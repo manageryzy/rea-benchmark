@@ -11,12 +11,14 @@ installation; adapt and review those paths for another host.
 
 The source repository includes the coordinator, harness adapters, report generator,
 reference programs, independent oracles, frozen case definitions and pinned ELF
-inputs. Generated HTML, raw model traces, reasoning, account state, credentials,
+inputs. Full private reports, raw model traces, reasoning, account state, credentials,
 downloaded runtimes and compiler scratch files are excluded from Git.
 
 After cloning, `make reports` creates stopped local execution state if needed and
-generates the global report offline. With no separately supplied result dataset,
-all measurements remain pending; historical audit snapshots are not new scores.
+generates reports offline. Without the private result dataset, the private record
+view remains pending; public pages retain the checked-in sanitized summary cache.
+Historical audit snapshots are not new scores. Public HTML under `docs/` is generated
+locally and committed for branch-based Pages hosting.
 Use `make benchmark-plan` to inspect the configured matrix without model calls.
 After installing the pinned dependencies and configuring credentials locally,
 `make benchmark` runs missing cells and reuses valid caches. It can incur provider

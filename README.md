@@ -80,8 +80,8 @@ debits are unavailable. Cost ranges preserve unresolved billing assumptions.
 The generated global report contains matching-case comparisons, per-case scores,
 runtime charts, historical conditions and evidence-delivery diagnostics. See
 [report reproduction](guides/setup.md#rebuild-benchmark-reports) for details.
-Generated reports and raw attempts are excluded from Git. The public site
-regenerates from a sanitized summary cache; replaying the underlying measurements
+Private reports and raw attempts are excluded from Git. Public HTML is generated
+locally from a sanitized summary cache and committed under `docs/`. Replaying the underlying measurements
 requires the matching private result dataset. This dated summary is not a
 substitute for that dataset.
 

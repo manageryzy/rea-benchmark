@@ -206,11 +206,13 @@ same compiler/optimization/ABI cases without relying on a local compiler rebuild
 It also includes the authored sources and independent oracles for inspection.
 These references must remain outside each model's isolated analysis workspace.
 
-Raw attempts, provider requests, reasoning, sessions, generated reports and local
+Raw attempts, provider requests, reasoning, sessions, full private reports and local
 execution state are ignored. `make setup` copies the stopped execution example
 only when local state is absent; the report, plan and benchmark targets call it
-automatically. It never overwrites an active run. A source-only checkout reports
-unmeasured cells as pending. Reproducing historical measured results requires the
+automatically. It never overwrites an active run. A source-only checkout's private
+record view reports unmeasured cells as pending; public pages use the checked-in
+summary cache. Generated public HTML is committed under `docs/` for branch-based
+Pages hosting. Reproducing historical measured results requires the
 matching reviewed run dataset and its archived source profiles. Offline replay
 and cache acceptance checks require that dataset and the documented local runtimes.
 
