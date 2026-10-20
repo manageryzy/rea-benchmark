@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-19T08:08:34.160048+00:00",
+  "model": "glm-5.3",
+  "endpoint": "https://open.bigmodel.cn/api/paas/v4",
+  "currency": "CNY",
+  "unit_tokens": 1000000,
+  "input": 8,
+  "cache_read": 2,
+  "output": 28,
+  "cache_storage": 0,
+  "cache_storage_note": "Official limited-time free storage pricing at snapshot time",
+  "source": "https://docs.bigmodel.cn/cn/guide/start/pricing",
+  "source_snapshot_sha256": "e47e492fffffdd7d0cdb3fb6b61f0ed33b2ab829dd3973c9d55e8a1f1c537e4a",
+  "actual_invoice_debit": null,
+  "fx": {
+    "source": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+    "date": "2026-10-16",
+    "eur_usd": 1.1253,
+    "eur_cny": 7.524,
+    "cny_per_usd": 6.686217008797654,
+    "basis": "ECB reference cross-rate; display conversion only, not invoice exchange rate"
+  }
+}

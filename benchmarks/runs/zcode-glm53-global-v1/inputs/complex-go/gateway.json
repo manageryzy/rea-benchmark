@@ -1,0 +1,6 @@
+{
+  "max_tool_calls": 60,
+  "tool_timeout_ms": 450000,
+  "analysis_tools_file": "/mnt/h/work/rea/benchmarks/runs/zcode-glm53-global-v1/inputs/complex-go/tools.json",
+  "data_limits": {}
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "default_batch": "gpt-baselines",
+  "batches": {
+    "gpt-baselines": {
+      "description": "Complete the existing complex and container cases for the older/lighter GPT baselines; retain the saved native pilots and other models.",
+      "models": ["gpt-6-luna", "gpt-5.6-sol"],
+      "suite": "all",
+      "condition": "paged-evidence-v2",
+      "report_every": 0
+    }
+  }
+}

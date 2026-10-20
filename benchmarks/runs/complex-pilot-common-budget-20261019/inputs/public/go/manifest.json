@@ -1,0 +1,23 @@
+{
+  "case_id": "multipoint-container-abi-v1-go",
+  "language": "go",
+  "architecture": "x86_64",
+  "format": "ELF",
+  "profile": "optimized-stripped",
+  "binary_sha256": "e0f46ae8ca1ffefe228d6eac54eecd19ae8a11f941a5784bb34a91c751d93931",
+  "entry_points": {
+    "P0": "0x498920",
+    "P1": "0x499020",
+    "P2": "0x4995e0",
+    "P3": "0x499c60",
+    "P4": "0x49a240",
+    "P5": "0x49a4c0",
+    "dispatch": "0x49a7c0"
+  },
+  "compiler": "go version go1.23.2 linux/amd64",
+  "optimization": "normal optimized build; inlining enabled",
+  "debug_info": false,
+  "regular_symbols_retained": false,
+  "runtime_metadata_retained": true,
+  "original_tests_passed": 3088
+}

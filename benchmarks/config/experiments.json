@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "suites": [
+    {
+      "id": "record-parser",
+      "path": "benchmarks/suites/record-parser"
+    },
+    {
+      "id": "complex-native-v1",
+      "path": "benchmarks/suites/complex-native-v1"
+    },
+    {
+      "id": "stl-native-v2",
+      "path": "benchmarks/suites/stl-native-v2"
+    }
+  ],
+  "experiments": [
+    {
+      "id": "pilot-20261019",
+      "label": "Earlier C-output pilot",
+      "suite": "record-parser",
+      "role": "historical",
+      "pricing_file": "benchmarks/config/pricing-20261019.json"
+    },
+    {
+      "id": "native-pilot-20261019",
+      "label": "Basic native recovery",
+      "suite": "record-parser",
+      "role": "primary",
+      "pricing_file": "benchmarks/config/pricing-20261019.json"
+    },
+    {
+      "id": "complex-pilot-20261019",
+      "label": "Earlier output-budget diagnostics",
+      "suite": "complex-native-v1",
+      "role": "diagnostic",
+      "pricing_file": "benchmarks/suites/complex-native-v1/config/pricing.json"
+    },
+    {
+      "id": "complex-pilot-common-budget-20261019",
+      "label": "Optimized stripped multipoint \u2014 eight tools",
+      "suite": "complex-native-v1",
+      "role": "primary",
+      "pricing_file": "benchmarks/suites/complex-native-v1/config/pricing.json"
+    },
+    {
+      "id": "stl-rust-data-v2-20261019",
+      "label": "C++11/14 containers and Rust byte inspection \u2014 twelve tools",
+      "suite": "stl-native-v2",
+      "role": "primary",
+      "pricing_file": "benchmarks/suites/stl-native-v2/config/pricing-data-v2.json"
+    }
+  ],
+  "imported_attempts": [
+    {
+      "experiment": "native-pilot-20261019",
+      "case": "cpp",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/record-cpp",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "record-cpp",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "case": "rust",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/record-rust",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "record-rust",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "case": "go",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/record-go",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "record-go",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "case": "cpp",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/complex-cpp",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "complex-cpp",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "case": "rust",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/complex-rust",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "complex-rust",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "case": "go",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/complex-go",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "complex-go",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "case": "rust-data-v2",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/rust-data-v2",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "rust-data-v2",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "case": "cpp11-string-abi0",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/cpp11-string-abi0",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "cpp11-string-abi0",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "case": "cpp11-string-abi1",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/cpp11-string-abi1",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "cpp11-string-abi1",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "case": "cpp14-string-abi0",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/cpp14-string-abi0",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "cpp14-string-abi0",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "case": "cpp14-string-abi1",
+      "model": "glm-5.3",
+      "directory": "benchmarks/runs/zcode-glm53-global-v1/glm-5.3/cpp14-string-abi1",
+      "manifest": "benchmarks/runs/zcode-glm53-global-v1/run-manifest.json",
+      "manifest_case": "cpp14-string-abi1",
+      "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+    }
+  ],
+  "import_note": "Location mapping only. Existing raw files and historical manifests remain immutable; these are the same cases, not additional benchmark definitions."
+}

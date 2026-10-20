@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+mkdir -p "$REA_ENV_ROOT/examples/build" "$REA_ENV_ROOT/results"
+gcc -O0 -g -fno-inline -o "$REA_ENV_ROOT/examples/build/hello" "$REA_ENV_ROOT/examples/hello.c"
+"$REA_ENV_ROOT/bin/rea" doctor --provider ghidra --json > "$REA_ENV_ROOT/results/doctor.json"
+"$REA_ENV_ROOT/bin/rea" decompile "$REA_ENV_ROOT/examples/build/hello" calculate_total --provider ghidra --json > "$REA_ENV_ROOT/results/hello-decompiled.json"
+/usr/bin/python3 - "$REA_ENV_ROOT/results/hello-decompiled.json" <<'PY'
+import json, pathlib, sys
+result = json.loads(pathlib.Path(sys.argv[1]).read_text())
+def strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for child in value.values():
+            yield from strings(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from strings(child)
+candidates = [s for s in strings(result) if 'calculate_total' in s and '{' in s and 'return' in s]
+if not candidates:
+    raise SystemExit('No decompiled calculate_total function found; inspect results/hello-decompiled.json')
+path = pathlib.Path(sys.argv[1]).with_suffix('.c')
+path.write_text(candidates[0] + '\n')
+print('PASS: Ghidra decompiled an x86-64 Linux ELF function.')
+print(candidates[0])
+print('Evidence:', sys.argv[1])
+PY

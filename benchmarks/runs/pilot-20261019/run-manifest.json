@@ -1,0 +1,64 @@
+{
+  "started_at": "2026-10-18T16:32:11.190Z",
+  "configuration": {
+    "schema_version": 1,
+    "name": "record-parser-pilot-v1",
+    "languages": [
+      "cpp",
+      "rust",
+      "go"
+    ],
+    "models": [
+      {
+        "id": "deepseek-flash",
+        "label": "DeepSeek V4.1 Flash 1017",
+        "provider": "deepseek-official",
+        "reasoning": "high"
+      },
+      {
+        "id": "gpt-6.1-sol",
+        "label": "GPT-6.1 Sol",
+        "provider": "openai-codex",
+        "reasoning": "high"
+      }
+    ],
+    "harness_version": "0.2.1-rc.2",
+    "max_tool_calls": 20,
+    "task_timeout_seconds": 900,
+    "tool_timeout_ms": 450000,
+    "max_output_tokens": 8192,
+    "seed": 20261019,
+    "run_order": [
+      [
+        "cpp",
+        "deepseek-flash"
+      ],
+      [
+        "cpp",
+        "gpt-6.1-sol"
+      ],
+      [
+        "rust",
+        "gpt-6.1-sol"
+      ],
+      [
+        "rust",
+        "deepseek-flash"
+      ],
+      [
+        "go",
+        "deepseek-flash"
+      ],
+      [
+        "go",
+        "gpt-6.1-sol"
+      ]
+    ]
+  },
+  "harness_version": "0.2.1-rc.2",
+  "auth_modes": {
+    "deepseek": "saved API key",
+    "gpt": "existing Codex OAuth"
+  },
+  "scope": "six-run pilot"
+}

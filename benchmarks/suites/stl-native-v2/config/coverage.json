@@ -1,0 +1,297 @@
+{
+  "name": "stl-native-v2",
+  "container_template_count_cpp11": 16,
+  "cpp11_specializations": [
+    "vector<bool>"
+  ],
+  "related_types": [
+    "basic_string<char>",
+    "bitset<64>",
+    "valarray<int>"
+  ],
+  "later_container_templates": 6,
+  "rows": [
+    {
+      "name": "vector",
+      "category": "sequence",
+      "point": 0,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "growth from reserve(1), emplace, rotation, erase/remove_if"
+    },
+    {
+      "name": "array",
+      "category": "sequence",
+      "point": 1,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "fixed extent, length errors, reverse"
+    },
+    {
+      "name": "deque",
+      "category": "sequence",
+      "point": 2,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "push_front/back, bounded trim"
+    },
+    {
+      "name": "list",
+      "category": "sequence",
+      "point": 3,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "cross-list splice, sort, unique, reverse"
+    },
+    {
+      "name": "forward_list",
+      "category": "sequence",
+      "point": 4,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "before_begin/insert_after, reverse, remove_if, sort, unique"
+    },
+    {
+      "name": "set",
+      "category": "ordered associative",
+      "point": 5,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "unique keys and erase all matches"
+    },
+    {
+      "name": "multiset",
+      "category": "ordered associative",
+      "point": 6,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "duplicate keys and erase one iterator"
+    },
+    {
+      "name": "map",
+      "category": "ordered associative",
+      "point": 7,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "operator[], signed accumulation, ordered keys"
+    },
+    {
+      "name": "multimap",
+      "category": "ordered associative",
+      "point": 8,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "equal-key insertion order and emplace"
+    },
+    {
+      "name": "unordered_set",
+      "category": "unordered associative",
+      "point": 9,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "constant hash, equality, reserve, load factor, erase"
+    },
+    {
+      "name": "unordered_multiset",
+      "category": "unordered associative",
+      "point": 10,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "collisions, rehash, duplicate erase-one"
+    },
+    {
+      "name": "unordered_map",
+      "category": "unordered associative",
+      "point": 11,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "collisions, growth, frequency map, canonical output"
+    },
+    {
+      "name": "unordered_multimap",
+      "category": "unordered associative",
+      "point": 12,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "collisions, duplicate pairs, canonical output"
+    },
+    {
+      "name": "stack",
+      "category": "adaptor",
+      "point": 13,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "LIFO, pushes/pops and empty pop guard"
+    },
+    {
+      "name": "queue",
+      "category": "adaptor",
+      "point": 14,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "FIFO, emplace/pop and empty pop guard"
+    },
+    {
+      "name": "priority_queue",
+      "category": "adaptor",
+      "point": 15,
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "max heap, duplicate priorities, empty guard"
+    },
+    {
+      "name": "vector<bool>",
+      "point": 16,
+      "category": "specialization",
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "bit proxy flip and bit order"
+    },
+    {
+      "name": "basic_string<char>",
+      "point": 17,
+      "category": "related standard type",
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "SSO/growth lengths, append, insert, substr, size"
+    },
+    {
+      "name": "bitset<64>",
+      "point": 18,
+      "category": "related standard type",
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "toggle, count, duplicate parity, signed modulo"
+    },
+    {
+      "name": "valarray<int>",
+      "point": 19,
+      "category": "related standard type",
+      "standard": "C++11",
+      "status": "locally_verified_four_builds",
+      "operations": "expression assignment, sum, empty control"
+    },
+    {
+      "name": "flat_map",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++23",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    },
+    {
+      "name": "flat_multimap",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++23",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    },
+    {
+      "name": "flat_set",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++23",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    },
+    {
+      "name": "flat_multiset",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++23",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    },
+    {
+      "name": "inplace_vector",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++26",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    },
+    {
+      "name": "hive",
+      "point": 0,
+      "category": "later-standard container/adaptor",
+      "standard": "C++26",
+      "status": "unsupported_by_installed_toolchain",
+      "operations": "Executable optional source fixture; requires native library support."
+    }
+  ],
+  "dialects": [
+    "c++11",
+    "c++14"
+  ],
+  "string_abi_values": [
+    0,
+    1
+  ],
+  "profile": "optimized-stripped",
+  "models": [
+    "deepseek-flash",
+    "gpt-6.1-sol"
+  ],
+  "model_attempts_planned": 8,
+  "model_attempts_executed": 0,
+  "source_signature": "std::string reconstructed(const std::vector<std::uint8_t>& data)",
+  "grammar": {
+    "C++11": [
+      "auto/decltype/trailing return",
+      "range for and initializer lists",
+      "scoped enum",
+      "variadic templates",
+      "value/reference lambda capture",
+      "unique_ptr and moves",
+      "deleted copy",
+      "virtual override/final",
+      "noexcept destructor",
+      "constexpr/static_assert",
+      "exception catch and specified RAII cleanup order"
+    ],
+    "C++14": [
+      "generic lambdas",
+      "init-capture of move-only unique_ptr",
+      "make_unique",
+      "return type deduction",
+      "decltype(auto) preserving reference",
+      "constexpr loop",
+      "binary literal",
+      "digit separator",
+      "transparent comparator heterogeneous lookup"
+    ]
+  },
+  "not_claimed": [
+    "Every container member overload or template argument combination",
+    "Exact source/container identity recovered by models",
+    "Binary interoperability between libstdc++ old/new string ABI",
+    "Allocator propagation, pmr variants, debug iterators, and every character type",
+    "New model accuracy, readability, tokens or costs before new inference"
+  ],
+  "related_future_views": [
+    {
+      "name": "span",
+      "standard": "C++20",
+      "status": "present in existing core C++ pilot, not an owning container"
+    },
+    {
+      "name": "mdspan",
+      "standard": "C++23",
+      "status": "separate view coverage planned; not an owning container"
+    }
+  ],
+  "references": [
+    {
+      "title": "C++ working draft: containers library summary",
+      "url": "https://eel.is/c++draft/containers.general"
+    },
+    {
+      "title": "C++ working draft: container adaptors",
+      "url": "https://eel.is/c++draft/container.adaptors.general"
+    }
+  ],
+  "validation_receipt": "../private/validation.json",
+  "modern_receipt": "../private/modern-validation.json",
+  "model_runner_status": "Not launched; original complex runner remains scoped to core cases. STL native grader ready."
+}

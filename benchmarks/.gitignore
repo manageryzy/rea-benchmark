@@ -1,0 +1,46 @@
+# Local run state and generated validation receipts, never release defaults.
+/config/execution.json
+/config/benchmark-status.json
+/config/*validation.json
+/config/*-audit.json
+/config/environment-audit.json
+/config/*.tmp-*
+/reports/
+
+# Raw answers, model events, HTTP payloads and reasoning stay local. Keep only
+# the six registered frozen definitions and their required input/source data.
+/runs/**/*
+!/runs/**/
+!/runs/pilot-20261019/run-manifest.json
+!/runs/native-pilot-20261019/run-manifest.json
+!/runs/complex-pilot-20261019/run-manifest.json
+!/runs/complex-pilot-common-budget-20261019/run-manifest.json
+!/runs/stl-rust-data-v2-20261019/run-manifest.json
+!/runs/zcode-glm53-global-v1/run-manifest.json
+!/runs/*/input-provenance.json
+!/runs/*/pipeline/**
+!/runs/*/inputs/**/target
+!/runs/*/inputs/**/manifest.json
+!/runs/*/inputs/**/prompt.txt
+!/runs/*/inputs/**/tools.json
+!/runs/*/inputs/**/gateway.json
+!/runs/*/conditions/*/profiles/**
+
+# Rebuildable compiler matrices and grader scratch space. Frozen ELF fixtures
+# in public/ and runs/*/inputs/ are deliberate benchmark inputs, not downloads.
+/suites/*/private/*
+!/suites/*/private/vectors.json
+/suites/*/public/build-points/
+/suites/*/public/features/
+/suites/*/public/*/evidence*.json
+/suites/*/grading/build-validation.json
+
+# These rules also override every frozen-input allowlist above.
+**/.credentials*
+**/credentials.json
+**/auth.json
+**/provider_config.json
+**/.env
+**/.env.*
+**/__pycache__/
+*.log

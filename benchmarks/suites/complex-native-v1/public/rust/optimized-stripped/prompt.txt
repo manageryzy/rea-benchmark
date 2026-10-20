@@ -1,0 +1,40 @@
+Recover this optimized, stripped Linux x86-64 ELF in its original language: rust.
+It contains six independent command handlers and a dispatcher. Reconstruct all
+six handler behaviors from the binary. Produce human-readable, well-formatted,
+idiomatic code with descriptive names, small helpers and useful comments.
+Analyze the application functions and their callees, not the entire runtime.
+
+Address hints locate code only; they do not specify its behavior:
+{
+  "P0": "0x216c00",
+  "P1": "0x217ea0",
+  "P2": "0x217810",
+  "P3": "0x218700",
+  "P4": "0x216970",
+  "P5": "0x217330",
+  "dispatch": "0x217ae0"
+}
+Point bodies: P0 arbitrary bytes; P1 repeated 4-byte records (u8,u8,i16LE);
+P2 repeated 3-byte records (u8,i16LE); P3 u8 followed by pairs of u8;
+P4 u8 followed by eight i16LE; P5 u8 followed by i16LE values.
+The first request byte selects P0..P5. Empty/unknown requests also matter.
+All requests have 0..512 bytes and each invocation begins with fresh state.
+Return exactly the same printable result string as the target dispatcher.
+No semantic formulas, error answers, original sources or tests are supplied.
+
+Public submission signature:
+pub fn reconstructed(data: &[u8]) -> String
+Use Rust edition 2021; no main, external crates, unsafe code, or crate attributes.
+The grading driver owns stdin/stdout and calls reconstructed. No filesystem,
+network, subprocesses, inline assembly or FFI. Helpers, types and standard
+containers are allowed. Equivalent native implementations are accepted.
+For P4 also explain observed argument passing and aggregate return conventions
+with evidence addresses; separate observations from inference. The candidate
+is tested for behavior, not binary-link compatibility with those ABI boundaries.
+
+Use only supplied REA tools, provider ghidra, and open path target. No source,
+hidden tests, prior answers, target execution, compiler feedback or other models.
+Budget: 60 tool calls and 30 minutes. Close the binary before finishing.
+Submit a short evidence-based explanation and exactly ONE rust code block
+containing the complete reconstruction. Code can precede the final close call.
+There is one attempt with no grading feedback or repairs. State uncertainty.

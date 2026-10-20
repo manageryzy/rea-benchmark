@@ -1,0 +1,13 @@
+#!/bin/sh
+# One CLI forwards to one coordinator; offline report generation is independent.
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+. "$REA_ENV_ROOT/env.sh"
+cd "$REA_ENV_ROOT"
+action=${1:-help}
+if [ "$#" -gt 0 ]; then shift; fi
+case "$action" in
+ list|plan|run|verify) exec /usr/bin/python3 benchmarks/scripts/run.py "$action" "$@" ;;
+ report) exec /usr/bin/python3 benchmarks/scripts/report.py build "$@" ;;
+ *) echo 'Usage: bin/benchmark {plan|run [--config FILE] [--offline]|list|verify|report}. See make help.' >&2; exit 2 ;;
+esac

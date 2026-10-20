@@ -1,0 +1,38 @@
+{
+  "features": {
+    "mcp": true,
+    "subagent": false,
+    "memory": false,
+    "skill": false
+  },
+  "memory": {
+    "use": false
+  },
+  "hooks": {
+    "enabled": false
+  },
+  "plugins": {
+    "enabled": false
+  },
+  "skills": {
+    "enabled": false
+  },
+  "mcp": {
+    "servers": {
+      "rea": {
+        "type": "stdio",
+        "command": "/mnt/h/work/rea/bin/rea",
+        "args": ["mcp"],
+        "enabled": true,
+        "timeoutMs": 450000,
+        "env": {
+          "REA_ANALYSIS_PROVIDER": "ghidra",
+          "REA_MCP_INPUT_SCHEMA_PROFILE": "compact"
+        }
+      }
+    }
+  },
+  "ui": {
+    "locale": "en-US"
+  }
+}

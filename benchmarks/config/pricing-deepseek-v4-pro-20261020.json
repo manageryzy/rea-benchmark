@@ -1,0 +1,28 @@
+{
+  "verified_at_utc": "2026-10-20T05:36:47Z",
+  "currency": "USD",
+  "unit_tokens": 1000000,
+  "estimate_note": "Published API token rates. Actual invoice debit unavailable. Recorded request completion timestamps determine peak/off-peak pricing; exclude local compute and this conversation.",
+  "deepseek-v4-pro": {
+    "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "availability_source": "https://api-docs.deepseek.com/api/list-models/",
+    "documented_release": "DeepSeek-V4-Pro-0813",
+    "availability_verified": "Authenticated GET /models lists deepseek-v4-pro; discovery makes zero inference calls.",
+    "selection_note": "Older supported release; a higher tier than the existing V4.1 Flash baseline. Legacy V4 Flash aliases now route to V4.1 Flash and are not older-model measurements.",
+    "off_peak": {
+      "input": 0.66,
+      "cache_read": 0.022,
+      "cache_write": 0.66,
+      "output": 1.98
+    },
+    "peak": {
+      "input": 1.32,
+      "cache_read": 0.044,
+      "cache_write": 1.32,
+      "output": 3.96
+    },
+    "peak_utc_hours": [[1, 4], [6, 10]],
+    "weekdays_only": true,
+    "holidays_note": "Chinese public holidays are off-peak. The selected run date, 2026-10-20, is not a Chinese public holiday."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "deepseek-flash",
+      "label": "DeepSeek V4.1 Flash 1017",
+      "harness": "deepseek-harness",
+      "reasoning": "high",
+      "pricing_note": "Use the frozen pricing snapshot of each recorded experiment"
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "label": "DeepSeek V4 Pro 0813",
+      "harness": "deepseek-harness",
+      "reasoning": "high",
+      "comparison_role": "Older DeepSeek release; higher model tier than V4.1 Flash",
+      "pricing_file": "benchmarks/config/pricing-deepseek-v4-pro-20261020.json",
+      "pricing_note": "Official API; published peak/off-peak rates. Older release and different tier, not a size-matched generation comparison."
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "label": "GPT-6.1 Sol",
+      "harness": "deepseek-harness",
+      "reasoning": "high",
+      "pricing_note": "Codex API equivalent; actual subscription debit unavailable"
+    },
+    {
+      "id": "glm-5.3",
+      "label": "GLM-5.3",
+      "harness": "zcode",
+      "reasoning": "high",
+      "pricing_file": "benchmarks/config/pricing-glm53-20261019.json"
+    },
+    {
+      "id": "gpt-6-luna",
+      "label": "GPT-6 Luna",
+      "harness": "deepseek-harness",
+      "reasoning": "high",
+      "comparison_role": "Lighter GPT baseline",
+      "pricing_file": "benchmarks/config/pricing-gpt-baselines-20261020.json",
+      "pricing_note": "Codex API equivalent; actual subscription debit unavailable"
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "label": "GPT-5.6 Sol",
+      "harness": "deepseek-harness",
+      "reasoning": "high",
+      "comparison_role": "Older GPT baseline",
+      "pricing_file": "benchmarks/config/pricing-gpt-baselines-20261020.json",
+      "pricing_note": "Codex API equivalent; actual subscription debit unavailable"
+    }
+  ]
+}

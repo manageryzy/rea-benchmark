@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+exec /usr/bin/python3 "$REA_ENV_ROOT/scripts/configure-zcode-api.py" "$@"

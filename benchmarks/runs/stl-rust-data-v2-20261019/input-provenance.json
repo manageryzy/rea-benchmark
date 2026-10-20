@@ -1,0 +1,59 @@
+{
+  "frozen_at": "2026-10-19T05:26:15.794Z",
+  "protocol_files_sha256": {
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/config/pilot-data-v2.json": "428d299b513b9fee9738df820741eaaf467056e94c21aacb2c6961f68a02fda1",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/config/rea-tools-data-v2.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045",
+    "/mnt/h/work/rea/benchmarks/scripts/runtime.mjs": "b3ba13fb9496998002a1a5f5e0f600972b327a69af1b5651d1d0b0ab3ecf7e40",
+    "/mnt/h/work/rea/benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+    "/mnt/h/work/rea/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+    "/mnt/h/work/rea/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+    "/mnt/h/work/rea/benchmarks/scripts/collect_answer.py": "077c335739173a43263670806dc2e06c167afe392826e60e9fa4f1d566656dee",
+    "/mnt/h/work/rea/benchmarks/scripts/grade.py": "3052bb6c23850c17a4dfa24e7953c381d47c2cd94a97d1aa8665419bc9d377e6",
+    "/mnt/h/work/rea/benchmarks/scripts/pricing.py": "cf913b61c16ee2c8ae16e7f87a1158be750ebfad835358b6330df9e55d5c4ebf",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/scripts/lossless-output.mjs": "088775fd18427241a8509700a0422c1d560304920376c0ea3e548b0f006a6906",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/scripts/grade.py": "2a53e0aea48a6a77cc198b30f91124b79ede1da76fc6633faa8d6dda9ec72120",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/scripts/grade.py": "3655a025a877219992b08b6ed208444c381776812ca665e542d81030497eb10e",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/scripts/run.mjs": "6879ec524f06df2e71b5d5c94a6ba0d5067ae43da4a07facf2909ffea960b234",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/authoring/driver.cpp": "e600190af3f0148bedc576423866ebe779ceb73073132c9010d64996fa7aa341",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/config/pricing-data-v2.json": "212a998ab18c0aea7b5f72aff1eb74806deba5f800e39585834705c541b43021",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/authoring/containers.cpp": "d740fdb2d5262f5e604f08b077d30d3d6bbe164cbb06d793e9320bda870349ed",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/authoring/grammar14.inc": "941823fbef52ffc9e91fedfa19227de2d4f1dc37f8c55992c09f6937a857d4c3",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/scripts/oracle.py": "4967f2e06b35d9629af9922ab67db4fb9e4638542d669ecad157adab85e464d1",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/scripts/selftest.py": "f0a84148693ae439a8c8ea2fb477ccd532fc7a4de841db0250cac6f2678024b8",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/authoring/rust/case.rs": "2f9e6c5a37fdb5625aa8b880f7762f4b1aee1a188369feed041036b1febade3c",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/authoring/rust/abi_bridge.rs": "d38ec592d930cfe173d17594700eaa46916647c81521553b1a186d75a6416485",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/scripts/oracle.py": "2a3f5ba1dc559cca4d67a927fcc23ee6145f2d5c9ea405f6d7d43a359704aa76",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/private/validation.json": "4357dd1e748c698e1c9fdf75e83c2a38a0ca9383825bee02648987fe14fdb7e9",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/private/vectors.json": "48cef013a5a061637fac0993aa73984ddd0ab7fe338d73d45c5ff1c466218945",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/private/build-cache/13c2af73930f43668737b43c73f2d9b88cfc93994c23c5d77ea8f19d4c708078/vectors.json": "8f5ce4a604fff89541a46ab8a2f65e343a3e026847d5f1f70eb292682bbc9490"
+  },
+  "public_inputs": {
+    "rust-data-v2": {
+      "target": "67318c0b8323b6d1763acd7edd42f596ac092dd2cef734f87b22b85df4d38ef6",
+      "manifest.json": "e4bfc437f3f52b22c8aefe30e5e08075ab2f77986d000b88fd3e62e5ecb15dbe",
+      "prompt.txt": "36b048203763fc05b62462f51867a960c695e18d20eeade5335c55859ba3e8aa"
+    },
+    "cpp11-string-abi0": {
+      "target": "6bb2b7494a1addfd7c5e138bb455bba22158400b7d3e6193f3405df297fcf00f",
+      "manifest.json": "d9679da6c6e507c0d7619c4b77f47f849abc5cc3deae32846e78b334e1cde3cb",
+      "prompt.txt": "796e17c2c3ea97c28068c5e0a5b79ee02c09fa0a2743ca4e82c3c4f5fd1d51f9"
+    },
+    "cpp11-string-abi1": {
+      "target": "f5c1e789d564ee82becc2d933f014f86333f4c00ca45c71ea791dd4d66ad06c4",
+      "manifest.json": "a72a8a94e625cdf1a0dd8a7dc075145b01562d7b3062fd8cd4093284007d4a06",
+      "prompt.txt": "c3f98a48ff0ef68662e50beb9650cca9c6b95206f6fbd7feec9b4b3c636578f6"
+    },
+    "cpp14-string-abi0": {
+      "target": "7944495ae298acd7b73360ba313ad360c26ded25d2a1e146b90d0bcf2dea630e",
+      "manifest.json": "a446d00129263551a0ab7a184000ec30d885ac95ed835b24d30b52de1f6aeda7",
+      "prompt.txt": "2cd06335f30646af64f0ad4b44acd468c6074e720a52dfb26077caa93cfdb635"
+    },
+    "cpp14-string-abi1": {
+      "target": "b9229bb84438659593d4ddb9dc417b272747c2989d8a8d0c225541028e95eec9",
+      "manifest.json": "5669e4830d71ff2bacc2cb3ae4912f905a2efd152740fd700dc49a0b8910f606",
+      "prompt.txt": "d43033c9a263005f00fd0cb7a9deccb21eed9ab87482991f098b9b12c2c171bf"
+    }
+  },
+  "protocol_sha256": "131da3f2df375c07b9a4d59aa6e9bb01bfccf1d00bbd70824ae56f005ac53d16",
+  "immutable_input_archive": true
+}

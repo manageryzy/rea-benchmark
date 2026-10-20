@@ -1,0 +1,44 @@
+# Downloaded dependencies, toolchains and upstream reference checkouts.
+/.tools/
+/.cache/
+node_modules/
+/upstream/
+
+# Local account state, credentials and editor/agent settings.
+/.harness/
+/.harness-agents/
+/.zcode-state/
+/.agents/
+/.codex/
+/.aws/
+/.gemini/
+/.vscode/
+/.idea/
+.env
+.env.*
+!.env.example
+!.env.template
+.credentials*
+credentials.json
+auth.json
+oauth_creds.json
+provider_config.json
+*.pem
+*.key
+
+# Generated output; authored fixture sources and pinned inputs are versioned.
+/examples/build/
+/results/
+/runs/
+/reports/
+/benchmarks/reports/
+__pycache__/
+*.py[cod]
+*.log
+*.pid
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "models": "all",
+  "suites": "all",
+  "experiments": "primary",
+  "cases": "all",
+  "condition": "active",
+  "execution": {
+    "max_parallel_models": 3,
+    "report_every": 0
+  },
+  "compiler_matrix": {
+    "config": "benchmarks/config/cpp-build-points.json",
+    "inference_enabled": false,
+    "note": "Build validation and planned compiler/optimization points remain visible globally. Only registered primary cases are enabled for model inference."
+  }
+}

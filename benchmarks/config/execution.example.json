@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "experiments_stopped": true,
+  "reason": "No model execution until an explicit make benchmark command",
+  "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
+}

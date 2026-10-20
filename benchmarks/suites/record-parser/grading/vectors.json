@@ -1,0 +1,7087 @@
+[
+  {
+    "hex": "-",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "00",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "0001",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "000102",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "00010203",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "0001020304",
+    "expected": -1,
+    "category": "short"
+  },
+  {
+    "hex": "524500000000",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000000",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000000",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000100",
+    "expected": 1,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000100",
+    "expected": 1,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000100",
+    "expected": 1,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ff00",
+    "expected": 255,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ff00",
+    "expected": 255,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ff00",
+    "expected": 255,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000001",
+    "expected": 256,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000001",
+    "expected": 256,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500000001",
+    "expected": 256,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ffff",
+    "expected": 65535,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ffff",
+    "expected": 65535,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450000ffff",
+    "expected": 65535,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001000000",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001000001",
+    "expected": 1,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500010000ff",
+    "expected": 255,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001010000",
+    "expected": 33,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001010001",
+    "expected": 32,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500010100ff",
+    "expected": 222,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ff0000",
+    "expected": 8415,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ff0001",
+    "expected": 8414,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ff00ff",
+    "expected": 8224,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001000100",
+    "expected": 8448,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001000101",
+    "expected": 8449,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500010001ff",
+    "expected": 8703,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ffff00",
+    "expected": 65503,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ffff01",
+    "expected": 65502,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450001ffffff",
+    "expected": 65312,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000200000000",
+    "expected": 1,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000200000101",
+    "expected": 35,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500020000ffff",
+    "expected": 8671,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000201000000",
+    "expected": 1088,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000201000101",
+    "expected": 1058,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500020100ffff",
+    "expected": 7582,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ff000000",
+    "expected": 15550,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ff000101",
+    "expected": 15516,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ff00ffff",
+    "expected": 9504,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000200010000",
+    "expected": 16641,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245000200010101",
+    "expected": 16675,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500020001ffff",
+    "expected": 24799,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ffff0000",
+    "expected": 64446,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ffff0101",
+    "expected": 64412,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450002ffffffff",
+    "expected": 57888,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 47167,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f000001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49152,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 8510,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 46174,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f010001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 17377,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f0100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 44255,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 24800,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fff0001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 22815,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 45089,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f000100000000000000000000000000000000000000000000000000000000000000",
+    "expected": 39231,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 41216,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001f0001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 12862,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fffff00000000000000000000000000000000000000000000000000000000000000",
+    "expected": 32736,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fffff01010101010101010101010101010101010101010101010101010101010101",
+    "expected": 30751,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 3873,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 49152,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002000000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49184,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500200000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 18912,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002001000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 16385,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002001000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49185,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500200100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 18849,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ff000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 31999,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ff000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 31967,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 46431,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002000010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 49408,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245002000010101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49440,
+    "category": "boundary"
+  },
+  {
+    "hex": "524500200001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 30944,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ffff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 31743,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ffff0101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 31711,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450020ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 62047,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000000",
+    "expected": 17,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000000",
+    "expected": 17,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000000",
+    "expected": 17,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000100",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000100",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000100",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ff00",
+    "expected": 127,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ff00",
+    "expected": 127,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ff00",
+    "expected": 127,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000001",
+    "expected": 273,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000001",
+    "expected": 273,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501000001",
+    "expected": 273,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ffff",
+    "expected": 32767,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ffff",
+    "expected": 32767,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450100ffff",
+    "expected": 32767,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101000000",
+    "expected": 17,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101000001",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501010000ff",
+    "expected": 127,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101010000",
+    "expected": 16,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101010001",
+    "expected": 49,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501010100ff",
+    "expected": 239,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ff0000",
+    "expected": 4207,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ff0001",
+    "expected": 8431,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ff00ff",
+    "expected": 8241,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101000100",
+    "expected": 8465,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101000101",
+    "expected": 4224,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501010001ff",
+    "expected": 4351,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ffff00",
+    "expected": 32751,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ffff01",
+    "expected": 65519,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450101ffffff",
+    "expected": 65329,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010200000000",
+    "expected": 0,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010200000101",
+    "expected": 17,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501020000ffff",
+    "expected": 4335,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010201000000",
+    "expected": 1105,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010201000101",
+    "expected": 1075,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501020100ffff",
+    "expected": 7599,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ff000000",
+    "expected": 15567,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ff000101",
+    "expected": 15533,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ff00ffff",
+    "expected": 9521,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010200010000",
+    "expected": 8320,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245010200010101",
+    "expected": 8337,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501020001ffff",
+    "expected": 12399,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ffff0000",
+    "expected": 64463,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ffff0101",
+    "expected": 64429,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450102ffffffff",
+    "expected": 57905,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 56351,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f000001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49169,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 8527,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 46191,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f010001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 8688,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f0100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 22127,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 24817,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fff0001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 11407,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 55312,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f000100000000000000000000000000000000000000000000000000000000000000",
+    "expected": 52383,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 41233,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011f0001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 12879,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fffff00000000000000000000000000000000000000000000000000000000000000",
+    "expected": 32753,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fffff01010101010101010101010101010101010101010101010101010101010101",
+    "expected": 48143,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245011fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 34704,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 49169,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012000000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49201,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501200000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 18929,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012001000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 40960,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012001000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 24592,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501200100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 9424,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ff000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 48767,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ff000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 48751,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 55983,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012000010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 49425,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245012000010101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 49457,
+    "category": "boundary"
+  },
+  {
+    "hex": "524501200001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 30961,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ffff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 15871,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ffff0101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 15855,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450120ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 31023,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000000",
+    "expected": 42405,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000000",
+    "expected": 42405,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000000",
+    "expected": 42405,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000100",
+    "expected": 42404,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000100",
+    "expected": 42404,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000100",
+    "expected": 42404,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ff00",
+    "expected": 42330,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ff00",
+    "expected": 42330,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ff00",
+    "expected": 42330,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000001",
+    "expected": 42149,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000001",
+    "expected": 42149,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502000001",
+    "expected": 42149,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ffff",
+    "expected": 23130,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ffff",
+    "expected": 23130,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450200ffff",
+    "expected": 23130,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201000000",
+    "expected": 42405,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201000001",
+    "expected": 42404,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502010000ff",
+    "expected": 42330,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201010000",
+    "expected": 42372,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201010001",
+    "expected": 42373,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502010100ff",
+    "expected": 42363,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ff0000",
+    "expected": 34170,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ff0001",
+    "expected": 34171,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ff00ff",
+    "expected": 34181,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201000100",
+    "expected": 33957,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201000101",
+    "expected": 33956,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502010001ff",
+    "expected": 33882,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ffff00",
+    "expected": 23162,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ffff01",
+    "expected": 23163,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450201ffffff",
+    "expected": 23173,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020200000000",
+    "expected": 42404,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020200000101",
+    "expected": 42374,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502020000ffff",
+    "expected": 33914,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020201000000",
+    "expected": 41445,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020201000101",
+    "expected": 41351,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502020100ffff",
+    "expected": 47163,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ff000000",
+    "expected": 39195,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ff000101",
+    "expected": 39225,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ff00ffff",
+    "expected": 32901,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020200010000",
+    "expected": 58532,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245020200010101",
+    "expected": 58502,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502020001ffff",
+    "expected": 50554,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ffff0000",
+    "expected": 24091,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ffff0101",
+    "expected": 24121,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450202ffffffff",
+    "expected": 18309,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 7578,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f000001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 26021,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 33947,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 4603,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f010001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 58948,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f0100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 2426,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 50501,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fff0001010101010101010101010101010101010101010101010101010101010101",
+    "expected": 64698,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 5508,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f000100000000000000000000000000000000000000000000000000000000000000",
+    "expected": 15514,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 1189,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021f0001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 38811,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fffff00000000000000000000000000000000000000000000000000000000000000",
+    "expected": 55877,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fffff01010101010101010101010101010101010101010101010101010101010101",
+    "expected": 56762,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245021fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 43652,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 26021,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022000000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 25989,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502200000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 60485,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022001000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 58788,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022001000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 25988,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502200100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 60420,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ff000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 55642,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ff000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 55674,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 4346,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022000010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 25765,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245022000010101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 25733,
+    "category": "boundary"
+  },
+  {
+    "hex": "524502200001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 56645,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ffff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": 56922,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ffff0101010101010101010101010101010101010101010101010101010101010101",
+    "expected": 56954,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450220ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": 22522,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450300ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503010000ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301010000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301010001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503010100ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ff0000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ff0001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ff00ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503010001ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ffff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ffff01",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450301ffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030200000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030200000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503020000ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030201000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030201000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503020100ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ff000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ff000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ff00ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030200010000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245030200010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503020001ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ffff0000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ffff0101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450302ffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f000001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f010001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f0100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fff0001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f000100000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031f0001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fffff00000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fffff01010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245031fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032000000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503200000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032001000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032001000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503200100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ff000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ff000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032000010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245032000010101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "524503200001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ffff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ffff0101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450320ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff00ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01000001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff010000ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01010000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01010001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff010100ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ff0000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ff0001",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ff00ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01000100",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff010001ff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ffff00",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ffff01",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff01ffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0200000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0200000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff020000ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0201000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0201000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff020100ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ff000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ff000101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ff00ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0200010000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff0200010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff020001ffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ffff0000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ffff0101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff02ffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f000001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f010001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f0100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fff0001010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f000100000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1f0001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fffff00000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fffff01010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2000000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff200000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2001000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2001000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff200100ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ff000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ff000101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ff00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2000010000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff2000010101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff200001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ffff0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ffff0101010101010101010101010101010101010101010101010101010101010101",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "5245ff20ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "expected": -4,
+    "category": "boundary"
+  },
+  {
+    "hex": "52450214fef33f36cb1ea010423689cb5678e05f0e8ac157e94a",
+    "expected": 45287,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502111607d1f64659f3c1452325166b01d6a9ceb98b",
+    "expected": 3905,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501128ea4056208f4cffd764538e47e8e7220d950c013",
+    "expected": 63899,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010598a449b4e3403a",
+    "expected": 7565,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001cd62f63e9386712889bea9ecf58d86beadc56d122000547a33bd9b8d6d98d",
+    "expected": 29930,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501159ad08ae3572f54cdde927b451319e65b7ae8447fb2c45e",
+    "expected": 31053,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202e8630000",
+    "expected": 22604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501163d7d678f35947a0f5fb3aa083e446811468b86ceb54d5353",
+    "expected": 36079,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210931baf780ea89d4978b350e5ce2226ec8e7e",
+    "expected": 6505,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ec13c11b69dbe1ec0e236402d6060ddf4770c036510dd1a2f49596a03304fb4fe",
+    "expected": 61317,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f369769bff6c4a1156ab665759be05049f2",
+    "expected": 57893,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010fa6db516fc5bafb08d7b2469e614126511b",
+    "expected": 43761,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450014e2861f50a16777d179a965d81e2a938a6dcee91936d0",
+    "expected": 4864,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450211bde2fd259f1047acaaefb3ba60806f1db14c30",
+    "expected": 38177,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011507e2023516198812cd51080946a1bd777529b2aa454dff",
+    "expected": 46499,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500150b437b6bfebca635239c8053566168b2be40a84711dbbf",
+    "expected": 22263,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103d40a83b48f",
+    "expected": 4201,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214f6b308804172ffb032265604e2b4632c9ef2a6b83fbb",
+    "expected": 11540,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450105f47e8b59904d74",
+    "expected": 12143,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020df3eae174b243339ea33f4161d45a36",
+    "expected": 62097,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450004415b2674c826",
+    "expected": 33137,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010721d05235464e0699ff",
+    "expected": 24934,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450010d427337db5dae1f37ff85de2c835bc73c8f6",
+    "expected": 13107,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450215c38cf6f581fda655ce2d0b274330428f762b231bfe75cd",
+    "expected": 2922,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020f3d05b479b790910c81936a279a2020e8ece8805a52d8e37c19d81d84aa5ad3786ce",
+    "expected": 19316,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501174fc0150d400df8022305d1a4215902f05313c46f8e9c8a391f",
+    "expected": 40934,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450204d6078dc1981c",
+    "expected": 8473,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ba5aa97b9fbb6fe42bdc5c24b7ddc97a7dba8f3b3cf266a0e870f73198f",
+    "expected": 19849,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021e286b1bf2c99ad172d3c39193cd54391461db0b7ab987e439de8da33c74f49a72",
+    "expected": 46527,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500119770e037a735031a9b5c0a8c632c3370d175d4",
+    "expected": 292,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ba78c3afd17b3606f7393b5b2ec",
+    "expected": 4999,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502169ae83dd773f38ffa79a3f08b9b189e42681a49a9f02e1b07",
+    "expected": 15043,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f2b57463fa555ddee803fa8d41c22dc0438",
+    "expected": 59193,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f39a5e94812e4d8c6c30eafdd8264901e7d",
+    "expected": 13930,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020795a9e847db105a0c49",
+    "expected": 58558,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000241af551d",
+    "expected": 32170,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021cf4e8893d04e2c425422ba463c874c8bc7d4c3cba4be99f3dd369845ef47e",
+    "expected": 18959,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010232a8c8ec",
+    "expected": 49803,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b67b0e00c1c35eb61274fff6bc99fc6f2f8b0e56d6dd40ac8aa9a632f4c",
+    "expected": 9201,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010abf5e6515c0790d2e9f82fef0",
+    "expected": 25169,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502134a5e3473f7cbd1e6b9b58caf0fa741aef1e9a9cd4e",
+    "expected": 30548,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021dccc12ba91a28f63c30335f23fd0b0aeb61ac82951b90384f7d5122839dec2b",
+    "expected": 9232,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207d450d60b26e5f0d6fa",
+    "expected": 62436,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450200e858",
+    "expected": 64845,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ddb9f7f3151957e333685027ea86e11082e8f0bee9525a64a6e331626c6e6db",
+    "expected": 53053,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011b74f98632c44fafd009055305d132507848b47ec1fb0d004bb414bbf55b",
+    "expected": 23265,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011685c9a884295b51b0344261a3131ab1c0d53c77e889ab9ce9",
+    "expected": 51599,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502137f91b53ddb6f08853e192d625136df7e2aeb11e1ad",
+    "expected": 42774,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020fcc1d6954ed79f73dab5b6165ffb687249a11d4026717f5b5d057f77a7aec9a4e5fb",
+    "expected": 12077,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450119400855f50b8da7086095e4a541cc9aa2604046730829d0780b8c13",
+    "expected": 6193,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021103bd60b3c678ba5dfde0a4177380c0ec129fab",
+    "expected": 21795,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021bbd0386759b010685e0aa40de45567882154776ac7fbd04fab55a1d7b69",
+    "expected": 53100,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000771372ce26764712043",
+    "expected": 15081,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021751a8c625c521e6b2146429849dafa19b88bce8f3891f49c6ac",
+    "expected": 4851,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502016447ea",
+    "expected": 38571,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450203fd2b90683f",
+    "expected": 160,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011b786936199983028217112fd2b8d700bc392f85ff7673ac5efb552842aa",
+    "expected": 15139,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021e912df0d45c93bfedb63a1962f49f5444a08acbc58a6f0656f650e93345de46c0",
+    "expected": 29680,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020dd792b8cd2774603fdeeb93d4194dc3",
+    "expected": 55230,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021010d85cf081e139c96d1d0afbbd34da9b93ad",
+    "expected": 22598,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005c6097ae85c138c",
+    "expected": 65261,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010891de12a286ea6bfb5b8c",
+    "expected": 57577,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450102daca1735",
+    "expected": 29645,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d7dadaf3edb1cf2dddb1c75fbf9b685",
+    "expected": 5881,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501182b07e130e64476316fcb550bd3ff26509b31b7441a8406d0d1a4",
+    "expected": 40038,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020c747549daa6f6e49914f2dd6b0f46",
+    "expected": 2366,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000e6685d409b4b7064cbce03ea936c6de7b",
+    "expected": 7757,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502139d25c9d415c4a40e933118fba1599cf499b7f99108",
+    "expected": 10972,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020eee781f1e0af4c6fbe7aa1283c40e0a47",
+    "expected": 50213,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450204dfd864d72dac",
+    "expected": 65510,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ddfe22d2d316c1c856f5c0eab7ece5c",
+    "expected": 24851,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f36fdddf4dd7285e5b3e19dcdc22e3acced",
+    "expected": 25409,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a28a560d677640855d59d460759684d5c659554676775c92b2bc7ebe3",
+    "expected": 7636,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500030b0d604cde",
+    "expected": 21254,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500046f4ea7f8a32a",
+    "expected": 20025,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007a4b6a8e8a5bdda487a",
+    "expected": 22673,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501054c1e444dad674b",
+    "expected": 56029,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450105bbb49bb253272b",
+    "expected": 6273,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001817c1fb48ce6cb95db908184322973e3b5cf84a182ad60981aae8",
+    "expected": 58538,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ab13e299ec5e268dafefca876489515711a64b28a269c9d3bbf987869",
+    "expected": 36751,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500202746cdf6ce6759340ec1103a21766070c52f020b534e0baba7ab295834dd9b1ca875",
+    "expected": 26434,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000d494c0fb38beea4860601fd412ff478",
+    "expected": 28196,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a7d1b44aec567764e2146387ba4073dd77c87b4f53cbe9d44187a5af3",
+    "expected": 22274,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502128a7a637023b3b2f8d5260d3ecd725048a0af5cb2",
+    "expected": 51773,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011da01c0edff1947b04c03e013357f35ef47dcf9a92a28f678587ac3eedc5e5ce",
+    "expected": 7903,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001fc9c28",
+    "expected": 15444,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b8654f3fe75229c2aa9f42d8a6c",
+    "expected": 49238,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450013224a93519e1fee54cb9dde57d7af7ae23f070686d9",
+    "expected": 36570,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450006e9ed2a7749faf800",
+    "expected": 7572,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005e18185f3469c01",
+    "expected": 51458,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001c89b0e06fb3cead850f4d64fb91366d76f8d82ef0840bc23957c730105137",
+    "expected": 10378,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021069e34bbde2c5623b4200f5099cdd56ccdb4d",
+    "expected": 64499,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000d2e1084c350b41bf36fb6382e8e3717",
+    "expected": 45450,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502181d5e1de9fbbd3df9cc18b1bd54b8934c6b2b7d53c92686296c68",
+    "expected": 56245,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001c801f6b94371ca8539741d925d96ecf004f6bc9b4e6479c94b0326e111825",
+    "expected": 1707,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502164de5ff4f5c8cce6f4aa02fa8ff91b91dba64051c77cb2a97",
+    "expected": 30653,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450209ecf91a0cd69bcc6ec1a26b",
+    "expected": 39686,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000608d143676b116e35",
+    "expected": 9746,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a27366855f7f9ee703b49b3c28d3815250f0b02f73f6a381762edc7f5",
+    "expected": 64448,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450212faf010c4cd9d350429846a0eb2efb1838852c390",
+    "expected": 52506,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010e84445fb80353572e88d2b232995f2dda",
+    "expected": 41481,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021936675fc3fc86c1767f134ea6dd7a4c1556bffd1a86e523ae81926a",
+    "expected": 19259,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ca5db2299f2c07733437ca412a255",
+    "expected": 54525,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a743713f6ff29cbbb348fc51de606b38467577271cfac7517f69691b3",
+    "expected": 15123,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005a94f235fea7e8f",
+    "expected": 44308,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450012ca194336b541ae4de1e832078121877787402e9a",
+    "expected": 47216,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000fed69d5ce9e5e1fb5b387478a771eb8b9e7",
+    "expected": 31483,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500132248c818db079543ad2a6b10637c179ec0a94cf132",
+    "expected": 54899,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120294ddfa79b41e5d727bbe92b072213e06fa2d43d1cd1bf5cc8990ee0897d981ca8a0",
+    "expected": 24439,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005bd6946e2e6eea9",
+    "expected": 62732,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450004786ccbddf4ff",
+    "expected": 24313,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450209f3c5784ce65464cbcb2c8d",
+    "expected": 6483,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450116bb7e06e6bdec21e2836bf66108bc1eb4d244ff0fe2488731",
+    "expected": 51403,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501209858596d67f9514255ac867541795208bcde29f8f1e5c6bdecde48e8fe2e16df7e0d",
+    "expected": 2308,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b91d28f71489391f53d9382b2fdeb7e68a019959635635d03db898b2686",
+    "expected": 41165,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120369b3d11c5f4afc67aeacb74471c94746064a6ca0cc344f4fb0eb0b58522d3648c31",
+    "expected": 46725,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219ab65a410cfc2235f33ec591ce962e4367aeeeb4f87bafda5c3d2a9",
+    "expected": 7407,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450009a06f7f0cbf899f9865d321",
+    "expected": 17593,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021d5ddc5d7d2fe14550b127f25adf70a93a763457a2f181f1c28d41d4e9b4815a",
+    "expected": 65173,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000b340",
+    "expected": 16563,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502073d8b46c855646795ee",
+    "expected": 40898,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f51242d7cd1770db71f72bff781fdd8dca4",
+    "expected": 52723,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f43d6cb2b0436e5053dc55f51c82b589ea6",
+    "expected": 40181,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450010b4caae9cbffaf7df27f16d755cd8ca7c76b4",
+    "expected": 49703,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107ed161e880f1c15dc87",
+    "expected": 3296,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020e65308d4b000d1ed0485373e82a0540b6",
+    "expected": 46673,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011fc96c3b59fd8ad9d19e857f4a3c43b82c3fc6aabf0787e7a09eb10edefa063a8258",
+    "expected": 56049,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001115957ec0f6c5d01b74b19ee339fdd41de1deaf",
+    "expected": 16442,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500079a88bea34a38a7a91d",
+    "expected": 36977,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502025f4cc96e",
+    "expected": 21116,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450116e682eb09ca83dd4f24ca145690e79cebeecb5a1a547ea315",
+    "expected": 22154,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021e0701ed5031c6cfa3501792b2ff10b8e40351cc33bd654fc8b29960c512672e0c",
+    "expected": 12546,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010175f5dd",
+    "expected": 42201,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020a0165df368f1e60363cd28f53",
+    "expected": 17171,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450101ff1a06",
+    "expected": 48492,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010a5eadd88faabade850bb1ae5e",
+    "expected": 46587,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c46f8740b9c39846831d4318631484e2c6031ce22957d04c3d005c915b603",
+    "expected": 46242,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a7681b7d0cc312cad568c60539471c284d7dc14eb482ad7f3ca933a6f",
+    "expected": 3689,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010e86a824fe5c3d27d915a295797dd0d685",
+    "expected": 44347,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001827354",
+    "expected": 58262,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007aaa2ea8aec7fe7b12d",
+    "expected": 1833,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c758a294eb36a7783d4ee394edc724abd6f397fd8f2bba3cbea7d1e62052e",
+    "expected": 64482,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a6528bf6ed08a640c83e52bd0400b58a65319328e4ec8cefcbbb27986",
+    "expected": 49080,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120865722985d932cf82e8429e9df439448c4bc6e0225230738e5f5f27f70c5e9dffdde",
+    "expected": 16565,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202ba62b060",
+    "expected": 18254,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450206a9b414196cb166b6",
+    "expected": 54217,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011f57ff87f45be63096b83bf6535dc5bd5e2e62799ea9a7453cd8a107e5c536ba1b91",
+    "expected": 33351,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020e068aae7bd19f7f2af9ba3710ff0f79f3",
+    "expected": 36770,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f6647735de46de779ed7c3bfe0c3be9325b",
+    "expected": 5871,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500019527a0",
+    "expected": 6805,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010dd061a822f4e47b7452183182924fd1",
+    "expected": 56787,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500088472935e86240e6a7073",
+    "expected": 14390,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450105b2fe39e9110d6e",
+    "expected": 51489,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001810476547b52b4ed0f4e7a813e7ddadee2c53ca421959016e5741",
+    "expected": 39701,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502161d87ab33b4d2c688025501c82aa53e70c7c629ec6bf84577",
+    "expected": 50779,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207ed6b76ddc0e7a1ae3d",
+    "expected": 49373,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000ce54183513901a9e0570d4b15361c",
+    "expected": 41792,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000ff5f16480a187324d111d97051342478dae",
+    "expected": 29306,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500097e60ce1955bc970f05f62f",
+    "expected": 22604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000d36591092c7b03e554551c9a44dddac",
+    "expected": 32095,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021adb9527651e6d3b84334a115bd2e0d60a53315d38822655d94febac1c",
+    "expected": 61815,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450119971a9e48b76f30613b22b09b73144673b35afcba70a943e4ed9123",
+    "expected": 39267,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ee863795301e8e8a4812090dfed5b2c5cd9b17479c0ba08e41907173369e0174b",
+    "expected": 33594,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011efa7e0a62b87c41622ee6281c09ee8ffbaae60c9e3f7ce18efe8bf7a974536f65",
+    "expected": 62754,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450203f4b0ca112a",
+    "expected": 4453,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502209a7cec7911883a8905e271c51db0a1558948905bbf56ab15991f013fd1e50448ae62",
+    "expected": 26365,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000d4909cd60a6a26f2a7c2dcc1c4f9f9f",
+    "expected": 32011,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207a29849efd5820578d1",
+    "expected": 53263,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500110410cbf1ff349b4397cd9a5a90908126c117b7",
+    "expected": 2565,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001f13246d0fff83b0246c31a312b94a042872e68fa442258d9add589606d1b8d5dc14",
+    "expected": 30447,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450106c4c3faa3547eba54",
+    "expected": 60667,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011e3f0f85167b461776ddc9d3996eac13d0e272d6988193775e249ef6abbe841237",
+    "expected": 41146,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010cc7055bb2de342a443e568d4fa2cd",
+    "expected": 58911,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000b06fffc50e93fd8e40c8ef7995d",
+    "expected": 12778,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000b9ce3d7f685413f26037d5b93f7",
+    "expected": 21412,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107a311d440ded8cbaf2e",
+    "expected": 50227,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021efe1685744d29964027a31a8aa616b83f269aa877b67e1bf4e46e4594446999fa",
+    "expected": 24029,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000cdc135479be0f6b6fd1bb31fe870f",
+    "expected": 61147,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000c53ee67dc199e134d0627485e697b",
+    "expected": 11318,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020e8915648f679deeb9699dfb8550f64f3f",
+    "expected": 59479,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501039683cd447e",
+    "expected": 527,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214e724a4a9a392a036cfa416f90f2a1a0d5d91d03665ac",
+    "expected": 43221,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021dd6c8cfa3ba7f04732f3cab13cab71c21e19d7c37d073d1a0af85daec3dce0f",
+    "expected": 22167,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001b9c826",
+    "expected": 57343,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021e6d20b009e46fa78963c8cd55b5cf0b6614a744fb7e8d3822dc564ade3acbbb71",
+    "expected": 50185,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450203d05eb3ce1e",
+    "expected": 24585,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450100ccb4",
+    "expected": 46301,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450100fc69",
+    "expected": 27149,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010114b304",
+    "expected": 5537,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010a0ea6ca3268b7aa58862daa35",
+    "expected": 18545,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502124d795386fc3594040d32362ae0470258e1591e4b",
+    "expected": 5386,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103d0162b6b72",
+    "expected": 35761,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020834b497c1cd92a6f89c5a",
+    "expected": 46666,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502186de2a735acc55e9d44c658adeb725c6976f5accd174510893a06",
+    "expected": 37116,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010b8516738bb8b7cb9cfdd737ec52",
+    "expected": 47263,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000be17c2e4c9699ff3f9a5dc490ea",
+    "expected": 24132,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502034bcd759b99",
+    "expected": 14204,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000761c809657fc5cdbc02",
+    "expected": 20703,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011162660e7328e0e355b356abc40aa23116453fbf",
+    "expected": 14545,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b9c7cf476a270bc993945c21b5923840b89282f70d2a200fe86bf2becd5",
+    "expected": 52448,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450017ba139ae22c43ef5f9abd572140fa75bc0fab152fba7f5a8425",
+    "expected": 6330,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001d87c7f75c2f959423a1b5f6db1eb5852c9a4fd367ba3827b02a89cb69f912c8",
+    "expected": 44410,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500209a02594d24c72db53b9fd4621e52832e3989017bbde904ddf77eabb743da6f7aff9f",
+    "expected": 64956,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011367bb041375efb519bc0f515b3a33b5619b3a4225bb",
+    "expected": 44721,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001f3ce8f",
+    "expected": 44508,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245022034a91d83c342a6dc4dea75cd0b0b91db9c1b68edffc34b338558b924d389858c264c",
+    "expected": 3804,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502039532487268",
+    "expected": 18145,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010df660b31123990d5b7073d5677d315d",
+    "expected": 60413,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502012b8165",
+    "expected": 843,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f6bb8dc98f540e1c60bc22abca850d3bb7a",
+    "expected": 36230,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010180f4fb",
+    "expected": 49725,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502078d4267e764cc589897",
+    "expected": 44658,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500204774c7e773e6c049234d07b189c1eebbd4a771d5d149bbc498dc11d28baa83239cea",
+    "expected": 12082,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000577b4a432c9e1a8",
+    "expected": 33379,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501193767c69112e413ad20833da3df4c9e0b71e35e0ed9f837172e290b",
+    "expected": 23249,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500031f34e7da21",
+    "expected": 62208,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011fc027062fb3b80e37a569d96a3e3de0fc23d9a0cc48f05d5e8064569c8b5a0e6fb7",
+    "expected": 18225,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501064d28e004ceef7163",
+    "expected": 12283,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219a94d24a761a6eeaf940463c4052f119251ba61b3c908629ef112f6",
+    "expected": 44650,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011bbce26abe0233fc6e280a8918f781848fc54cc52e4721ef77e861891f5b",
+    "expected": 56541,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001b3bc1b674f39c92898284ad800978f222a457997606556ac7b936ba37f5",
+    "expected": 21683,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011f9a6aad1585753b6ed1841448e211d725f7546cf7289ee64359b0f326df8516011a",
+    "expected": 7353,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502016ec1c3",
+    "expected": 19016,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000274e8ef2b",
+    "expected": 47447,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a6df13a301220d873360f2968629bcddeb45f864af2819533ce80ee4f",
+    "expected": 21275,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000604047ad3b1a005a2",
+    "expected": 25236,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020dc809245f9c083f3d2157a2ce82feff",
+    "expected": 50071,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501011e9cd0",
+    "expected": 7967,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001e3b0b0b99314c988cf15daa307972e59a5baa8ae36f8b9552d51e218ec58aacdc",
+    "expected": 45999,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450113252c1282fe253031ce858628c9401f1c62d1f6190c",
+    "expected": 8016,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f51ca3d4ba1de20de15ce0c39a2392d453c",
+    "expected": 37300,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450110999f4a21914a057132e2eb298da4abb43877",
+    "expected": 16063,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501057eb905077b3fb4",
+    "expected": 62789,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ef15c5eb30f7ea170a190e55e739f6527",
+    "expected": 15830,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450017d5d8c32ec3a674cd384bf623dc444c7ea0c99a044ed1789261",
+    "expected": 40330,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000a1ac46bb24d57f1cfea8fb4b9",
+    "expected": 6990,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500163b01f4a4a337e6b7719e7c7245e9e848210a0a9ab0c71cd5",
+    "expected": 26193,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021686f00695ee3ff94a366767859315eccccca5dda6369220ef",
+    "expected": 36277,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450115ba7eddef57b4ddbb20131ca74c9f2a2d513a36f021fdbd",
+    "expected": 16673,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001854fb1",
+    "expected": 16532,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202b51118c5",
+    "expected": 62606,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214660874da315810c84d61a79b41840a5464915f561d61",
+    "expected": 16927,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ca28b9c6d841b2272213528cbe489169b80fe6654d973b276eb8d40cdfea1",
+    "expected": 6204,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502058845ba95431a2d",
+    "expected": 36168,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000462ecdf4077d8",
+    "expected": 2206,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450206aa68aeb6b6b7bfbd",
+    "expected": 48629,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f104215345f3aedf42e86cb9f96fd5f44e6",
+    "expected": 8480,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020a24b67a9931f572e60ef2c65d7d57761e77420e4becb22aab67100c55f451a7e3ea4",
+    "expected": 65259,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000da98317921ad93ca3078926e801571d",
+    "expected": 14887,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450013be00d4534f6de0334948abcaec735d10ff78c322d8",
+    "expected": 39167,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000322e466ce19",
+    "expected": 29104,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f76ce20d1e6ac048dd50317b11937a4643f",
+    "expected": 30609,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c399836dafa923a15721ade2602683bc340c591bf621eabe69ca8f1ea8cc2",
+    "expected": 9810,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501026b1d3804",
+    "expected": 10599,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011495683494259026590bfdc4e59fa7e4cb802a11f5e11c",
+    "expected": 10669,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020efb5b10ba692e8880820bef81ebe63cf1",
+    "expected": 20819,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500085b7e58c7198b758237b1",
+    "expected": 54917,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000008fb",
+    "expected": 64264,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011fbbab3a7c3ac55e74d0ba11c83b20c7ef37cbecd8b2c4c0aaef5d1000fd07fe4d07",
+    "expected": 64655,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021fe62137db69974bd156dd34aeed9bbd4cec1eef751c9603ab00052f0e4461b22147",
+    "expected": 26097,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d15d8111d61174296d75dbf734b79d1",
+    "expected": 63233,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450106bd20c866e607c3f6",
+    "expected": 18877,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010dee100cf6b333ee13eada52d15e6b4d",
+    "expected": 43451,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ff0260470153ccc95955d586dec56d10707",
+    "expected": 64050,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450004faa88913d012",
+    "expected": 42432,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011318926e5711d853ae844756d6927ff9b12a0bd7dfed",
+    "expected": 35665,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450217f76386dd7076cc0d0e5fb6a3c5ea74444d84102ac2ee559960",
+    "expected": 6047,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011c6b7e8472abc46d47ddff3e4f2810adc5078c0efb87d9436d1d59f18c2d36",
+    "expected": 64091,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000667e1602c18ac4d46",
+    "expected": 32997,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021590d1d2002615161304a0758039af6f2bccc28df3ab6c1f",
+    "expected": 49140,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011f015758aa55e3b769339ddb87ea14cbd454e4ce7ee347d109b9f464334024623b74",
+    "expected": 7141,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450119a7e349c9618a77262825675f363f5a9a215a1936fa95a74e89da01",
+    "expected": 17275,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007f1c0f973963770f806",
+    "expected": 57371,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f71a2c8da35ba2dbd1fa2de3a0055810c1e",
+    "expected": 35680,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020edaa3e5eed3907b7af38932e41bac89a4",
+    "expected": 25851,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f2f114c03d0c930d602aa8a04231d15123f",
+    "expected": 54851,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450002543e56cc",
+    "expected": 6159,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007148ccc8884607a8adf",
+    "expected": 13248,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450102239bbaac",
+    "expected": 59141,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ab937f7b46effd59a9e985e0247f304df0a24c00d1748d6819eb75abc",
+    "expected": 51900,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001e3586b95cb7a6b702645f49ee5f50ca8af7fe1fda4cb66f8f58f08f70039b2baa",
+    "expected": 11604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010b698d3f9e62eb8ac26d42b93a56",
+    "expected": 33347,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502166d9c1ceaebb94c92dd1ba7ae210c7644bd7c716548c75212",
+    "expected": 8553,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020895e3dd1e36cc8ecfce78",
+    "expected": 392,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021539671a6fa0f5b06d24a7926106a28e8fe3d04acc828bb2",
+    "expected": 48832,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011e3eb3135548423d46b02c5c190495cfde8469035c75b8f7b5404467ba77854375",
+    "expected": 3843,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011b6df1ed2c05f4ff1944764a7c212fbd4a1087cf1c5857908e8882438426",
+    "expected": 32073,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501016e41f9",
+    "expected": 14315,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107f670cb5474aa5d589d",
+    "expected": 7837,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021cbb248b13652b90226812dd2c4d9ca256da5e63a4c4d5d73abcf4d0da38b7",
+    "expected": 54458,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501088f9cf7a65341b81c2a34",
+    "expected": 3305,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501014e6d84",
+    "expected": 6043,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010853e023ac1669feb17d15",
+    "expected": 29715,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450002e1d2cc15",
+    "expected": 10619,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450217065a0bf3bd1b952716b68a08da67a815de6e6e5254d90bf420",
+    "expected": 37932,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ff87e881bc03c914d5cffe3f594277fcbb7",
+    "expected": 30552,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500166df2014f00f5f5b63d61aed61fb4b55c869dd8bb1ad44f3d",
+    "expected": 35934,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a9cb98b4be64833e9db74c579df9520c667966c536b99ea66e79ea349",
+    "expected": 28471,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500032fa0090bea",
+    "expected": 16614,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ffeb93d8f832fc8b7148cbe98b6b98ac4c5",
+    "expected": 61915,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450002f047895c",
+    "expected": 62660,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ee144cdf308ee9b6e5b5d6471b278acb33bcc64bed9fd5de1c315ffde93cbd207",
+    "expected": 11659,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112e32fbf23dbef649a38354106f7af8c44b6ff7134",
+    "expected": 24457,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500049f5851d7f113",
+    "expected": 63411,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450012179abb834f37dfeb227b4aada151fbbea5ecea50",
+    "expected": 60790,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000e838d50455881ac9ec9e1dc731b7ba05d",
+    "expected": 21506,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450220c5a06857828bb75b0dcc65817e6d4711b82d415a9ed8d97ea876698b0cd034ccffcf",
+    "expected": 52079,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202f7c04cb9",
+    "expected": 30692,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501173666411af554f75889d372fed16adfd25a972128f0e91fca55",
+    "expected": 37939,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f472d35fb5fe6670bb6362bc5c9a28b8dd6",
+    "expected": 48999,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b2506d66e478117f3423c87175f39cc1750ffbfc9fa585de16316a9fa5d",
+    "expected": 20278,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010da3eaf01d81f17db35c52621e4b60f0",
+    "expected": 1371,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010fe7e05510073e0e2216459a1dc44d2e668b",
+    "expected": 33917,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450206a6b46b5b3263e80a",
+    "expected": 42341,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011382affb17e7f38ecf03ac5398da303f2db05579fccf",
+    "expected": 15604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501181b671c53a694dbfe1b6ae4dfcaa65c3b92022d41ca0dc65e1862",
+    "expected": 46094,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020be1e2e11f6dc869b2807227ca78",
+    "expected": 12250,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001186e43f3a3590092133144a2df8316e0a821050",
+    "expected": 23959,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001404800a94f4fc139b32c4af447bb0baf834decd3db0a1",
+    "expected": 33179,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450106afa8c2e5a23a717d",
+    "expected": 13442,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112885c18bb6272ba3bac4ffd544a72782f829e9409",
+    "expected": 54630,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010995e629f3ddd68b9600fd82",
+    "expected": 45187,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500116d2555e2638f31f255aba2421e0b2ec19666ea",
+    "expected": 45351,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500035daee87f25",
+    "expected": 498,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450109e7cbfee700136a09143980",
+    "expected": 50971,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000c84e9a0207ac869886bc5d44aef02",
+    "expected": 47604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ee9ea34fcbbeab432246a00b162a7c1c02286f97229dd857a057773e53ad4896b",
+    "expected": 26956,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450201f8fb3c",
+    "expected": 57185,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210cb512c636bcbc10c06040b1119d643b046d6",
+    "expected": 64254,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450014dfd940d377fff8de5942664143ff5938c2523e421435",
+    "expected": 35896,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010cb03d9a50aac010d9fe55a0a6603d",
+    "expected": 10001,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001718dc561dd260ad24da108434bf041593c6ea8ade53805239d3",
+    "expected": 64721,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500161ead0f95ff58da3b08fbd4a6a6796d8e8570c027cc10c9c4",
+    "expected": 61623,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021d05a6b93c20f71bdbe7b003e7045d45c5b62dd856121865aed1e730ba3c5b65",
+    "expected": 32198,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005f842258b2b6f9b",
+    "expected": 40209,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ebd10649bacdd8e224ba3ba2deef1e6ba",
+    "expected": 64453,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021d0bc45d13dbb17a05484f4c9f807bdf94d39f907f8dad2a4e3977bcce4da210",
+    "expected": 14145,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f28c3a18559825eb5f2d8f41c1a2323c324",
+    "expected": 52405,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501100d27b6bf886eb00c2c2b32210790a06ef528",
+    "expected": 49709,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b5390a4ea50c7bc6488c765de69",
+    "expected": 14193,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000223ee3149",
+    "expected": 2232,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214d47e160a4d76edff030628c2f85e24658c1d71cee6d8",
+    "expected": 38082,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ba864041c807bb1c35c6cc5045d1e0c1bd1ac85a94ed6638787f5aa5cf2",
+    "expected": 21581,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ccd426b3d1e958d9d94e793377245",
+    "expected": 23253,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207ec3214c51568c521d2",
+    "expected": 59504,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502097c3142452131181caad005",
+    "expected": 16221,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502028ffc105d",
+    "expected": 64420,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020fcd2feb525aeb01a8b1f0b7246982f465c6",
+    "expected": 24960,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000e416",
+    "expected": 5860,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501084b3097992715b2832c90",
+    "expected": 3773,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d2da22aef456b0d4db42c5c844e2da3",
+    "expected": 64035,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ae803dad18cf4404f73a736238360bd97974fac830e5fd436367dff01",
+    "expected": 14480,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107a77db83fb0dd08ad9f",
+    "expected": 50247,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d25adc9b00355fb23c66c356a6433b1",
+    "expected": 13669,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207f38caad4002780206f",
+    "expected": 21109,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b5dfb31573d3e2abf88e2e71f8a42c51e75ba671c47797edf4f01fec785",
+    "expected": 58257,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450013e0b26a238e9470f7ea296902f9cf5bbf9029828c93",
+    "expected": 33605,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020daacb3f688801a841f8d91ccbb6a72c",
+    "expected": 1785,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010331fb6a444e",
+    "expected": 42207,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021fe053ed07927fa24f23051726e4e086cef12d8f67c84b5f2fbeee56d5c4f44a11ec",
+    "expected": 2280,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450104428efd385a35",
+    "expected": 25235,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450218a23b30310f80af64008f4df1ba86a40874f14550565e7f9c337e",
+    "expected": 6035,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000ee0c1844d450a63cfe25488624e25f89b",
+    "expected": 50399,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450108e603b690be242dcebaac",
+    "expected": 22603,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021033948c89738f33488a16407a2d78ccfbd9b8",
+    "expected": 32655,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450217e0697e2c26321af9f2d737594c800bfde70403b85da44d48db",
+    "expected": 42713,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011aaba790a94a244738bcee949f9c4820fac40d8bd8ac0220805df422fe",
+    "expected": 9059,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112163a7cbac3be913eecb1b687bd70c79592e729d5",
+    "expected": 52705,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000133a40f",
+    "expected": 10908,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001e71fc25225554a85c766ba51a4417c073c873634498fe3fb176262009f7a37b7c",
+    "expected": 14444,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500053c829478a1f2a4",
+    "expected": 20591,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450203528eb77ee2",
+    "expected": 22203,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450118d987e112ea1a66426f580d249090f8446fac28d4f20577168a99",
+    "expected": 51703,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450205ee1ee732d1da36",
+    "expected": 54699,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f00ac291dc6fb43e2d110542c0df363cb72",
+    "expected": 37494,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501200cbe7b419df69b5714e53f5f6dcd1d41199a074af373aa3229a01a9eda22074cdef4",
+    "expected": 48521,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450009b473e4c54a4cd05615a933",
+    "expected": 42506,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f73e73ebc7e98f2b15a6eb0ff2ab4695f94",
+    "expected": 19631,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214892f977f34df498403669dcb32a0dd4814be7bdf5774",
+    "expected": 52303,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020175542b",
+    "expected": 18075,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450217c998639eae6c3036b40957e6a859f7c7f03cabd7b108f0df06",
+    "expected": 57961,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a6ee673cb458e82d412f4e230e9afa17e1271448f4abd1fedc45c0eec",
+    "expected": 43989,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450115c32e7a0ca14aac66d3a1a02eb3ee1ff64c3bad4bc032b0",
+    "expected": 18640,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b2b44db6b528aba4a3ed700d023",
+    "expected": 32887,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a7623ea9bc92a593d8b2e7a5b8da3bd561574c6e1fd0822672ab7878e",
+    "expected": 42785,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501010e8a8a",
+    "expected": 52053,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000bb0849cc44ac102a671a9a8fa54",
+    "expected": 23302,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450213c26a313f1ac217cebb050d91c4829a10f4d43213ed",
+    "expected": 32229,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000290dad93e",
+    "expected": 46422,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000828cf8fb060050abc5ce2",
+    "expected": 23512,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c17a559c1de89250aa4681e15604912d38e94ea03506229519c1c50507569",
+    "expected": 12744,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450118d7007c9db3179b657a1d09a9053e33157e701e405304538efab0",
+    "expected": 37647,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450206b3f89f6c731ee0af",
+    "expected": 40224,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500113c7d0fd2f55b9f33965a618e175dcaf97b7b27",
+    "expected": 6108,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210e915c1f409122cd4dd4a72c3d4c259b182ad",
+    "expected": 25583,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020271d5190f",
+    "expected": 20797,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001dba77ec42dacb20f08d4ff49fe85d3d84f299c12bf6f41b4845d897fa3b4798",
+    "expected": 50838,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450012bbdff6f028c1719412e20533a9ff55834c744189",
+    "expected": 31620,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450109bdfd94a73491d8da93f038",
+    "expected": 7423,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502047b556ca42c77",
+    "expected": 35075,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001f77380442f7f524dcc6f769307e56c50224eaa635fbb2dc520a1a9723201a18cc21",
+    "expected": 25854,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210f7946be99061e1e6f6e6aafaaf59f4722f8c",
+    "expected": 26447,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112eafe1a511790587cf64fe3b69905be69fcaa3638",
+    "expected": 3689,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450216c9809ce9bc5f10f5f834a8c12b6c0adb167612aa5ca5e36f",
+    "expected": 33654,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500110f04986ea050bad4d29b6472d3fe1ebc936ea6",
+    "expected": 42398,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020c0cd11a8f6432aa968fd8a21e5e2ba6a31f97654e4226fe77ac952eef609e99ea4af",
+    "expected": 19188,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502178ab95628be66cd1b4f046927d669e5e6ae60fd6089feb91f31",
+    "expected": 45562,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501165e14eadfc2e5385f0785b0cb6d5e0fe4136bde4b5ae52c6b",
+    "expected": 45845,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450016c0c83f6aaf65c290be020fde3e8dbfc6070f7c5a4d83bad4",
+    "expected": 34345,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502058486a19d5a2912",
+    "expected": 1912,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450110e37504c1e7b087e2771cf7422e0f1ee8a72e",
+    "expected": 40573,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500079d1edf57749575d8c9",
+    "expected": 39647,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001f487ef567bafcc8966eb54c91caf9aa98ff59ada8e46ebc73a6c259fa671f89f063",
+    "expected": 11551,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020d14eedefcfad4b933075cb599cb7128",
+    "expected": 40304,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502111dcf2b70cd7b16e091a9fd6fda481c9aa54ffd",
+    "expected": 27534,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010af1dd97f4203a8922b3ae06f1",
+    "expected": 23887,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011103972f892f251e541629c812ada2370c09fa41",
+    "expected": 51517,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021aab344f33bbf6ba4b9457577a0b3c452c4beb31449c2d6f492b074ae5",
+    "expected": 36314,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500135ee13b92f170c1e1bae99de3efe60f3aba0b282dd4",
+    "expected": 34186,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001b009a3b58b8bc9d16c2712b43d7867cfff741837a2baead8827cd7720fd",
+    "expected": 38899,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450201fdd8eb",
+    "expected": 24019,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000acb5de02550e48239a4399930",
+    "expected": 58706,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450104e51fc60e676e",
+    "expected": 33445,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010055c5",
+    "expected": 25258,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ff1a325f16ce9223268b5ab709ffeb8ea556898d0d175721a7d27532c524adb7351",
+    "expected": 42019,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a51aad00728f5db136c2cd2621cbc2a25cde8bf75ecd77d4d37466d5e",
+    "expected": 36340,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020bbd0335d029029ccfba768c0596",
+    "expected": 12193,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450014ad498c3fca9657386d1559358bb455e46c5b0241395d",
+    "expected": 28147,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021b735dff4c6954b8447fad81e0597da030e81b03a03f5671e4e8364f47dc",
+    "expected": 23486,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001b029ca930aec6e9e26bcd1dd33e3ce21c057515086bd20efb110e8e5a16",
+    "expected": 40763,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107102ad1f50270ade6b0",
+    "expected": 42557,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450008028638f3316ee465b973",
+    "expected": 1035,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001a570e3",
+    "expected": 34214,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500093908016d73c0a6b01908d0",
+    "expected": 59383,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011dce8aeed9169fb0e82a2fa1ae42e2a946fd5b7bd6817356fc5f5421ad4d71c2",
+    "expected": 14216,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501180cf6be620744dbc73b09a09d916fa1a5bdc87cebef413d4cff52",
+    "expected": 58825,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500101e0a710792aa8c594d3d3b53b6063e5ce110",
+    "expected": 218,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b70d55f76a49d7ead105209e08e",
+    "expected": 9604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450101772db1",
+    "expected": 56567,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501092ad2660d699c46b427f30e",
+    "expected": 21,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000becde88c974c60d53c0adc9f0c9",
+    "expected": 54033,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450104641ed2ab573d",
+    "expected": 23089,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021d9d54b3d1b8f1b679d0620a63846428a03343b9f140f6e2e41e02585c1e1fa3",
+    "expected": 2163,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450011999436214d97ad81ea579063b1f588093c329c",
+    "expected": 64171,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500064e909b88b66ab3da",
+    "expected": 35361,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011d46745d8508abeef9e265afd46aec946bc43e323496bbe7d51f641f919936dd",
+    "expected": 29427,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d99fc6f0e3d29c4bcfdaa56f9b036a3",
+    "expected": 40444,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450009921e78ef854bd140be9347",
+    "expected": 33842,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f36654b3bb7732d55eb47659cea6b977362",
+    "expected": 42566,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000cf13975638ef525ec734def787c1e",
+    "expected": 5604,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021469fec527f0b38a75411b4af77741e0692ac8e884f1a6",
+    "expected": 43849,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103ed5f14284f",
+    "expected": 4448,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001b4e491",
+    "expected": 31653,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021f7ed1b0c999c2d36064953b99421b840571bc505cd439c6f92f906be07d3782dabd",
+    "expected": 56954,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020d7d4f10e79b30b351f34a34620e7bdc",
+    "expected": 61478,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000fd2a73721634a7d964be99a8a65ee15116e",
+    "expected": 48752,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000a0de702f92442118970227b8d",
+    "expected": 53319,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000c84299ce52a9595f0f8e2327d61a4",
+    "expected": 16457,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502132e2f5ef6133cfbf3099b9ea3b2ff8b0c9270ac8db4",
+    "expected": 54315,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021166fb25ef090d725a72015f88da70811dd7777f",
+    "expected": 7638,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021a4f409e1c8a6ae3e1f51621a8417c59282c082f8da8eff4f2f0145364",
+    "expected": 9099,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210309007249cbde1a30a70bea8e5bcb7ea5755",
+    "expected": 28617,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500123135cd9a28508725b0b9d40cf8fff1f44fa85a74",
+    "expected": 37297,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021799f0260d62378cc264d7f2f58f5c88d392203a98759ab9ae2f",
+    "expected": 13066,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450216f852f00319899d929ab8da381bc53b57a21d22faadf219aa",
+    "expected": 54511,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500112a3e40402953c7c3606bbe4a7a4a0b097f6ad2",
+    "expected": 46674,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450117ddd5dbe8e55c3054678aa932a20d9a4a52f7d38840369d0b12",
+    "expected": 45387,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010a17074dcf3130c1abdce76d3c",
+    "expected": 55201,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501101ed653e4f4870a2408548fa07cd7ac48121b",
+    "expected": 40237,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000a1f0279c5ae8deef611c57cef",
+    "expected": 35054,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450204346e27a7eb62",
+    "expected": 6614,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502198b4f38b0cd39a588e843128498ccf0eb95060e67c2179a9cd89e50",
+    "expected": 54128,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450214bb02f1a03c10170d5a193630ccb452bf7bd5b37d0aef",
+    "expected": 11624,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020e6a937625e57bf6092ff64bd3467fc617",
+    "expected": 24249,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005408afd116f6551",
+    "expected": 3939,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011e7209723995f1dbb543525a38f3a82a109ef7665ccb08a8acb5bbde1ea8a017df",
+    "expected": 36799,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021d3de10cd211e8a127fe13808bfadc18eb9bf819f41624fa471f126f8c8fc1e1",
+    "expected": 20498,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020976c94b3d71108591218156fa75da92ade681730f21fd2ba1a8a70c3dbd209277806",
+    "expected": 2652,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001dfa15892d0fcf1009277eb3a86063be9911be38f0464c250bdcb7379766436b",
+    "expected": 21041,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020c87f8773df16da0f4b9c513661eea",
+    "expected": 43311,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502106cab183c5575cd9578144aaea149c34108df",
+    "expected": 10190,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001deab9a8e6e27c3a36d34a752022eb41ae413b673a1872f007642b1eecec6d47",
+    "expected": 61571,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000bbf9ce2c760ed9c14f2a4c6cba3",
+    "expected": 14202,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450200d8f6",
+    "expected": 21373,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020149ff0f",
+    "expected": 19907,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500088063b2bf4338255409cb",
+    "expected": 59905,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501145039f1b83142b546c36fd9b32b83bcc27aac149f15b0",
+    "expected": 19216,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500046a24e0864918",
+    "expected": 39101,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020363aed90057",
+    "expected": 52551,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450111546830db21dec07583cbda4eb3056026af58fb",
+    "expected": 18820,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001d1b6118bab46502800c647d093af52397f56a99a7bead389ab0ff350ae4dee2",
+    "expected": 5659,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450213db0f6c1e66de99d655050955752949005308962bae",
+    "expected": 37,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005c4da29af70a541",
+    "expected": 62658,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450003d23814c430",
+    "expected": 4945,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000ed30",
+    "expected": 12525,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502208a53bfd966ad38a5fc506028140ef1fce3b59bd051b8e96ae0e7f8b07d845c7f2538",
+    "expected": 62727,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210c94a37b717b59035480736b6fdb135dc51c0",
+    "expected": 18190,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000a696df5e235765716416d2058",
+    "expected": 2763,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f015916c086d86fac3abae97409f4dcdb3e",
+    "expected": 31579,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001b0eab2b6a59e1846703f61b22a7c09c33de3b3e9843efd5928d15f2f2a8",
+    "expected": 48143,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011564ad3ee5eca4feea7360abbdf43ef5de0f97e57fd5250e",
+    "expected": 41078,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000b5de9bb7d8c58b7aa65bf52ac22",
+    "expected": 28983,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f3fa00248e1f36d23b58010e3998778e380",
+    "expected": 9037,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500089ccb9caf49bee46165ef",
+    "expected": 169,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450113b3c8af8b6e66461d2ed83ae53b4b5dae9edd7bcd7c",
+    "expected": 63117,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021905629d49b662ee5b8b651f0db66c53ac694be7e9764e608334b7c2",
+    "expected": 6462,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502127e94c0e4db6fb0208c6b732f6f54581c92758628",
+    "expected": 54755,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f4cba0e0433f917e9d0805f64a21a463b3c",
+    "expected": 27961,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011dbf96fcb26b96bf068f94ebf76da9fd4108ff14de5890f66c06379c5991be23",
+    "expected": 27694,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450206b687053f4820a81f",
+    "expected": 36311,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010dcb8b31b79b57b400c136656f10322c",
+    "expected": 38297,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021470ac31d67bb499ff26d9e5ccfefae11553f73f559582",
+    "expected": 44458,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450220d37e4c69b7780420f65d08081cf32128616b3d9896d2c7061fd68e37729b1f83a9b9",
+    "expected": 34954,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021ef009dab5ccf1098479212cb2c49ce123774c67b1f75346b4c46bb6ef0f9b18eb",
+    "expected": 45921,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001383308350463fc279f56b1a2cd4dfa2c9f61274dd5d",
+    "expected": 22481,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219aae37b311f7ea683445099a929eb81ea7cffe6f96b01443963244e",
+    "expected": 41750,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450212bdd1ae9b5ca01c82fb87a5e15b67b233c3e174ce",
+    "expected": 30955,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011846702d76e31dae85ee17c298884a6e73c6f5f945a863675dac17",
+    "expected": 14045,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000e3e4",
+    "expected": 58595,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501037f1537eea1",
+    "expected": 50133,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000018a6",
+    "expected": 42520,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011137a622c94a9ac99d04f6ee6b62d23fe4dcef9d",
+    "expected": 51863,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502162d129c204053a2c62d99474bb8ee6a7ccc3b6e0f45831afc",
+    "expected": 47184,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001f490e22fda1cff0e9d8d4cb9ab81dc99b7ce70e811e8cfed10a7b8a7706606fc565",
+    "expected": 14438,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202926c6d08",
+    "expected": 29491,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450104040fe9a77954",
+    "expected": 60628,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500022c341287",
+    "expected": 61942,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500027d3eb59e",
+    "expected": 58167,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501017645ed",
+    "expected": 31341,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010c224a8c8e6de1fd664acd923b81e6",
+    "expected": 11217,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500204423c6c71f61cdfc9fa411b92248bde947ab045b784cd7ee9089d841895a8754a2ad",
+    "expected": 53924,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501124ef96b55849aba29e0749d7118750f108e42e4a0",
+    "expected": 18503,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450208f5535d48e46caff1b7fb",
+    "expected": 9559,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501076572cd095a0e61505f",
+    "expected": 25387,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450216ba4915d7513bdc980b0b6693a36d2fdcc5ebe5861865efd8",
+    "expected": 41539,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007739409f7558b6b53cb",
+    "expected": 55581,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120c7e54791dd1c8f5073b540b812d5f1ed60b0fc2aacc1aa72fb7906d52ceb965f2368",
+    "expected": 1063,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500087bae50527cc7d2cbcbe0",
+    "expected": 7836,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450009f2514a02dfeed50a7bf48f",
+    "expected": 3408,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007d0a7b5bbaa946d6228",
+    "expected": 59866,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120d4c50f63cfe281b2b0431ec093122157d868f246c2b37ac651ecead81507ef9d67e8",
+    "expected": 10036,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001898e7e7fa58c229e2c8720cd8069d182acda9b0b6504465bc2837",
+    "expected": 63409,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007595c31e478c2096e4b",
+    "expected": 56669,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210a0444496b262d89a1163b877f58e8730f12c",
+    "expected": 36981,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010c449552df77c9f30acabb591730bb",
+    "expected": 64709,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450009eb049f860f0bf23660d4c9",
+    "expected": 47181,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502041415fe33e7f7",
+    "expected": 60104,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202684f906d",
+    "expected": 32307,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450218ac288731e811a478ffd6aa235c2c79271610498f01f73e449ae6",
+    "expected": 61132,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f9ec81e7cca5a71b86390fdcc879169884b",
+    "expected": 48655,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010565141b3a54c62e",
+    "expected": 15385,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450203b71ac7d77e",
+    "expected": 43437,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219f4c134229f5c3bc23789b886b74c94c56e5272c1361c6fb7839270",
+    "expected": 38491,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500047d93522a8545",
+    "expected": 44331,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011af573decee0c1dd348691185260f2b53396e9e126ab0ca388b582df26",
+    "expected": 58021,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450109f9b6ecbf7439a3b9b12005",
+    "expected": 15437,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500077c399de74b90890811",
+    "expected": 52032,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450018705b9067f589278602f390710a79eb0f4bf843bd5274e56d58c2",
+    "expected": 50900,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502140525846ba061235ad5b16d3d2be91f816b2bf9cedbcc",
+    "expected": 12965,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450213230381e66ee094528fbaebcf8a84a9cfdeb4a5b43a",
+    "expected": 34978,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f8c3c647f6cfec2c8d97acdd4d3f0e768aa",
+    "expected": 42343,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020182df60",
+    "expected": 27143,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501023d4d6e6c",
+    "expected": 35727,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502177e253d320953207b76e4b4b82a88ffb313e16f3d3c53769dd7",
+    "expected": 17335,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020d22178a60b84d675ebce0774835b012",
+    "expected": 42687,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501168560f2dc4271eb695592092d0ac016aad5228bfb4ce06467",
+    "expected": 52489,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f78532524b5a48d60fcd427254c60d1c9c9",
+    "expected": 5061,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000828e7a30fa539da655274",
+    "expected": 23831,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210aece523576a9ed070d315e5a2de636bd6280",
+    "expected": 38073,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000a7d8e78ebb8cb6b2fc9650e56",
+    "expected": 47148,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450115e3c9579f3bdb661ff5bea841742d0043e16841dfe08e55",
+    "expected": 35765,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112cf0fea1c3b0fb0d83910957f152c921c4e4f13be",
+    "expected": 33507,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500086fb6d6c56731ae0996cd",
+    "expected": 45558,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000075aa",
+    "expected": 43637,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500071d8bf18997cdd4b5b3",
+    "expected": 18324,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501091b7958d2c93263c32101a0",
+    "expected": 30967,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502166bb6a0f8e2ed49496b905a6ede55ef9a7be7bd37392d01fd",
+    "expected": 9457,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ef82be68f5a0928ee3b1f47f8cd6b96d7",
+    "expected": 42199,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500049f8d6ce32a1f",
+    "expected": 41369,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ee7c2359cba51bdc48da7c41b2aba6f2b850137e123d7f1c31a2623ab6b9816bb",
+    "expected": 32978,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021ab89adf31ea42960e9cda0ee01b98c81805d022539ccd353a1fbcc359",
+    "expected": 65478,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020a97728c801bc4636b250c1e98",
+    "expected": 53869,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010583891f24e4b952",
+    "expected": 59578,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000e0e058a4bc53e3d3e4edaa16e188a18a5",
+    "expected": 22374,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450114e47f667b45fefd05c5c1f206e00df7639dfd004251ce",
+    "expected": 49395,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450012b218c6b3fa0f72478fb93c42cfed3573f40b11cd",
+    "expected": 56969,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450200f5dc",
+    "expected": 31056,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021fa8cc2db38dcd330754d30d8c314f1157cffc895f7c9bdbb2b3ca0556918326f690",
+    "expected": 41167,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001b26b33",
+    "expected": 57793,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450202bbc71e3c",
+    "expected": 14909,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ecf87f5de93e4f9303b0c0b70e9f19010",
+    "expected": 16660,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502202a9b4c4bc0d5ac903f70aaa2ab81b14232aa631423af26dd866cf93a9d1a8754ab66",
+    "expected": 41121,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011662c08d100e3852d368290af1950d8f167d6dd7dc36299b63",
+    "expected": 18589,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450212caaba1a124f7c56cc8d3edf15cdb1d3e2821b5dd",
+    "expected": 50492,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450008e7b75d436807bc27402f",
+    "expected": 46690,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010b4cbc09cabc91aeb1bee825764c",
+    "expected": 7479,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011703b5a1ec508f9a3ea7622ac5c36b57b62052db7df92e84e6e7",
+    "expected": 60167,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501128a09e027d1250d3dc4a5937f83f3de7fff408eaf",
+    "expected": 45895,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450205901b0f725c94fb",
+    "expected": 52095,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450220c3181f70165e089195a94d2ea2769cba34b60205ee031ac7309b85686322825d59fc",
+    "expected": 8039,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011feaba84666e570771b1cdfc86920aec3d45d5a845e44c7a81cfc6a8d33097493ff6",
+    "expected": 12117,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010f8421ae0c3098f9f26837c65b119c43aa39",
+    "expected": 60334,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502034fe6aa4a4d",
+    "expected": 19140,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501169b0823d9e6e026bab924798bd998cde2333ba186d3efdf7d",
+    "expected": 39889,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502082644e7ec0956ced18bd9",
+    "expected": 63630,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219be2ee23f144d3aeacddef9b16e8274937e7a911388801b124726e8",
+    "expected": 17143,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001e8b0f9920717ae775815448afb20ad24b3001525e15d6740337ca36723f2e9a17",
+    "expected": 27921,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d6f478127f6fc1c4012e7f1fb158085",
+    "expected": 31163,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001c5db4c9f8c7660e252a234f9613749c8c484c05c87797bad6eacef43545f6",
+    "expected": 35258,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502015286a4",
+    "expected": 62867,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502014cee58",
+    "expected": 4657,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450118d1889d61439ceaa614c16dc12437efbee5d7afc5363dd9de647f",
+    "expected": 15431,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500121762744e5294c4b2888691bc497ef053ae104a0b",
+    "expected": 47532,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ddc8918485542fc9c858cc9039961ad86236c4fd3364207a94ca0e6d44e0614",
+    "expected": 57465,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000e9940bbf4f3e5ed12dba6cd7589540406",
+    "expected": 47492,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021bccdadbab4d941b76fb87bfdc24ff5778f7d65215b6c403f1c3adc12e44",
+    "expected": 19802,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500053c06758cbeff4b",
+    "expected": 35881,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001bbecae0aaaf000de37cb71ec4981c51787404e8446701d98ee39ec3a575",
+    "expected": 19693,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000c58bb1665968465ce6de641290b38",
+    "expected": 27710,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000054c5",
+    "expected": 50516,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020c85fed5e62dc23c6f42b70fa09c04",
+    "expected": 45261,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001921575b65a8fd76ed97fc5680b013f81cab7a06accdf5cf827cba7e",
+    "expected": 15891,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502094a2b37a05fb16fd38fc012",
+    "expected": 3727,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501088f76d8d5b578883eba1d",
+    "expected": 14487,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500205c0929c6cd30e75890850f51d7f282a15a5dbcf3137687b8c18f4344d06c2127cc1f",
+    "expected": 2386,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450007ac213f33ff21bd53fd",
+    "expected": 2520,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501103cd8a325309dcc2fdc64bde4bbafd8783fbc",
+    "expected": 53895,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010eebf395ec2a8ddf1731e4792ea68930a8",
+    "expected": 37163,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450018a1fac6f9c8ee195ecff6dbf5ce6815ddb77e22b99c6e35086eca",
+    "expected": 47203,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500024852320c",
+    "expected": 2743,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500065fc01c8804baeb5d",
+    "expected": 55388,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020932c2570ced6873cafd4813",
+    "expected": 34406,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501082f4b7b0ddc4054969270",
+    "expected": 52517,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020501b3debfd5ad40",
+    "expected": 35705,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ba4ed694585547da0e540a38274",
+    "expected": 61862,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ea980fbf0348a27d87251c42fff7d3144",
+    "expected": 46923,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020fbc573f2c16f704402c46e3eb2d9f25ddf2",
+    "expected": 18786,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450001c7690d",
+    "expected": 41642,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245022096613ca363356883293ee82b721b072abd9de18f65ade3ae1428b3073d94ed2d39d7",
+    "expected": 63091,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010cdfc328dfda495a2de0d47aa38c75",
+    "expected": 24959,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501090666fcba43a655c538ee60",
+    "expected": 61406,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450207071c03ef747131f4f3",
+    "expected": 3430,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001d2428272eebee428c4a8154638bfa3dc60a200e8755a0b7d13b29cc7504f960",
+    "expected": 29728,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502107e09de7df9af7957089cc0c2cc7da38d7451",
+    "expected": 31316,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450004130834a2de96",
+    "expected": 25085,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000b0b6467853c56398adf3e1564ce",
+    "expected": 52951,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000a7ef",
+    "expected": 61351,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450006de24982441bd03c9",
+    "expected": 61033,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107f6ed6404dbad79a327",
+    "expected": 30195,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b1efe51296175eb32287fd6aa13",
+    "expected": 58139,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c647041553d105c41c2a5696a402ea4d02e0111ffdf9ebccf75523628d4e3",
+    "expected": 24688,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500149096df0827515c96ed777a962eb8560ea40ef57c8689",
+    "expected": 18673,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ac646ed16706a4899388370e71e8469b325687a891c489385d75e9b81",
+    "expected": 8626,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000962f4e06c7303d693c76f03",
+    "expected": 46414,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450109dcc5f1cc7de1aa1b137a89",
+    "expected": 6093,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020f286f36f4a9cee4ad46ea9561dea30d92fac46320667d206547aef8454f4682b72c2",
+    "expected": 45191,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502203f2af0d617f3160debdbcdbb1701411a218391cb70a645468854def248c60101db57",
+    "expected": 57441,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020f1e990b3fb2677d787a07f011002cdd1432c1f2e18143de9ef3d5a13c6dd9313a55a",
+    "expected": 58139,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219d8f442ba613cdf733287ea3f38e2d4159a102df8f41162f049fd51",
+    "expected": 7954,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f280ba0c021929717033ffc90e19cf27fcb",
+    "expected": 21160,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245022098a0a8380157e5be2afc3ac3364c58c087d2ac0459557c160d560996279262e18b1c",
+    "expected": 29575,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ac6f245c26f141cca542d48328c826ff2c74ea036bda971bcc525e883",
+    "expected": 57313,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501189d50ce3df7c318062034cf5d1f193e6f2af15570a0952201c31f",
+    "expected": 48189,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103e39f004afd",
+    "expected": 24715,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000fab5dca3ad582cbda7f2bb7f25516ab0180",
+    "expected": 32290,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450000836f",
+    "expected": 28547,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ebf3629053a0e5a955c866164f80084a2353b18e07eff7c4a68b719290bd0915c",
+    "expected": 15921,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021e2add93a01362005701efbc4f358a3eeac16c401d8dac75ca87ed467a85f7b09d",
+    "expected": 49308,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020b17dcc0d99dd1645b69a6019915",
+    "expected": 33565,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450019deb5748ac67ee637a49554e0754987cedc30c40cd43bdf441c2688",
+    "expected": 63087,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001875b96f11fe701779ff0db2abc1dc0a082ed40039101923324e94",
+    "expected": 24378,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502178acadb545f20ac367d4f85c4e8c7c0ff51cf8653ad58052eae",
+    "expected": 65508,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450018dcde29de69168afafad3c951b9e0577ba960a614aca039d9560f",
+    "expected": 41588,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450107f658a092b725bcce8a",
+    "expected": 36779,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010ee4e6c000d93b012913eb9972b3bac87b",
+    "expected": 26671,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500145314fac012f313a38938db12390ce6d9774d83a63cdb",
+    "expected": 9376,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020f4adc9df03f350511990c76c5a63cf9978a",
+    "expected": 49591,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021c79b1ea8e7d86e5a185bc81591ab3897531d800f3fe57c5ecebcc5c693233",
+    "expected": 22614,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103a41b449956",
+    "expected": 15475,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450112cbc65a924b506c7b25f22a07d638d55ef7d360d9",
+    "expected": 20313,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501131c2ff42f047463ead2d5357616dc3374497cecbc89",
+    "expected": 24729,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502165de0f75a7329943e515e2559154b64c78cedcf66c573e483",
+    "expected": 16729,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450120ffbd4c4c83858e302ad5950926cb725445c3274e475a677f24f4989487407e146764",
+    "expected": 18339,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501100fa5ed55e8df7b6e45eba806ebfda7192095",
+    "expected": 31493,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450108ddb7bda431ee139caffb",
+    "expected": 40535,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021fb5e016ebcef4755c8afd0413fd3316ad768454c833dfe10c81d0760581d4e57c8a",
+    "expected": 8125,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011e318bf209b7140560bf18d23de8fc2ea44863ed6bd7df59891faafabd862584d8",
+    "expected": 53069,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501000a46",
+    "expected": 17947,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450113e9fefa89d56cb380a2c8dfc9f69a02e0d2077d7a8e",
+    "expected": 33467,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000f9fcffb52898e5a667352a22f2c157cda21",
+    "expected": 46012,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011ac142dc610614520cd7ef2bec41792ce2f7317c872c41c9db9c2fb83e",
+    "expected": 3755,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010d85c4e16ebf1514429ed79c44aae540",
+    "expected": 52135,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001164ec5a8a13c4cdd91b7dd261ea9bf965f2fef7",
+    "expected": 114,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450008b4927abe762048ba0d60",
+    "expected": 61837,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501005ad4",
+    "expected": 54379,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502010cca95",
+    "expected": 44732,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000e6420360805361acade77b10fc8defa81",
+    "expected": 47036,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a10889c35adbd0d415e2a6475fe701964a23dafdbd27b0369afd7d809",
+    "expected": 31355,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450101b16266",
+    "expected": 23643,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500130c7a88dd6d47a46dc79c91e3093f2ea703fa39aa80",
+    "expected": 5297,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450017cb432c549cb2397722d40aa59dea3de87faff7cecb23aa839d",
+    "expected": 17676,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020e1b83c94628219c011bb7efc0e0a7d09d",
+    "expected": 57847,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450005c9b9ca58766419",
+    "expected": 14200,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450016d2bc4d8efca73ff21e288a4e067d170b4968431450ed9053",
+    "expected": 3973,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502154a2e13b787580c1007ca4c6a8d9d459016c7b23bae65a1",
+    "expected": 38986,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450103040a1e725c",
+    "expected": 10571,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501154e84e4e4e5e5fde5f43bec2f249317c41981d496717eb8",
+    "expected": 34747,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000997540a9b8b939f3fa296b9",
+    "expected": 1737,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450004fe5e352f1b96",
+    "expected": 28543,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501164188235676277770e42702dec59c16f9a6db70fc7a288048",
+    "expected": 1536,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000803e93f41dd8d08056bc8",
+    "expected": 64937,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020181da56",
+    "expected": 36690,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450006cc0c7b1b3f30c504",
+    "expected": 5305,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011a958daf0484a0457d66c5cdb2eeabd1c02c438f1197c7c50f993d31a1",
+    "expected": 2755,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011b4387223e5793b7831f8e7a85078da53ed4c2085fb5be9fd76ca708478d",
+    "expected": 46133,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450210a08c4d204beae9127242ecf56d0e20170ce6",
+    "expected": 6977,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020fd1231e20217bb7f062cdbf9608b316d45f",
+    "expected": 61790,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502025086b855",
+    "expected": 51227,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502059505a617aab469",
+    "expected": 22200,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450020ec591683eb85f374bc584f1c3bf82217ec90fbfdf500c88dd07604b4efbcc447dcf3",
+    "expected": 59412,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001ae10e8db9cb8e8bbcf2f06a08ca9811a8c1f01a18380de7f063e808ce",
+    "expected": 34993,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450215f915d39a14370bc5f0367cfa01a2cc91732115a1f15fd7",
+    "expected": 15117,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450114ef27091ab921c9871f8bdfdccbe290db333324aaf976",
+    "expected": 35429,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010477195ef89a38",
+    "expected": 63099,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001a31e08d9bbac8cf0ec97943bb3ca5be240d6721c2fdad30016bad60eb",
+    "expected": 10289,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000b4223c237acd5856f27f4fb357d",
+    "expected": 17151,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011d2cbb744bf38411d16b459f6a5c00ace53b23946d384d4703ba6ba2a223abec",
+    "expected": 30433,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501190390142ce75c3d1154948a2fb22d5519e8c687b9f99a087480dafe",
+    "expected": 1959,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000fad7e9a12ec16af35634f73c7db4d21c442",
+    "expected": 58143,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500197112ca1553978781fc96f958bbc46589cbe1de843db6c71243f40d",
+    "expected": 32866,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450219e6a37cee8a75bc6ef335c49e40f92fbf5c27f2177bd7f9e70aa15d",
+    "expected": 41389,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450006643789f4329bf91a",
+    "expected": 976,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450215c6ec506815cbf541677f9301a05aa4c80326892b31d7a8",
+    "expected": 60408,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524500051b9fa03364f925",
+    "expected": 39644,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501171afa243dd9eb0c80c608ea7c330173363d9798aee29fec5c0c",
+    "expected": 37255,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ec6e280d230dfc04189dfb5549c5890f9",
+    "expected": 3892,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020ff3eb8a22a5e1e83134f37a34a27bbf41a2",
+    "expected": 19878,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010b65fa0bf1772845704e00775da6",
+    "expected": 43353,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011022bb5bb155e39dda7f8d735b1ffbf80c0591",
+    "expected": 24885,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245011f3d95553ae0a3e31fb326364b35e55f9b9e2d2f35cc68469e2a208f19139189725b",
+    "expected": 54921,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450116cda47a42d6b8e23d61814548b4110c90d34c2054821a4542",
+    "expected": 45439,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245020eb119fc8a210ae8405255df95cf368d7c",
+    "expected": 913,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450204fe7f8a845b8b",
+    "expected": 51623,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245001648770e5113f39195f880c7280fa798350a6bbbc6405402be",
+    "expected": 45404,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524502093517a64b208f61fc068482",
+    "expected": 49795,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245021cdabef768dc8c9f3a992237e290bc88ac684d544d3e86de035f9f35260ac1",
+    "expected": 43844,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245000eb718a60e42db95e115fba4b8192dca78",
+    "expected": 18919,
+    "category": "valid-random"
+  },
+  {
+    "hex": "5245010eb2b3ff2652bc44977830bcae4914d0cf",
+    "expected": 59697,
+    "category": "valid-random"
+  },
+  {
+    "hex": "52450216ccfc75ae63e2c6e63aebadf0b33cb23b84e2ec1108fde8fd",
+    "expected": 185,
+    "category": "valid-random"
+  },
+  {
+    "hex": "524501121011006650310c87dc955da26974664b61fb29ee",
+    "expected": 55305,
+    "category": "valid-random"
+  },
+  {
+    "hex": "69145b57c797a2c284",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "e30f5ef1d052cd903828e0356542db0cb9d25b1fa6353fa681",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a889478e405880564e5d84a9fc14e2",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5cdeca388d97d0e94cdeb1563f1de881c2888805f146f28662353cc23225e696a797",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52455f84db754010794a67522375241df99637fd5f054a5d1701d2f28c2f864de7b41fccb42a87f7d9b280745e764c",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245cbaa838c13ab987390455bc30a08be",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2412daf18df215620c4ff336778cf81b919424f0782e8c5e270c119540b4848b5b1aa98049190216c3760d2946",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "75682fff7c514e1f9d3796",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "7b3b99acc1cf8c9d2a23142264411db30e",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245e3bd6d8272805f6a43",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "749cb61408201ab261c7c1790af4c9a03a5edba4cdad99d91bdc385badf038bd",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4f593e5b0847b8e9b4cf3c1598116cef68698a1ac6cc691e997dc2dae6a660dc3e306c7b9feea122d8464a79ed",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245058c91b94675f911147d763b804964",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52457ee69795b53a31d07f",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "3d18c3f71580d54e75dc115ba939bdc0c86c867967f895d2c6db5dacc7a08665521785b70180b2",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245c924a49d110f7f34f1d95c7f329f79543f53817567a750e5",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "b58353a7195caa0b24ed4017068629ea1a470e34e5bbab84a1f5b7f9d83a0c",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "fe8a31eb64a88917480ea31245a73029dacc30314a05633d24fa421909b098845bc533a8783173364d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d34f0344e12171581cdcfa2b229c201a37a6d208",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c26bb8250362d167ab08b415d6",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c35e11c506fb09dd46cc841dd8d6931f",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52452dde7d68bd4424467aa52d69ded9f26bccad5cabd36a39e41095821e75e3f10f0f89eae0a4e22c",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4f45d691fddc9d6ebabbf1c5d9c3dee4e9414304",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245fd1533f90446f1b1975c04b2bc1d8016cb48cfa42befbd708f59dff5005e8f",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2197697cc8896fef87d8583caa17d97f56e7f039242d3cb0ea720e6caba837e28e010eac78574abd55292b83",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245af26476c716cc29fc4b79345977f94beba1f39f9591b0da9aa1acf77d2bb51beef6f166d05000103388b8fa9",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d392d1d0b768b92839d14e722f768dfa",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2815c84c69d502cce70eeae21268695e482c3a1098c998633ef3",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245615302df179cc6948ebbb19ba5cfbede8d61a3f2b42fb4d0f25f0b994bed57",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52451c8133413f29834d6616909ef8304824771bcaf089ba2eb8b4e09cfb2f7ba0e6718eb7796fea256e0619c6d6da",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524539c928d6344b92d709705e492fb168",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52456c73c1c5e958f0b28b8078f834d3bd76a575b4ac51",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "77636b022189a98fe96b3b3367031aad55893d6f1504c183b89cf71eef0c1895b89475953ce143e6c0366c35108d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c4d5d39038ea214ee828c3b9",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524531b308c01465ed8c090151d44e0f14ce6aa3422e60fe38a18ac5af4a75ec051eef69721cece2efa055c0b5df8bd584",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450d081c2b8f73a7ea7284c844",
+    "expected": -4,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "de18497b519ba097485e92f737107d07f6aec0bc25b1d429d3290a95ec298d32542f85df03b76fb69a17b6f890",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "e0334d918cdb565502",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "70a157b507f17f28a17fe07092655492fe453ebd2e8f61163e53d2947869e6c7297e2c96f2f95ff7468484cd452760",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245e12df0c94f75c3053622a692d50d26dae2d2b0",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "3471e31fc4a1acfa05be3ac246",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f400af0fa2da1fd66b62030216c4b5a2235169e7",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "8bc5eb1d8af40cf4c05912cf76b49e99",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245bf32f6852301be4c7ecf2ba1a3d9a0b2ef6dd83eb631a19a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524520d1a799c71769ac33b4fb04187c02d13ae233e1f8fb7fae",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9f3dffe184ca061f342331",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "cf62761397b4a109031d0bd8eb446e874ce26887cb948cc4117a210f040ff19584e55817d9e4b3",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245c8acafd1c943d944f8eb7bfb80444aec71ba07c3b8ddfe1505b56afab2b2bb835d94ead167",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245ff6f69f45394edfdb5c3912b33331edd44a5f749ebaf96fbbc2a753c31e2a9",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "59f58a22b66f614bec2becf3294a31c5",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "acb3349ef2fac2f75dd71129300c3a00c2",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "184a16311d07218f337aada592a5884b82e607801f3b2ed2b8eb6bd420ce",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524568b08f6858ff63fb483e3fc8130240d64d5a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "fb4b3dc55061699525676c23",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524568728f021c5f6e331d9c8e8b1d7e280e9e5ae89df465b4b225148e190bce7519a6fc21dd097fa437",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "6a6427af462730b6d56910509aad68fec0d7a17ce01e650da0773742b9",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "68c290833071cfced66f21b37821450ab4cc20d9dcd15ec80dfb26381bbb2ec3f269f61408963e686094e9d6",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245383115aa5cef18fd95f6c68b1e7dbaa8d5fdf6dd5af5bf6d0dc9e1a4",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2ab761acefd97683b2c4b73bae6e1f2307f00cdb4dfd6394b9c1ce384783f4",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524523d6ef853328f39959c134193fd8a8b05b3f4c0c10b38f6a2768ef7a5ee2b9459b",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d7a87252b96e7cc5245106e074c90e5689cd4e760bbeb76166082af28115d95a2863",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "403a73480bfb6569b843d1",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a96143334a330a5997e15699241a159b4e3bea51d847b534220117d538ad75830ac5",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "0c438e0597bc4b516c70409fcef2ca459647ab1ab7ce0c901b3d5a558de4e9c5931e2b0c04a2a62afedf484bb1d2",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "b43c5b4652a8d70d8c333174aaa3cea4ca",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "0baa29d6d8a186af1d58b603d367932e056f623eaa4d4620a87673fb27aa",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52451a17ae0ad6012591ac987edf2241e16e3beddeee332bc5cb3df08f46d3",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245ced25b4daf5430",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "cfdcb0e9e58f1f063788",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52457364231063f5d4eb87e3cb53398a99aaac3e48cd1c712433faa114da",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458c5e5fffed811dcde40712ae",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524fce0e45bda112f8ee4a406f7d43a16a5c9d08e8f1c3fa69d6d8e3e444c858c898fb",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52453ffd0f40a9ec6188f110",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524506473f25969386287f89b5df",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245097f137cf0e64eff7c2bff88",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524528a6185ff01cdeba1056f6c83230f6948eea7de15cdedb82c59ae4c4c4e3462881912f64bd404c2fd1c2",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5132c98c8f1758daefeb05e67412502cc4fe0d617c",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "023a79f15832ecf18e76089a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245d3fa65ea05e4e152ca42feded94c786d25560eb898ecc056be92c1",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52457bcf91aa439264c1da0a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "1b885a9dc185c11929b4dc5bf86b561218797dfd359d150047b33b658791826097",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "05c0590336e5cee4a091029e8fa8cef9d97d3bb7001ef2c4a2987f9d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "178a1849dae4310994cd4a760d9162a25a5c24f4ef647b7785196bc7491fe1",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524580d4824d9b76fb62515b861f4f17acd04dab5046b8a94511f760e39276",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458364eaa7aaca4f44",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "586b32804b39c53754057eaab22b7d7a360e1ecd4c4c1f988a460910668d9c45b1105e4130",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f1a2d9b35544f3f625fbd10823",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245fc9ff4792e8bd777",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9e01a5971a9c90da9e98ad9a96e8951cfe7000cd856a7812fcc8c1926ff8b974752ecfba815db7",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4dc4e0dbfd687ae4d4133be607a61441",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524500dbdf9ecd1ae0d4e390bbadd6b38b48103221292f2fdb",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52453f4d0ee2d9e4776ec7b51bf07bcb137b9a677ec4209c9fe5effc98a4c4e45b02b22067",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "f5d6a9f680ba3bf1fedeeba58a66f650a833e732fa",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2961dd406ba7a83910c681dffa77547a3972c053c6b0958735af87e0",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "b4bd70374d111f18e408d465b4da9800",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "234c477244148912a2cce3e55275f7f1a9c6",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a279a8b25b4da84896c91bdda15183ca9e0e5fb1a8e9ab73a31676abc7105508",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245158f40f985a2ca37a2fc9f3d0b2f58b09f09ea3b3e34e0b19e66031b7d6da37a1f5ba8",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a545e989dd7b9b63e737fde22123efa0bf5055beda88520b0fa99bd2",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4eecf48e11b2d669b314abb6020e0d62c04baa24622e195373d9652fe3ad",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "7737db2c90aacf637acd5f7e886bd6ddd3da533f42f1e7d1e67b7603e80b245335d26edd3a8468ee35e5630ce8d4",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52455770415fff2fac3f66515ed0fbeb0485a2ddff9ea405034ef68081ac0109e90f781aa6930df2",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9f0a60c2d3cbc0977450da02cfca833ce8de8e1bb9b2979a79cbd5c0d0c75bce18159564fc7c",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52455493c97f28580f0da038d494c9b81b08a15d20ff455e3d87cabdf750973b04446560fa",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245722188dc04d5642369ff85ed75b759e10898d6c61c",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245995270cd415e283f8b5373c9062d24a481a2b7d4350b0ec6ebbdbd",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245a81f9c376441672921ff",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52457d916623a30cf7d0d5ae0724944c63350dfb089d2e17ccec99d8cc629d9cabb4",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245d9e72e051a9dc5bd0b8b85c8ea20141a3d7b84bd44415e6ec7",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f6354b11156e62bf5ae3c93faee2f6c929b85e7451bc3648eebc5e606ae57b08",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "65cb3629c7d3eb206d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5d7fecea7e79554889b74628d0c7d6743f1683e3d7105b13f1519620c47c",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52456dee32d26efedb43f880ed716084ff64f4",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245a2c48e3a427d76018a5feeb498d2afffb8480d7e41da05f3af3dc172",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4c7f7cc5297e9b3f8967e910430a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "736b5b1739816d4f0768d81e19a95c36d2f5596789b912f044b3be6fcd805734d61bc2748d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524593468d932b1eb513",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524584d05abf3797a4586e04c87a0a51f37aa951d1c89b46d91b6f7c7998777b0000128d4793260fa9fa1e0f95f13260",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245d2d90b67a5977c593f8181d1baef7ceb9f3d7b4fafddc11812",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52457299915e2d453d386234edeff88d076ad5e7e5a3db581bc5508d",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "f3e6169af616345b630880c1c99144ca474d9ab52b0354b01c59dde01caadb5db2cf666b71a9866c3bca3d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9207ac30b33bff75e4ae7fb4e2835d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524560ebe79002d29a04cd3a5e361544ae4591a16cccdeda7fc66dad0efb0839",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52455c2b7d8202d8d0ede6db2d7efca9d50a8e0f89d423fa9c613b79",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52456914c5ddb0e47efa043468a5ee5119c37a04",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450ae3adf5c64d403769c500fb1818f355ff6726a3b259603f8e2fcd9da9658861de35747f9f2c1a07d5770a03550e37",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245e40ddbd72f185768d550b8d83ff7998670e73176c54ce4d37420346a8b0ec60a60000c70",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "b58e827d86c97228c7a6d4be35095c0c4e49d51f3399303addec391bc693d1",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245893660d085de388c58eb689579",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524514070b69463b9447df16a7b03c52",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245eb312c6ff7ff6a86d5d7427c290a8b7da5756c296f6c532cabec570c3c",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524586d321837066df2a9bd2a806dd6e2a1be5f49d76",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245764e5a6b4decd5d58828ca96a66f",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "7e55d781b9aa2daa17c1f5810b5aba8b670cce4ec6685ab1d5a9cb4416de6f15a6ce7ad4b0a7689c9957c80d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f5af139735cb045fa6a7baf8898c9903c907b98df04be54c3cbd",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9be5ad05116dda097410e9254ca833f8e28bbbcdaac467f0e8c6d9eff464685602ed5524",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245cf2636ef600ce21a5a5e3d80a82d8858f4481a2874fd1faf",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c3bfa84116d8a9a309afda3855",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "8c339efa7f0262bfe2e6cc1278a6f97e",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "67fdb0094d0677c1d6e8ee7e34f504ada1e0",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524537628377aab37993c6850031e9456526f8f5",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "8176f3cea591acb4345ebab6dc1e3d89f797973a791b29d16b3d84865f7210c4fa",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "22bd926c9e318afa63d85c6e6cbb771ec43e367d1b2d8d7dff723e5df264a9fd0198",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a05d620d313ea9f6795302c3af1f8f1cee3d048558710b5f9215a19b376d6b00e51876d4a4d94580899f",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52459d220729dea30e04d5c1f031953be95f2d2a549d42db68",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "6b21cf43b194556ed039080f7128d0629e",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "dcab3aeffa45328e826dddf351eb0952f19a0a49fdcbef300964cdb5dd2ec6389a5f589f4f60",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "9409cf9d32b5d329c2188f5872ca42",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a71f5f9896b656091d58077b9f42b18af88214949c02d9ad5055c9013ce4bf810a6a2e52cf83",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245683faaf10937a47577a00be733",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524555721927423aca9e",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "bee8f983c2d3e060bba83b3d5bf5ae",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245c6a9f76caac70d37c86d86d5194b01a51f",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "35bfaf88ac59f47a028dd53cbd425184363a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "0051283402827077dd5537e4ce58bece5bac3bff84766c22f64bae0bb509f102",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "f18bca0e4f802fe3513247af78c55ddc9c1ffabd62adf2ae5d0c3ef7ac1b75281b3410e95224",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2ff30b5fa14199b82b7d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "ed47b76db94d501f85f9abe2fc0575",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c07463db81e88b8fc4d41bc8fc",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450fb81afcf245ffa9e1ad81e7d7d0d68f3669",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "61f586117421ce4efe8d481f3f7e7683bd05187a356a188f",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52a6bd345e7ce44ee950c8ddc040e9b821917993d9afa3f72642362ec83d8665e20c8bc2f6066d4e18bdac92",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245754c559531e39183",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "817a34e0ad9da0ed4701477b2f1e697d7addce27e60076b7e7d52591120be1da3f2e25ad36684499c1ac",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245912e8f107d8703820a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524501830b0bad57caaf11f60fdd73afcec2dd117499993cdd7c9d9d4b",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524501e9ab0bcf1b86d46f2b381b233e244f7f6705ee5acd0fb17cc8c0dea8195c01d8",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458a26822fe83ede430b797484063b622343fe22db4a875febeb427858814599a164f5266f22d105f254ab11e27690",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245b8f6fe94bee3e623287343ac127112d13d5c8c9527e8f2a97877c18640fc6b0a2565b8749748b139a6fc9197",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "f7da5d53e0ec3158eafc6805f8ca",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "ee25b5df6928c8a48907e956b1b7fb1367ef0fea",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d9e8ca27d749e47b57e18adf478635f833b67e2b87013d",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "96ab7bbe0e9a20a0dcb12ef2828d6e5e093490a74929374bc16366e4676c2f5d1b3cef12e67b5b5594576fdba8ce449b9a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4c3c108eb1b2200b792654937b016b4b8b3086b0dd33446dd58053764dff85253f",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524554018f7d3a2e6e41a11bdb26ee19e3675b75ced16f29b3465aa57b2b45683c",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "fc00b0f3774709",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "1bad22ce0cf1aec2cc172de94cad8a8a7a2cfc7b2f4e86d353f1118f97e90c4b0f26409e056c",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d2a7dcf6bcf64666c4394e127a1906d9089bf7e1304a39",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4e2d598fdfb04c5bd0da555349d1c12f57d451db5a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "430a48eccc10155138d975b141e66c42c3bfc0",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52453227b98db5286de9af304bb0b2",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450efac46fcb9c4a4963201016275bacc4968bca49e3ecb82ce185a1",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "b332ee1bf626a11ff92aacf7d16c245d71ae3e32adb8",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d30f9f76c22c87f6495188a0510d783da555dc7f0ec4b59468a64e5e320a0d907122360b907e81a99d01cdc5",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450245261edf9239a061d308faed8f2e68d803496d4b192f20cb9a60d0803a836163",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52450f1e7b5510408bb629e4b6629d375db7e2716f3d97318b629e6bd8ab5c8ec77f0217941a36c910",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245d0e7bdc6156f637ddbafb7459420b847c1bb750d6168521eed316bac4e4084e530e6a132e095",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "1067d3bb3fcfa473c13a13780390bf1ffa477ead7060de468e5c6d9f6260ec2761df3391ffe2e3c94ed65fc4",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "6c433e7334ca33832b4a9679d5c3437bbf0377a048b04d1506a5ba44ec3a4421018e6b",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245efcbfb774e92db9812f7a2cf8cafe2b0a1dfa9f58242a727",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245485f108ab725e7a10de6c4871c5a1053741bed0cd04d356a3c55ce",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "92025e6fa819a4df1a03cf2f9da2bbfed54466f316cb0acd393ca5ceb7af07",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52453a75a4ae113552b5e2237e660ecc90aa",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d9b849ee490a48",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4cd34c44404674c58d5c232c105bc6",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245035fa3d9e736f51b",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524508113acd3edf3933a32235ebea2a6625d0cf3f91eb97aec80b12cad46a9aa9f8ee7c2cc90370e3",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458d82044809d1b91c4d4b7b9ca7f1f7553adaf1ed65403085af6848",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524542e1b413d0bd0ff9754ef49648be1caba124a2fe492ab9a51c56bc5f0c9e7e58be3dd9131d397dafe65b163b3f39",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f0c23bfbefa9e2bb69acd6c08f824bb5e71610c19fd8bf39139a95e60b8d1d13e43710e3731e60ba3b65875663a696",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52454acf0a8544b4f0e11265fe0c7697255a699a6811f953e183a9e7fb2f1f477c6c45284773d3ea684d",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524514d6f15b9f71e623",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d565476b62dc517b52e8affcbe",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "7fa96f48c198172566ad03f135f645a3604b429753b0ccf898de6fe7852e517f7695692462",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2e204a6d83552cc4a77892975121348742b4069f2e944576",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245fa9ed27ce144ae19b4e7fb1b4fc58e2e6604ee22ad1ea14309f12b2b",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d4ef6009a9995d85a8cf5a59",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245b52ebda627757181e8befe465f97ea7578f3e7d022fb3cd412",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c3e8e2051cf67498d9db0315af3cfd72ea5d021e9bd42f97cfc5a10a2127b3f852661a21228c9c1c60cd628cc2f9f2c3",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "e1c268ef73132a6c43ecf66b6a3e548422a33928b5d66cfa081f91e7b88f018c6930342771666f55",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "8b8af2608ac5e534da6821388922a80151342c6a7ee6a9383d813ba3be79b6eab499ecf7f1",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245bffd3c65709d4319bf8ebec9d19f88de4d152cd1cfa078ffa6ef60d803de8fef359040b636dccea49ffa",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245cd38f71ae133b133",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524543af3edc24efef6c65ff1851b4989977b44230cc8e2202ffcf472e974a4b2035616cad6ab091da385e0b101496",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524551909767d118bbdb601b6af7c8140d4aed6facbca3",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245ca10325761d6fe136847184400521626068287cb9c0ea8e04d39f4e297251677c68f9b7d08901a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524533c1ce8e12fb09c7ff20bc3dfa09847184894275511e7a2110f4f9fd69",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52456cf1b60e1c2b4421c12cb4b6fd3c74d3",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458195fc7875dec4e6a348ebcd0267",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524535edc6ee0443872e42a3acf1d294ae81a2de00461c66c5e1b009f085bfe8b3877c2edfee39d5f7b692a29a8f08ae",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5ad43fd7cbb7ed437c54545bff68531d4a85b424e04c6b59811c506cd1d499ec30e5470143ff60",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5fb241b345817e968e1bb64114148d22e4c321c9d28f3cf1ce4aba381591c4f5c12568d0db115806cb",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245604664c8009919ffb44b199c446d22a4d9f987",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245fed316e46c3dcae64c511aaf2e430378863f844beac0f0785312f79d409cb07347",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "2809847c771e98fba161a9f577ea",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245461b3adf2ecc18e561ba7d9f58ff3960663a59c1acfd15931146333d82f810612cbd7b98171b912a2cf1",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "654d3c7d65aba0471aea47db39163ebefaf279ea51a826652db7979e15cf8bb95bcc112c5b29225b0484eddb924a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245b63e0b223958ea6b27f053f8fba4ca28a8d1fac9476626ce5ac508c735161d3797b4e7447bd1c0d756a8",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245d64db0b6f9754f54cc5bfcdde48749ef18ca46d8c2be66802d26dd029f75856052dc41b580f9e9185a5d39",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245fff50e7df6597a",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245ef061801161ebb57ac82b190768f45e6c9cbf6882b5026f74493e2df9039a7a776",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245f36eb64652",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524523143ba2497cd0",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4ca4cd766d5266a1ddea13f3c04eaaa9d1",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "4f9b5755c1769c132c74cf24e8c68c4672cf9c7fb4",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "6231408c54a84348a2df71b9dc",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a8de12888d92e0753ceb93e2aa920e5689a9f97a1546ca50cf81ababca6235f25b",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52451e57ff9af146002e17c4c17c347ab31af49553cc6405df63e5efc2c4bc4c5457",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "c03359c664b6b590ac8f3950",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "34ace11e22835e9814e3777038f9f47503a68102c56be70aefa3853c9fe78288",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "5245df7adb6872af21bdf578bc41d663",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52456b00d2fae775ea81f06c09d9c1f1a48ea6a241987214a727522abe13e22c2380edf36459daf1",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "a8b696dadfef632273e4ac2bbdc24be687493f42351540df",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "cc8cb71201dc9e459c09b7f72cf243d0c68c1e92b0c20bae27ba42683e035da8ad97cae7c4944fd0a3397b712a7975f8",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "d8e4752b9e180adccb95789aa808e950fd08d662d102d60eaa2c87977d4f35ab",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524563bf3092e6239dab3c98e7dbd3fd844aeb0deacd1ad3a04b3de342",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52459793d284f507738daee58cb0934be0b05e5efb7b85fd8ad9a9d5d8051de5cae4cda0d7c18c0b",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "60d7bdb88a38b6b99c2338fd8c2beb45359dfee122a24009c8f48ab9648a",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "eb9dde6fb5df168a9f29",
+    "expected": -2,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "52458e5240bc870474320b79ca11cbc5e9f78e44a43439b8614f5f0e9f148fd5aeceb423bb6ac34b07480e",
+    "expected": -3,
+    "category": "malformed-random"
+  },
+  {
+    "hex": "524500210000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "oversized-count"
+  },
+  {
+    "hex": "52450040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "oversized-count"
+  },
+  {
+    "hex": "524500ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "oversized-count"
+  },
+  {
+    "hex": "52450000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000100000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500020000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450003000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000400000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500050000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450006000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000700000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500080000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450009000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000a00000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000b0000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000c000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000d00000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000e0000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245000f000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500110000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450012000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001300000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500140000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450015000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001600000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500170000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "52450018000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001900000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001a0000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001b000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001c00000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001d0000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001e000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "5245001f00000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  },
+  {
+    "hex": "524500200000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": -3,
+    "category": "length-mismatch"
+  }
+]

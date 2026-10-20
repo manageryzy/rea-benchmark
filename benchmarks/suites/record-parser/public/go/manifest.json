@@ -1,0 +1,27 @@
+{
+  "case_id": "record-parser-v1-go",
+  "language": "go",
+  "architecture": "x86_64",
+  "format": "ELF",
+  "target_function": "main.score_record",
+  "binary_sha256": "a056b5b6aa086578a1592bf927367c5aa3e41c197a4e7f9d03fc0ebc17ca8a68",
+  "source_sha256": "26ee79c6ae1e165d726bf5ec013038176714f9907f5c81a29a72b31ea572595e",
+  "compiler": "go version go1.23.2 linux/amd64",
+  "build_command": [
+    "go",
+    "build",
+    "-trimpath",
+    "-gcflags=-l",
+    "-ldflags=-w",
+    "-o",
+    "/mnt/h/work/rea/benchmarks/public/go/target",
+    "/mnt/h/work/rea/benchmarks/authoring/go/case.go"
+  ],
+  "postprocess": [
+    "strip",
+    "--strip-debug"
+  ],
+  "original_tests_passed": 1417,
+  "debug_info": false,
+  "symbols_retained": true
+}

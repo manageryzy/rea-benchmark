@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "compilers": [
+    {"id": "gcc13", "executable": "/usr/bin/g++", "family": "GCC", "expected_major": 13},
+    {"id": "clang20", "executable": "/usr/bin/clang++-20", "family": "Clang", "expected_major": 20, "container_diagnostic_flags": ["-Wno-error=unused-lambda-capture"]}
+  ],
+  "optimization_levels": ["O0", "O2", "O3"],
+  "standard_library": "libstdc++ 13",
+  "identity_fields": ["suite", "base_case", "compiler_family", "compiler_version", "standard", "optimization", "string_abi", "strip_mode", "extra_flags", "source_sha256", "toolchain_sha256"],
+  "families": [
+    {"suite": "record-parser", "experiment": "native-pilot-20261019", "base_case": "cpp", "standard": "c++20", "string_abi": 1, "strip_mode": "debug", "extra_flags": ["-fno-inline"], "recorded_optimization": "O1"},
+    {"suite": "complex-native-v1", "experiment": "complex-pilot-common-budget-20261019", "base_case": "cpp", "standard": "c++20", "string_abi": 1, "strip_mode": "all", "extra_flags": ["-no-pie", "-Wall", "-Wextra"], "recorded_optimization": "O2"},
+    {"suite": "stl-native-v2", "experiment": "stl-rust-data-v2-20261019", "base_case": "cpp11-string-abi0", "standard": "c++11", "string_abi": 0, "strip_mode": "all", "extra_flags": ["-pedantic-errors", "-Wall", "-Wextra", "-Werror", "-no-pie"], "recorded_optimization": "O2"},
+    {"suite": "stl-native-v2", "experiment": "stl-rust-data-v2-20261019", "base_case": "cpp11-string-abi1", "standard": "c++11", "string_abi": 1, "strip_mode": "all", "extra_flags": ["-pedantic-errors", "-Wall", "-Wextra", "-Werror", "-no-pie"], "recorded_optimization": "O2"},
+    {"suite": "stl-native-v2", "experiment": "stl-rust-data-v2-20261019", "base_case": "cpp14-string-abi0", "standard": "c++14", "string_abi": 0, "strip_mode": "all", "extra_flags": ["-pedantic-errors", "-Wall", "-Wextra", "-Werror", "-no-pie"], "recorded_optimization": "O2"},
+    {"suite": "stl-native-v2", "experiment": "stl-rust-data-v2-20261019", "base_case": "cpp14-string-abi1", "standard": "c++14", "string_abi": 1, "strip_mode": "all", "extra_flags": ["-pedantic-errors", "-Wall", "-Wextra", "-Werror", "-no-pie"], "recorded_optimization": "O2"}
+  ],
+  "model_execution": {
+    "current_frozen_rerun_unchanged": true,
+    "pilot_suite": "complex-native-v1",
+    "pilot_base_case": "cpp",
+    "policy": "Validate builds first. Compare the six compiler/optimization points on the existing multipoint case before expanding paid runs to the complete grid. Reuse only exact input/environment cache matches; preserve original case IDs and artifacts. Unmeasured points are not model failures or completed benchmarks."
+  }
+}

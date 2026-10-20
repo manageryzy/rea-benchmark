@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "language": "cpp",
+      "candidate": "correct",
+      "passed": 1417,
+      "total": 1417
+    },
+    {
+      "language": "cpp",
+      "candidate": "incorrect",
+      "passed": 9,
+      "total": 1417
+    },
+    {
+      "language": "rust",
+      "candidate": "correct",
+      "passed": 1417,
+      "total": 1417
+    },
+    {
+      "language": "rust",
+      "candidate": "incorrect",
+      "passed": 9,
+      "total": 1417
+    },
+    {
+      "language": "go",
+      "candidate": "correct",
+      "passed": 1417,
+      "total": 1417
+    },
+    {
+      "language": "go",
+      "candidate": "incorrect",
+      "passed": 9,
+      "total": 1417
+    }
+  ],
+  "source_credentials_and_prior_runs_hidden": true,
+  "wrong_language_rejected": true
+}

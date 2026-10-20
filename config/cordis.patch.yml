@@ -1,0 +1,27 @@
+- insert:
+    - id: rea-mcp
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: rea
+        transport: stdio
+        command: /mnt/h/work/rea/bin/rea
+        args:
+          - mcp
+        cwd: /mnt/h/work/rea
+        toolCallTimeoutMs: 450000
+- id: llm-pi-ai
+  config:
+    providers:
+      openai-codex:
+        reasoning: high
+        models:
+          - id: gpt-6.1-sol
+            name: GPT-6.1 Sol
+            contextWindow: 1050000
+            maxTokens: 8192
+            reasoningEfforts:
+              low: low
+              medium: medium
+              high: high
+              xhigh: xhigh
+              max: max

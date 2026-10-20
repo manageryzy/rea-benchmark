@@ -1,0 +1,16 @@
+{
+  "files_sha256": {
+    "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+    "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+    "benchmarks/harnesses/deepseek-harness.mjs": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+    "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+    "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+    "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+    "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+    "benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+    "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+  },
+  "fingerprint": "791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f",
+  "harness": "deepseek-harness",
+  "id": "lossless-evidence-v1"
+}

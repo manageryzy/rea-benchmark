@@ -1,0 +1,32 @@
+{
+  "case_id": "record-parser-v1-rust",
+  "language": "rust",
+  "architecture": "x86_64",
+  "format": "ELF",
+  "target_function": "score_record",
+  "binary_sha256": "d05fbf4cd855c3175dc0d11ccfe62d49b8a7d95de9a8036c7a164e8dba22963c",
+  "source_sha256": "430b36536cc1136c3dcae276a7b051b0671a0c66f9945df689db4a897e5deb87",
+  "compiler": "rustc 1.91.1 (ed61e7d7e 2025-11-07)",
+  "build_command": [
+    "rustc",
+    "--edition=2021",
+    "-C",
+    "opt-level=1",
+    "-C",
+    "debuginfo=0",
+    "-C",
+    "codegen-units=1",
+    "--remap-path-prefix",
+    "/mnt/h/work/rea=fixture",
+    "/mnt/h/work/rea/benchmarks/authoring/rust/case.rs",
+    "-o",
+    "/mnt/h/work/rea/benchmarks/public/rust/target"
+  ],
+  "postprocess": [
+    "strip",
+    "--strip-debug"
+  ],
+  "original_tests_passed": 1417,
+  "debug_info": false,
+  "symbols_retained": true
+}

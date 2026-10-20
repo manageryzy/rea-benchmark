@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "conditions": [
+    {
+      "id": "legacy-recorded",
+      "label": "Original harnesses",
+      "immutable": true
+    },
+    {
+      "id": "lossless-evidence-v1",
+      "label": "Fixed inline harnesses (v1)",
+      "environment_profile": "lossless-evidence-v1",
+      "suites": [
+        "record-parser",
+        "complex-native-v1",
+        "stl-native-v2"
+      ],
+      "retired_suites": [
+        "complex-native-v1",
+        "stl-native-v2"
+      ]
+    },
+    {
+      "id": "paged-evidence-v2",
+      "label": "Fixed paged harnesses (v2)",
+      "environment_profile": "paged-evidence-v2",
+      "suites": [
+        "complex-native-v1",
+        "stl-native-v2"
+      ]
+    }
+  ],
+  "active_comparison": "fixed-harnesses",
+  "note": "Conditions reuse existing experiments, frozen cases and grading. They are not new benchmark suites.",
+  "active_case_conditions": {
+    "record-parser": "lossless-evidence-v1",
+    "complex-native-v1": "paged-evidence-v2",
+    "stl-native-v2": "paged-evidence-v2"
+  }
+}

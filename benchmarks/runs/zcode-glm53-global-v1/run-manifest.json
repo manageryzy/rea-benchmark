@@ -1,0 +1,252 @@
+{
+  "created_at": "2026-10-19T08:06:27.984358+00:00",
+  "model": "glm-5.3",
+  "reasoning": "high",
+  "harness": "ZCode",
+  "cli_version": "0.17.0",
+  "repository_version": "3.16.1",
+  "cli_sha256": "703e00506b7cefeb2bafc1d6b4cd142800d9bf741a3a0c8ce49d261d3f006900",
+  "cases": [
+    {
+      "id": "record-cpp",
+      "language": "cpp",
+      "track": "basic",
+      "cohort": "native-pilot-20261019",
+      "cached_case_id": "cpp",
+      "max_tool_calls": 20,
+      "timeout_seconds": 900,
+      "max_output_tokens": 8192,
+      "tool_count": 8,
+      "standard": "c++20",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "3718d3294eff80497ca874a771b3a60f5c60190d365677e9009055be5e3e05d3",
+        "manifest.json": "af91da83b7f3e7779c33da102fcf008765ba6c1bf15a759391473ac2f68456f0",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "target": "6aa9d0be17f40ecf83703f45b4b4636662cbf9d8fb4c14bf8e4d2c63886ec04c",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "record-rust",
+      "language": "rust",
+      "track": "basic",
+      "cohort": "native-pilot-20261019",
+      "cached_case_id": "rust",
+      "max_tool_calls": 20,
+      "timeout_seconds": 900,
+      "max_output_tokens": 8192,
+      "tool_count": 8,
+      "standard": "2021",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "daadc61e4e755031d89af21bb865a14a366869585694ef7eea061969688e26b1",
+        "manifest.json": "eb1a05bf3644f3d74041d00b4a678cb7b62ad0fae5c8384bf09706aa32a51b4a",
+        "prompt.txt": "2f3e8e572064b7dc6815b657b75e408c0963a59e40c9bbdc0fff06947f70dbbb",
+        "target": "d05fbf4cd855c3175dc0d11ccfe62d49b8a7d95de9a8036c7a164e8dba22963c",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "record-go",
+      "language": "go",
+      "track": "basic",
+      "cohort": "native-pilot-20261019",
+      "cached_case_id": "go",
+      "max_tool_calls": 20,
+      "timeout_seconds": 900,
+      "max_output_tokens": 8192,
+      "tool_count": 8,
+      "standard": "Go",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "e2b1d9242e4c180fb1fbd4953f136cc19aef65d14a63c5090070c5fb85535278",
+        "manifest.json": "8b81eec8b28a4027a82d48ad64db9b45de40fe523112ad7a0fe1cfcef6e0cdb4",
+        "prompt.txt": "6e55aa0c1b3cd0a7b1f72457b4b94ba97e3d64999322b167e9f29c46054c6edb",
+        "target": "a056b5b6aa086578a1592bf927367c5aa3e41c197a4e7f9d03fc0ebc17ca8a68",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "complex-cpp",
+      "language": "cpp",
+      "track": "complex",
+      "cohort": "complex-pilot-common-budget-20261019",
+      "cached_case_id": "cpp",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 8,
+      "standard": "c++20",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "2c6453768e49a42fcf8a1bd5795105fbe94a069b1ecddb0668585b2767958a1d",
+        "manifest.json": "bbc306bc1fc17ff081f75e7a3c9d6186cff6e82af87685b4caba9ce0a1461b57",
+        "prompt.txt": "636bc1dd4b84891988b5b906a84d28d75f701614a4b43da3d139fb4435ad9f51",
+        "target": "a152643be640c641e21c55c160062f95adb84d69fa0a3d97dc070dc5a00caf17",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "complex-rust",
+      "language": "rust",
+      "track": "complex",
+      "cohort": "complex-pilot-common-budget-20261019",
+      "cached_case_id": "rust",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 8,
+      "standard": "2021",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "c9ecdb16420eb68372100106d98d5bae62cc69b162bb0bfa0d888ff663b4d9b0",
+        "manifest.json": "e4bfc437f3f52b22c8aefe30e5e08075ab2f77986d000b88fd3e62e5ecb15dbe",
+        "prompt.txt": "484fc7926cf00f0520d1b858883041aa1cf0358f90760911f2c76b4cc4ea4881",
+        "target": "67318c0b8323b6d1763acd7edd42f596ac092dd2cef734f87b22b85df4d38ef6",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "complex-go",
+      "language": "go",
+      "track": "complex",
+      "cohort": "complex-pilot-common-budget-20261019",
+      "cached_case_id": "go",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 8,
+      "standard": "Go",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "e3ba3ac2ee7d7014b8826312e29d531f89b4305e1c6b5d5d040b7eea2be62e1e",
+        "manifest.json": "508ccefc9cd058d19c46b0a1144cb6a6d2d4efd921976b46ebb95a80fa88eca5",
+        "prompt.txt": "e50823d642aa759bcb3ce1ae76fe0d948e99d1515bd0a9913fcdb0521adb081f",
+        "target": "e0f46ae8ca1ffefe228d6eac54eecd19ae8a11f941a5784bb34a91c751d93931",
+        "tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2"
+      }
+    },
+    {
+      "id": "rust-data-v2",
+      "language": "rust",
+      "track": "core",
+      "cohort": "stl-rust-data-v2-20261019",
+      "cached_case_id": "rust-data-v2",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 12,
+      "standard": "2021",
+      "string_abi": null,
+      "inputs_sha256": {
+        "gateway.json": "c0870616eed2e896ef79eec1162bb04b90e16808060883f38d152349f930ed30",
+        "manifest.json": "e4bfc437f3f52b22c8aefe30e5e08075ab2f77986d000b88fd3e62e5ecb15dbe",
+        "prompt.txt": "36b048203763fc05b62462f51867a960c695e18d20eeade5335c55859ba3e8aa",
+        "target": "67318c0b8323b6d1763acd7edd42f596ac092dd2cef734f87b22b85df4d38ef6",
+        "tools.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045"
+      }
+    },
+    {
+      "id": "cpp11-string-abi0",
+      "language": "cpp",
+      "track": "stl",
+      "cohort": "stl-rust-data-v2-20261019",
+      "cached_case_id": "cpp11-string-abi0",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 12,
+      "standard": "c++11",
+      "string_abi": 0,
+      "inputs_sha256": {
+        "gateway.json": "ad001fdf038cfc7f3e800e16b018a7d8c5e0efc927cf45f7ee04d32f927a2c57",
+        "manifest.json": "d9679da6c6e507c0d7619c4b77f47f849abc5cc3deae32846e78b334e1cde3cb",
+        "prompt.txt": "796e17c2c3ea97c28068c5e0a5b79ee02c09fa0a2743ca4e82c3c4f5fd1d51f9",
+        "target": "6bb2b7494a1addfd7c5e138bb455bba22158400b7d3e6193f3405df297fcf00f",
+        "tools.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045"
+      }
+    },
+    {
+      "id": "cpp11-string-abi1",
+      "language": "cpp",
+      "track": "stl",
+      "cohort": "stl-rust-data-v2-20261019",
+      "cached_case_id": "cpp11-string-abi1",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 12,
+      "standard": "c++11",
+      "string_abi": 1,
+      "inputs_sha256": {
+        "gateway.json": "d13cb054275790e296f4d19282f17e1b5a28fad7ebb0238446efe029d98d58f3",
+        "manifest.json": "a72a8a94e625cdf1a0dd8a7dc075145b01562d7b3062fd8cd4093284007d4a06",
+        "prompt.txt": "c3f98a48ff0ef68662e50beb9650cca9c6b95206f6fbd7feec9b4b3c636578f6",
+        "target": "f5c1e789d564ee82becc2d933f014f86333f4c00ca45c71ea791dd4d66ad06c4",
+        "tools.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045"
+      }
+    },
+    {
+      "id": "cpp14-string-abi0",
+      "language": "cpp",
+      "track": "stl",
+      "cohort": "stl-rust-data-v2-20261019",
+      "cached_case_id": "cpp14-string-abi0",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 12,
+      "standard": "c++14",
+      "string_abi": 0,
+      "inputs_sha256": {
+        "gateway.json": "d4fc9073c8a7ccb1aee0a8c81d2b11383070d8a4552a07bc99fc889cede5f671",
+        "manifest.json": "a446d00129263551a0ab7a184000ec30d885ac95ed835b24d30b52de1f6aeda7",
+        "prompt.txt": "2cd06335f30646af64f0ad4b44acd468c6074e720a52dfb26077caa93cfdb635",
+        "target": "7944495ae298acd7b73360ba313ad360c26ded25d2a1e146b90d0bcf2dea630e",
+        "tools.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045"
+      }
+    },
+    {
+      "id": "cpp14-string-abi1",
+      "language": "cpp",
+      "track": "stl",
+      "cohort": "stl-rust-data-v2-20261019",
+      "cached_case_id": "cpp14-string-abi1",
+      "max_tool_calls": 60,
+      "timeout_seconds": 1800,
+      "max_output_tokens": 128000,
+      "tool_count": 12,
+      "standard": "c++14",
+      "string_abi": 1,
+      "inputs_sha256": {
+        "gateway.json": "a92b3914c1cf044f5d8239e561b1528e38061f82670f2ee34b03b0a075a9bc7d",
+        "manifest.json": "5669e4830d71ff2bacc2cb3ae4912f905a2efd152740fd700dc49a0b8910f606",
+        "prompt.txt": "d43033c9a263005f00fd0cb7a9deccb21eed9ab87482991f098b9b12c2c171bf",
+        "target": "b9229bb84438659593d4ddb9dc417b272747c2989d8a8d0c225541028e95eec9",
+        "tools.json": "5ae34311fcc869a39856a878515c2e13474ef2f63723cdb99009e0e3548d8045"
+      }
+    }
+  ],
+  "scope": "All 11 implemented native-language protocol cells. Unbuilt families and unavailable C++23/26 types remain planned/excluded.",
+  "automatic_retries": 0,
+  "paid_smoke_tests": 0,
+  "cached_models_reused": [
+    "deepseek-flash",
+    "gpt-6.1-sol"
+  ],
+  "system_prompt_policy": "Unmodified installed ZCode system prompt; native tools removed. Different harnesses are disclosed.",
+  "protocol_files_sha256": {
+    "/mnt/h/work/rea/benchmarks/zcode/run.py": "87a12b2ea22a9fbee78ccf20f514f2d5b7d8eff71a248abd3e0fa68547d6e440",
+    "/mnt/h/work/rea/benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+    "/mnt/h/work/rea/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+    "/mnt/h/work/rea/benchmarks/scripts/grade.py": "3052bb6c23850c17a4dfa24e7953c381d47c2cd94a97d1aa8665419bc9d377e6",
+    "/mnt/h/work/rea/benchmarks/scripts/collect_answer.py": "077c335739173a43263670806dc2e06c167afe392826e60e9fa4f1d566656dee",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/scripts/grade.py": "2a53e0aea48a6a77cc198b30f91124b79ede1da76fc6633faa8d6dda9ec72120",
+    "/mnt/h/work/rea/benchmarks/suites/stl-native-v2/scripts/grade-framed.py": "a3c4e75bffb3a6c9b5ef139aace3e22857dbecf6909f79f4bc059bdf147f78aa",
+    "/mnt/h/work/rea/benchmarks/grading/vectors.json": "0a8de775bd753d3be4184f5798327975ad9a5e2ed425e854563787fdf06046b1",
+    "/mnt/h/work/rea/benchmarks/suites/complex-native-v1/private/vectors.json": "48cef013a5a061637fac0993aa73984ddd0ab7fe338d73d45c5ff1c466218945",
+    "/mnt/h/work/rea/benchmarks/zcode/pricing.json": "59dab972865080de2b81f58ce5c26f5a52a18dcc4fae77cb27f6f7100ee2f1f0"
+  },
+  "pre_inference_amendment": "Verified schema blocks oversized byte reads before gateway forwarding; preserved per-response answer boundaries and final usage capture. Set explicit official BigModel thinking/reasoning/max_tokens option maps because the recorder changes the API host used for built-in model rule matching. No paid requests preceded this amendment."
+}

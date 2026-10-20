@@ -1,0 +1,5 @@
+{
+  "cpp": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "rust": "rustc 1.91.1 (ed61e7d7e 2025-11-07)",
+  "go": "go version go1.23.2 linux/amd64"
+}

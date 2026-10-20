@@ -1,0 +1,19 @@
+{
+  "files_sha256": {
+    "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+    "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+    "benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+    "benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73",
+    "benchmarks/harnesses/zcode.py": "8af14da579338a4fdcf914954b271c53c8ee2a10f0436748da86a4cd7f92e82f",
+    "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+    "benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+    "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+    "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+    "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+    "benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+    "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+  },
+  "fingerprint": "4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586",
+  "harness": "zcode",
+  "id": "paged-evidence-v2"
+}

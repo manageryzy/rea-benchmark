@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+. "$REA_ENV_ROOT/env.sh"
+export DSH_HOME="$REA_ENV_ROOT/.harness"
+export DSH_AGENTS_HOME="$REA_ENV_ROOT/.harness-agents"
+cd "$REA_ENV_ROOT"
+exec "$REA_ENV_ROOT/.tools/node-v24.22.0-linux-x64/bin/node" "$REA_ENV_ROOT/.tools/harness-0.2.1-rc.2/node_modules/@deepseek-ai/dsh/lib/bin.js" "$@"

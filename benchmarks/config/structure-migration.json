@@ -1,0 +1,36 @@
+{
+  "backup_location": ".cache/structure-migration-v1",
+  "code_moves": {
+    "benchmarks/scripts/build.py": "benchmarks/suites/record-parser/scripts/build.py",
+    "benchmarks/scripts/prompts.py": "benchmarks/suites/record-parser/scripts/prompts.py",
+    "benchmarks/scripts/run-pilot.mjs": "benchmarks/suites/record-parser/scripts/run.mjs",
+    "benchmarks/scripts/runtime.mjs": "benchmarks/harnesses/deepseek-harness.mjs",
+    "benchmarks/scripts/verify-runtime.mjs": "benchmarks/suites/record-parser/scripts/verify-runtime.mjs"
+  },
+  "directory_moves": {
+    "benchmarks/authoring": "benchmarks/suites/record-parser/authoring",
+    "benchmarks/grading": "benchmarks/suites/record-parser/grading",
+    "benchmarks/public": "benchmarks/suites/record-parser/public"
+  },
+  "experiments_stopped": true,
+  "global_report": "benchmarks/reports/index.html",
+  "immutable_run_artifacts": 2015,
+  "legacy_glm_note": "Imported attempt location only; matched to the existing suites through config/experiments.json. Never treated as a new benchmark suite.",
+  "legacy_glm_record_location_retained": "benchmarks/runs/zcode-glm53-global-v1",
+  "new_inference_attempts": 0,
+  "old_report_entry_redirects": 53,
+  "rebuild_command": "make reports",
+  "report_generator": "benchmarks/scripts/report.py",
+  "schema_version": 1,
+  "shared_orchestrator": "benchmarks/scripts/run.py",
+  "status": "complete",
+  "verification": {
+    "historical_result_paths_unchanged": true,
+    "live_model_calls": 0,
+    "migrated_zcode_adapter_local_fixture": "passed_eight_and_twelve_tools",
+    "offline_report_reproduction": "passed_two_byte_identical_clean_builds",
+    "preserved_fixture_inputs": 49,
+    "preserved_run_artifacts": 2015,
+    "report_link_and_zip_validation": "passed"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "live_model_calls": 0,
+  "dummy_grant_only": true,
+  "requested_metadata_max_tokens": 16384,
+  "codex_wire_output_cap_omitted": true,
+  "captured_body_keys": [
+    "model",
+    "store",
+    "stream",
+    "instructions",
+    "input",
+    "text",
+    "include",
+    "prompt_cache_key",
+    "tool_choice",
+    "parallel_tool_calls",
+    "reasoning"
+  ],
+  "adapter_sha256": "4d90da82aaac68f9f0e1fd7daec39f1aa285c111bf04c7ddefa52e920b41b2cc",
+  "documented_gpt_model_maximum": 128000,
+  "official_source": "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+  "correction": "Request 128000 for DeepSeek and use the documented 128000 GPT model ceiling; disclose that the Codex adapter omits the wire parameter.",
+  "verified_at": "2026-10-19T02:33:26.804Z"
+}

@@ -1,0 +1,64 @@
+{
+  "files_sha256": {
+    "shared/runtime.mjs": "cda4d3b42ae16c9db9dec22a063e36d5258839eb31f038fd0674114ebd0d9684",
+    "shared/rea-gateway.mjs": "e15cc111d547a3731aba62b5f3d33b44b189e9272abd3594983f86652e1ac62e",
+    "shared/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+    "shared/grade.py": "3052bb6c23850c17a4dfa24e7953c381d47c2cd94a97d1aa8665419bc9d377e6",
+    "shared/collect_answer.py": "077c335739173a43263670806dc2e06c167afe392826e60e9fa4f1d566656dee",
+    "shared/pricing.py": "cf913b61c16ee2c8ae16e7f87a1158be750ebfad835358b6330df9e55d5c4ebf",
+    "shared/rea-tools.json": "8aaa0862bfd73457929901e6f75e6e411f6ed9454b373bf62de5de2aa14ea9a2",
+    "suite/README.md": "1a7ce187aedeeaa0218d405117e1094802d85fbfdc2483a789a82f875a0b2a78",
+    "suite/config/pilot-common-budget.json": "5ec99d89813097bedf69eb2f90d331fda84d2cce601676c0041921957600855a",
+    "suite/config/pilot.json": "4ce17039d405ebbc62e3ce2203fbffdadb6c96e11b9c339cbae0f74fa4a52fde",
+    "suite/config/pricing.json": "d2849db857c171115fae6295a6f9ce438c2ca211872359275e5f466e4674d88a",
+    "suite/config/transport-budget-validation.json": "f0c574406424ee71257fe08f5c6a0b8bcd8e7b813ddf6d88b4f7a548f50dd007",
+    "suite/scripts/audit.py": "a4cc9f7ebed37da79cfb9e5d5cf588828be8318f5067ef460dc19684ceb7eb1c",
+    "suite/scripts/blind-review.py": "002f9a54b014c4cd7ec770e20f368ca6b8018db40f9cbbdfb87fcf2672f0494c",
+    "suite/scripts/build.py": "042055a12c135546562569960531912336a7c0fd6382a6b96a7ce5016b1fe8ac",
+    "suite/scripts/check-pages.mjs": "f485f0b69a684f7860786097e69d9295e5f97a18f9fdb62b69c52ff8c71a6fd7",
+    "suite/scripts/finish-review.py": "97eccd895b3a99fd6622c4c004ea31314f0a0f957b6141e43d73ee866ead31c8",
+    "suite/scripts/grade.py": "1bd1e00b6b0b4491cc660b4aa5a6933ad48fc15a070af6a9ec00853213d88e86",
+    "suite/scripts/lossless-output.mjs": "088775fd18427241a8509700a0422c1d560304920376c0ea3e548b0f006a6906",
+    "suite/scripts/oracle.py": "2a3f5ba1dc559cca4d67a927fcc23ee6145f2d5c9ea405f6d7d43a359704aa76",
+    "suite/scripts/report.py": "ba0bb1927cd0aa2aba1c5fe06076a0abf7b10cceabcdca1b253634a4bb8eca2e",
+    "suite/scripts/run.mjs": "c23a115785d5e9551f938fdeb40bfb9292ce5756db6c1212769bfd1dd984fa64",
+    "suite/scripts/selftest.py": "a8bd8550274773245a953c1fa1a3b7b62091dba832161aff68f75caa8e77b217",
+    "suite/scripts/test_capture.py": "7cd501a9864ca60c50c975c3140255415690086733dcf9b4f386eea7fea6a123",
+    "suite/scripts/verify-budget.mjs": "cf18fd86f80a2c6d203648bfa993dc84d4b614463bdf57c77b296a1ea1b66d9a",
+    "suite/scripts/verify.mjs": "eb5a2004eb12118e277be07879f76676ad07976f24ae8d339be6000d1c50779f",
+    "suite/authoring/cpp/abi.cpp": "e8dcd37a88fd96955d2e92f482b4516dd0f909f821ad0ac5e8d8274ec6e82422",
+    "suite/authoring/cpp/abi.hpp": "0d01816d5e9613a351f3beb66a5c3aef06a51e1f90615ddd115c96c1d567f302",
+    "suite/authoring/cpp/case.cpp": "a3fdcb4a9eeb35ab278f8080a0b22c56adcec8d397ca59cc906f0fc83b44850d",
+    "suite/authoring/rust/abi_bridge.rs": "d38ec592d930cfe173d17594700eaa46916647c81521553b1a186d75a6416485",
+    "suite/authoring/rust/case.rs": "2f9e6c5a37fdb5625aa8b880f7762f4b1aee1a188369feed041036b1febade3c",
+    "suite/authoring/go/case.go": "0a5a2ade504060917653e64f8c69c08e5a2c4fa9bf975c6a10195d9c003b8f05"
+  },
+  "public_inputs": {
+    "cpp": {
+      "target": "a152643be640c641e21c55c160062f95adb84d69fa0a3d97dc070dc5a00caf17",
+      "prompt.txt": "636bc1dd4b84891988b5b906a84d28d75f701614a4b43da3d139fb4435ad9f51",
+      "manifest.json": "bbc306bc1fc17ff081f75e7a3c9d6186cff6e82af87685b4caba9ce0a1461b57"
+    },
+    "rust": {
+      "target": "67318c0b8323b6d1763acd7edd42f596ac092dd2cef734f87b22b85df4d38ef6",
+      "prompt.txt": "484fc7926cf00f0520d1b858883041aa1cf0358f90760911f2c76b4cc4ea4881",
+      "manifest.json": "e4bfc437f3f52b22c8aefe30e5e08075ab2f77986d000b88fd3e62e5ecb15dbe"
+    },
+    "go": {
+      "target": "e0f46ae8ca1ffefe228d6eac54eecd19ae8a11f941a5784bb34a91c751d93931",
+      "prompt.txt": "e50823d642aa759bcb3ce1ae76fe0d948e99d1515bd0a9913fcdb0521adb081f",
+      "manifest.json": "508ccefc9cd058d19c46b0a1144cb6a6d2d4efd921976b46ebb95a80fa88eca5"
+    }
+  },
+  "private_inputs": {
+    "private/vectors.json": "48cef013a5a061637fac0993aa73984ddd0ab7fe338d73d45c5ff1c466218945",
+    "private/build-validation.json": "d38ae7ab3e4db0ea3a7c83b40cef5bda5cca7288bdb6073aa1c244ce886494bd",
+    "private/abi-boundaries.json": "49bc146a9aedea0801556daddfdc25610fb5d7b7d278530bbc83e8450e6a1000",
+    "private/grader-validation/validation.json": "dd0caf174b0489bdbc6c3c625e3d2c9a3bc666054dd4461bba6e762889753ec5",
+    "private/runtime-validation/validation.json": "49cbc2b78e9e69d6e373a017808e22f0c42133744b6f151899a7ec057d43c11b",
+    "private/build/cpp/build-manifest.json": "4dc853dc08c471264274557370da3c4344b8f98ead729d7c288abd053ed4d3d6",
+    "private/build/rust/build-manifest.json": "9923ee8ded6b72b502df9d21ab6ba7562b7a3ccd0f30d0dcee8c249f8a182551",
+    "private/build/go/build-manifest.json": "2239d03a6bc9063270aadf18a833a7156042e6494189f35ab9d830c0c74f7424"
+  },
+  "frozen_at": "2026-10-19T02:39:14.608Z"
+}

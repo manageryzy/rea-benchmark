@@ -1,0 +1,6 @@
+{
+  "max_tool_calls": 20,
+  "tool_timeout_ms": 450000,
+  "analysis_tools_file": "/mnt/h/work/rea/benchmarks/runs/zcode-glm53-global-v1/inputs/record-rust/tools.json",
+  "data_limits": {}
+}

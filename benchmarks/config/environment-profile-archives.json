@@ -1,0 +1,279 @@
+{
+  "model_api_calls": 0,
+  "profiles": {
+    "090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4": {
+      "attempt_tasks": [
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/lossless-evidence-v1/deepseek-flash/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/lossless-evidence-v1/gpt-6.1-sol/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/deepseek-flash/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/deepseek-flash/go/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/deepseek-flash/rust/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6.1-sol/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6.1-sol/go/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6.1-sol/rust/task.json"
+      ],
+      "directory": "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4",
+      "files_sha256": {
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/config/conditions.json": "cf3d1df57f25348eca35b370987cd987b336a06295e0bb3058cccb98579a68c2",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/harnesses/deepseek-harness.mjs": "171c9c29b2cd9c0eb50177665556f5db7a0c0e1b8e5781395b0785e249038fc3",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/environment_profile.py": "72198c2498e1174fba53affd317ea5527fa7a88164a45dadc54a4cf9a5931f92",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/run.py": "49fff090cd3b1f1803c1e4cf7c1634b01482e72156e85aeece2f65f72d892820",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4/profile.json": "f4d8b96870dcdc6cf9b217704589db7759b89a21ff90487ef6a061d460d3bed4"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "cf3d1df57f25348eca35b370987cd987b336a06295e0bb3058cccb98579a68c2",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/harnesses/deepseek-harness.mjs": "171c9c29b2cd9c0eb50177665556f5db7a0c0e1b8e5781395b0785e249038fc3",
+          "benchmarks/scripts/environment_profile.py": "72198c2498e1174fba53affd317ea5527fa7a88164a45dadc54a4cf9a5931f92",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+          "benchmarks/scripts/run.py": "49fff090cd3b1f1803c1e4cf7c1634b01482e72156e85aeece2f65f72d892820",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "090e183cee3fe11078b18985dc44dc18a4737f14b0b30d823048ea5551392ea4",
+        "harness": "deepseek-harness",
+        "id": "lossless-evidence-v1"
+      }
+    },
+    "4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586": {
+      "attempt_tasks": [
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/glm-5.3/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/glm-5.3/go/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/glm-5.3/rust/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/glm-5.3/cpp11-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/glm-5.3/cpp11-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/glm-5.3/cpp14-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/glm-5.3/cpp14-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/glm-5.3/rust-data-v2/task.json"
+      ],
+      "directory": "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586",
+      "files_sha256": {
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/harnesses/zcode.py": "8af14da579338a4fdcf914954b271c53c8ee2a10f0436748da86a4cd7f92e82f",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586/profile.json": "38f9f0ca4dc1f09f6a020520a15e44e90f6bc6ee3529d47dcafec4a235375ac3"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+          "benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73",
+          "benchmarks/harnesses/zcode.py": "8af14da579338a4fdcf914954b271c53c8ee2a10f0436748da86a4cd7f92e82f",
+          "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+          "benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+          "benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "4cbf70b997454a513e8f7ff3d00035d46d17aba31902d23c445dda78542cc586",
+        "harness": "zcode",
+        "id": "paged-evidence-v2"
+      }
+    },
+    "6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830": {
+      "attempt_tasks": [
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/deepseek-flash/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/deepseek-flash/go/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/deepseek-flash/rust/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/go/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/rust/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/deepseek-flash/cpp11-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/deepseek-flash/cpp11-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/deepseek-flash/cpp14-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/deepseek-flash/cpp14-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/deepseek-flash/rust-data-v2/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/cpp11-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/cpp11-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/cpp14-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/cpp14-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6.1-sol/rust-data-v2/task.json"
+      ],
+      "directory": "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830",
+      "files_sha256": {
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/harnesses/deepseek-harness.mjs": "171c9c29b2cd9c0eb50177665556f5db7a0c0e1b8e5781395b0785e249038fc3",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830/profile.json": "ff4f6e1f7245be050b9a00ea131c019f9243d63b9cb3ba0d140efeb72905b29c"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+          "benchmarks/harnesses/deepseek-harness.mjs": "171c9c29b2cd9c0eb50177665556f5db7a0c0e1b8e5781395b0785e249038fc3",
+          "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+          "benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+          "benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "6742c940360a99c55611e0f01f9320195d3048feb24883de13a10ca9c4b1b830",
+        "harness": "deepseek-harness",
+        "id": "paged-evidence-v2"
+      }
+    },
+    "761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746": {
+      "attempt_tasks": [
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/lossless-evidence-v1/glm-5.3/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/glm-5.3/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/glm-5.3/go/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/glm-5.3/rust/task.json"
+      ],
+      "directory": "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746",
+      "files_sha256": {
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/config/conditions.json": "cf3d1df57f25348eca35b370987cd987b336a06295e0bb3058cccb98579a68c2",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/harnesses/zcode.py": "125ab5478d160f18667f4d6b7dd03f9257db3d32b599a0651eb909291bb0cd53",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/environment_profile.py": "72198c2498e1174fba53affd317ea5527fa7a88164a45dadc54a4cf9a5931f92",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/run.py": "49fff090cd3b1f1803c1e4cf7c1634b01482e72156e85aeece2f65f72d892820",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746/profile.json": "0fcaaf750b4eab0f74d309689d06ab8e78f41840f511571e9fd8a102d00930e3"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "cf3d1df57f25348eca35b370987cd987b336a06295e0bb3058cccb98579a68c2",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73",
+          "benchmarks/harnesses/zcode.py": "125ab5478d160f18667f4d6b7dd03f9257db3d32b599a0651eb909291bb0cd53",
+          "benchmarks/scripts/environment_profile.py": "72198c2498e1174fba53affd317ea5527fa7a88164a45dadc54a4cf9a5931f92",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+          "benchmarks/scripts/run.py": "49fff090cd3b1f1803c1e4cf7c1634b01482e72156e85aeece2f65f72d892820",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746",
+        "harness": "zcode",
+        "id": "lossless-evidence-v1"
+      }
+    },
+    "791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f": {
+      "attempt_tasks": [
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-5.6-sol/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-5.6-sol/go/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-5.6-sol/rust/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6-luna/cpp/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6-luna/go/task.json",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/gpt-6-luna/rust/task.json"
+      ],
+      "directory": "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f",
+      "files_sha256": {
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/harnesses/deepseek-harness.mjs": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/native-pilot-20261019/conditions/lossless-evidence-v1/profiles/791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f/profile.json": "de4aabf91402a235ee97ed8add528964e927f1847d95e40d97dd97e520dd62c6"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/harnesses/deepseek-harness.mjs": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+          "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+          "benchmarks/scripts/run.py": "c1a92d3ab8a94378a00d4dac8a242d512b0e3e1f1553edb5bdd8b3e6b32cff1c",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "791bdf00d00284cb63421ccc97bc2987833664812f9695102cebe8fd492ab27f",
+        "harness": "deepseek-harness",
+        "id": "lossless-evidence-v1"
+      }
+    },
+    "a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1": {
+      "attempt_tasks": [
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/go/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/rust/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6-luna/cpp/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6-luna/go/task.json",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/gpt-6-luna/rust/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/cpp11-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/cpp11-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/cpp14-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/cpp14-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-5.6-sol/rust-data-v2/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6-luna/cpp11-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6-luna/cpp11-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6-luna/cpp14-string-abi0/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6-luna/cpp14-string-abi1/task.json",
+        "benchmarks/runs/stl-rust-data-v2-20261019/conditions/paged-evidence-v2/gpt-6-luna/rust-data-v2/task.json"
+      ],
+      "directory": "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1",
+      "files_sha256": {
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/harnesses/deepseek-harness.mjs": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/run.py": "ac646e9935da20413ee328981512b2037872d1f13447c2bc040773108ec93035",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+        "benchmarks/runs/complex-pilot-common-budget-20261019/conditions/paged-evidence-v2/profiles/a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1/profile.json": "d5203de0fd392923056b3770472656ff059496744cd6fa6a8bc6f5e67df88fe5"
+      },
+      "profile": {
+        "files_sha256": {
+          "benchmarks/config/conditions.json": "d3e745c7c7f7d387bad87b79f636e9488e4c7761e8b5ea765818e0bf2746da1e",
+          "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+          "benchmarks/config/evidence-paging.json": "328900416334727775100058d6d8e7849caded853669d07a5eb4ddd089b9818d",
+          "benchmarks/harnesses/deepseek-harness.mjs": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+          "benchmarks/scripts/environment_profile.py": "62cdbdca8c653175c619f36f49c93c895a8e4ce647ef72c06e2bd48cdfc7c84a",
+          "benchmarks/scripts/evidence-paging.mjs": "e58313ff1ce0d62767ba7f79ac46b0c916b1431be8614027fdba43964f675ca3",
+          "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+          "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+          "benchmarks/scripts/rea-gateway.mjs": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+          "benchmarks/scripts/run.py": "ac646e9935da20413ee328981512b2037872d1f13447c2bc040773108ec93035",
+          "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5"
+        },
+        "fingerprint": "a23886fac2e08759060e013043a1689c40d6f436825f9a283620974cefd698a1",
+        "harness": "deepseek-harness",
+        "id": "paged-evidence-v2"
+      }
+    }
+  },
+  "schema_version": 1,
+  "scope": "Exact source/configuration bytes for the saved fixed-harness task profiles"
+}

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+. "$REA_ENV_ROOT/env.sh"
+exec "$REA_ENV_ROOT/.tools/node-v24.22.0-linux-x64/bin/node" "$REA_ENV_ROOT/node_modules/rea-agents/scripts/rea.mjs" "$@"

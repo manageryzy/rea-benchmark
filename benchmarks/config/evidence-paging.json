@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "paged-evidence-v2",
+  "inline_characters": 24000,
+  "default_page_characters": 12000,
+  "maximum_page_characters": 24000,
+  "catalog_entries": 24,
+  "note": "Common explicit read-only paging for all harnesses. Original results are retained verbatim, with SHA-256 references and JSON-pointer views. No source or arbitrary filesystem access."
+}

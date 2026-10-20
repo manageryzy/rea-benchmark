@@ -1,0 +1,230 @@
+{
+  "status": "authorized_ten_cell_subset_complete",
+  "total_attempts": 44,
+  "pilot_attempts_included": 0,
+  "remaining_attempts": 34,
+  "languages": [
+    "cpp",
+    "rust",
+    "go"
+  ],
+  "profiles": [
+    "optimized-symbols-retained",
+    "optimized-stripped"
+  ],
+  "models": [
+    "deepseek-flash",
+    "gpt-6.1-sol"
+  ],
+  "program_families": [
+    {
+      "id": "multipoint-core",
+      "implementation": "implemented; six-run pilot completed on 2026-10-19",
+      "points": [
+        "word counts",
+        "transaction ledger",
+        "stable ranking",
+        "dependency scheduler",
+        "wide ABI summary",
+        "policy dispatch"
+      ],
+      "containers": {
+        "cpp": [
+          "string",
+          "array",
+          "vector",
+          "span",
+          "map",
+          "unordered_map",
+          "set",
+          "priority_queue",
+          "unique_ptr"
+        ],
+        "rust": [
+          "String",
+          "array",
+          "Vec",
+          "slice",
+          "BTreeMap",
+          "HashMap",
+          "BTreeSet",
+          "BinaryHeap",
+          "Box"
+        ],
+        "go": [
+          "string",
+          "strings.Builder",
+          "array",
+          "slice",
+          "map",
+          "map-backed set",
+          "container/heap"
+        ]
+      }
+    },
+    {
+      "id": "expression-ast",
+      "implementation": "planned, not built or evaluated",
+      "points": [
+        "tokenization and escapes",
+        "precedence and recursive parsing",
+        "AST evaluation",
+        "nested error propagation",
+        "scope lookup",
+        "mixed scalar and small aggregate ABI"
+      ],
+      "grammar": {
+        "cpp": [
+          "recursive variant visitor",
+          "unique_ptr ownership",
+          "templates",
+          "optional",
+          "exceptions",
+          "lambdas"
+        ],
+        "rust": [
+          "recursive enum and Box",
+          "match",
+          "Result and ?",
+          "Option",
+          "lifetimes",
+          "generic iterator adapters"
+        ],
+        "go": [
+          "AST interfaces",
+          "type switch",
+          "recursive methods",
+          "multiple returns",
+          "closures",
+          "error wrapping"
+        ]
+      },
+      "containers": [
+        "token vectors/slices",
+        "scope maps",
+        "node trees",
+        "fixed arrays"
+      ],
+      "checks": [
+        "operator associativity",
+        "overflow contract",
+        "nested malformed expressions",
+        "empty scopes",
+        "shadowed names",
+        "depth limits",
+        "ABI argument/return witnesses"
+      ]
+    },
+    {
+      "id": "cache-and-stream",
+      "implementation": "planned, not built or evaluated",
+      "points": [
+        "LRU eviction",
+        "TTL with injected logical time",
+        "batch updates",
+        "ring/deque processing",
+        "cleanup event order",
+        "mixed-width and large aggregate ABI"
+      ],
+      "grammar": {
+        "cpp": [
+          "RAII",
+          "move semantics",
+          "iterators",
+          "custom hash/comparator",
+          "explicit cleanup events"
+        ],
+        "rust": [
+          "ownership and borrowing",
+          "Rc/RefCell where appropriate",
+          "Drop",
+          "traits",
+          "error propagation"
+        ],
+        "go": [
+          "defer",
+          "pointer receivers",
+          "interfaces",
+          "generics",
+          "explicit error paths"
+        ]
+      },
+      "containers": {
+        "cpp": [
+          "list",
+          "unordered_map",
+          "deque",
+          "array"
+        ],
+        "rust": [
+          "VecDeque",
+          "HashMap",
+          "safe linked-node structures",
+          "array"
+        ],
+        "go": [
+          "container/list",
+          "map",
+          "ring buffer",
+          "slice"
+        ]
+      },
+      "checks": [
+        "capacity zero/one",
+        "repeated keys",
+        "eviction ties",
+        "expired entries",
+        "rollback/error cases",
+        "cleanup order",
+        "container growth",
+        "ABI sign/zero extension and alignment"
+      ]
+    }
+  ],
+  "abi_policy": {
+    "current": "Behavior recovery from actual optimized ABI-lowered calls, plus evidence-address review; reconstructed programs use native safe code.",
+    "future_interoperability_track": "A separately labelled experiment may require reconstructed libraries to pass native caller/callee interoperability tests. It is not included in the 36-attempt matrix or pilot coverage claims.",
+    "platform": "Linux x86-64; C++ System V/Microsoft x64, Rust native/C, Go ABIInternal. Cross-architecture experiments require their own toolchains and cohorts."
+  },
+  "readiness_review": [
+    "frozen sources and independent hidden tests",
+    "original binaries pass before model runs",
+    "symbol removal and identical text verified",
+    "long committed outputs captured without clipping",
+    "native compilation and point-level scoring work",
+    "readability assessed separately",
+    "all diagnostics counted in expenditure",
+    "pilot cost projection reviewed before full execution"
+  ],
+  "reuse_rule": "Preserve all six old pilot results as the eight-tool historical baseline. The new 12-tool protocol is a distinct cohort; none of the old six are counted toward its 44 planned attempts. Reuse binary/analysis caches by content digest, never relabel cached model answers as new attempts.",
+  "proposed_data_tools": [
+    "read_bytes",
+    "search_bytes",
+    "list_strings",
+    "search_strings"
+  ],
+  "matrix_groups": [
+    {
+      "id": "core-and-two-families",
+      "attempts": 36,
+      "formula": "3 families x 3 languages x 2 symbol profiles x 2 models",
+      "status": "planned; only core programs currently implemented"
+    },
+    {
+      "id": "stl-native-v2",
+      "attempts": 8,
+      "formula": "2 dialects (C++11/14) x 2 libstdc++ string ABIs x optimized-stripped x 2 models",
+      "status": "local fixtures added; no inference"
+    }
+  ],
+  "data_tool_status": "Implemented in separate pilot-data-tools-v2.json / rea-tools-data-v2.json; local verification only",
+  "new_stl_coverage": "../../stl-native-v2/config/coverage.json",
+  "later_standards": "Six optional C++23/26 fixtures are feature-probed separately and excluded from the 44-attempt matrix while unavailable.",
+  "authorized_subset_attempts": 10,
+  "unscheduled_attempts": 34,
+  "new_protocol_completed_attempts": 10,
+  "execution_note": "Only the ten C++11/14/string-ABI and Rust cells are authorized in this cohort; do not launch the other 34. The historical eight-tool pilot remains separate.",
+  "new_protocol_verified_attempts": 10,
+  "current_cohort": "stl-rust-data-v2-20261019",
+  "full_suite_started": false
+}

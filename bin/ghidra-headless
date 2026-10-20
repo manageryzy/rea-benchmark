@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+. "$REA_ENV_ROOT/env.sh"
+exec "$GHIDRA_INSTALL_DIR/support/analyzeHeadless" "$@"

@@ -1,0 +1,9 @@
+Analyze /mnt/h/work/rea/examples/build/hello using REA's Ghidra provider.
+Do not read the example's C source or previous results.
+Open the binary with provider_id ghidra, find calculate_total, and obtain its
+decompilation and assembly. Explain its inputs, return value, and branch
+condition. Predict the results for (quantity, price) = (3, 25), (4, 25), and
+(5, 25), including the boundary behavior. Reconstruct the function in C.
+Distinguish observed facts from inferences and cite addresses or Evidence IDs.
+Do not execute the target or modify it. Close the binary session when finished.
+Record the model, reasoning setting, elapsed time, and token usage if available.

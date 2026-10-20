@@ -1,0 +1,7 @@
+# Windows Codex starts the shared Linux provider through WSL.
+[mcp_servers.rea]
+command = "C:\\Windows\\System32\\wsl.exe"
+args = ["--distribution", "Ubuntu-24.04", "--exec", "/mnt/h/work/rea/bin/rea", "mcp"]
+startup_timeout_sec = 30
+tool_timeout_sec = 450
+

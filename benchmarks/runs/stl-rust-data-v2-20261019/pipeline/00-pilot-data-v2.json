@@ -1,0 +1,133 @@
+{
+  "schema_version": 3,
+  "name": "stl-rust-native-data-v2",
+  "languages": [
+    "cpp",
+    "rust",
+    "go"
+  ],
+  "models": [
+    {
+      "id": "deepseek-flash",
+      "label": "DeepSeek V4.1 Flash 1017",
+      "provider": "deepseek-official",
+      "reasoning": "high"
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "label": "GPT-6.1 Sol",
+      "provider": "openai-codex",
+      "reasoning": "high"
+    }
+  ],
+  "harness_version": "0.2.1-rc.2",
+  "max_tool_calls": 60,
+  "task_timeout_seconds": 1800,
+  "tool_timeout_ms": 450000,
+  "max_output_tokens": 128000,
+  "seed": 2026101901,
+  "run_order": [
+    [
+      "rust-data-v2",
+      "deepseek-flash"
+    ],
+    [
+      "rust-data-v2",
+      "gpt-6.1-sol"
+    ],
+    [
+      "cpp11-string-abi0",
+      "gpt-6.1-sol"
+    ],
+    [
+      "cpp11-string-abi0",
+      "deepseek-flash"
+    ],
+    [
+      "cpp11-string-abi1",
+      "deepseek-flash"
+    ],
+    [
+      "cpp11-string-abi1",
+      "gpt-6.1-sol"
+    ],
+    [
+      "cpp14-string-abi0",
+      "gpt-6.1-sol"
+    ],
+    [
+      "cpp14-string-abi0",
+      "deepseek-flash"
+    ],
+    [
+      "cpp14-string-abi1",
+      "deepseek-flash"
+    ],
+    [
+      "cpp14-string-abi1",
+      "gpt-6.1-sol"
+    ]
+  ],
+  "output_mode": "original-language",
+  "profile": "optimized-stripped",
+  "pricing_file": "pricing-data-v2.json",
+  "scope": "Ten authorized first attempts: four strict C++11/14/string-ABI cases plus Rust, two models, twelve read-only tools. Do not launch the remaining full suite.",
+  "readability_rubric": {
+    "scale": "0=poor, 1=mixed, 2=clear; each dimension scored separately from correctness",
+    "dimensions": [
+      "formatting",
+      "names",
+      "decomposition",
+      "language_idioms",
+      "explanatory_comments"
+    ],
+    "reviewer": "coordinating analyst, with model identity hidden during source review; subjective descriptive assessment"
+  },
+  "response_budget": {
+    "deepseek": "max_tokens=128000 sent by adapter",
+    "gpt": "Codex adapter omits max_output_tokens; documented model maximum is 128000",
+    "note": "Same model output ceiling, different enforcement paths. High reasoning is not equal internal computation."
+  },
+  "analysis_tools_file": "benchmarks/suites/complex-native-v1/config/rea-tools-data-v2.json",
+  "data_limits": {
+    "max_read_bytes": 4096,
+    "max_search_hits": 200
+  },
+  "suite_version": 4,
+  "cases": [
+    {
+      "id": "rust-data-v2",
+      "language": "rust",
+      "track": "core",
+      "public_dir": "benchmarks/suites/complex-native-v1/public/rust/optimized-stripped"
+    },
+    {
+      "id": "cpp11-string-abi0",
+      "language": "cpp",
+      "track": "stl",
+      "public_dir": "benchmarks/suites/stl-native-v2/public/cpp11-string-abi0"
+    },
+    {
+      "id": "cpp11-string-abi1",
+      "language": "cpp",
+      "track": "stl",
+      "public_dir": "benchmarks/suites/stl-native-v2/public/cpp11-string-abi1"
+    },
+    {
+      "id": "cpp14-string-abi0",
+      "language": "cpp",
+      "track": "stl",
+      "public_dir": "benchmarks/suites/stl-native-v2/public/cpp14-string-abi0"
+    },
+    {
+      "id": "cpp14-string-abi1",
+      "language": "cpp",
+      "track": "stl",
+      "public_dir": "benchmarks/suites/stl-native-v2/public/cpp14-string-abi1"
+    }
+  ],
+  "concurrency": 2,
+  "concurrency_note": "One sequential worker per model; at most two inference processes share local compute. Timing is descriptive, not a primary ranking.",
+  "model_retries": 0,
+  "attempt_reuse": "Only exact configuration, model, prompt, binary, tool catalog, harness and grading-input fingerprints; incomplete attempts are never retried automatically."
+}

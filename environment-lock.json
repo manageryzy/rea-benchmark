@@ -1,0 +1,59 @@
+{
+  "recorded_date_jst": "2026-10-19",
+  "host": {
+    "distribution": "Ubuntu 24.04",
+    "environment": "WSL2",
+    "architecture": "x86_64"
+  },
+  "rea": {
+    "repository": "https://github.com/morluto/rea",
+    "source_commit": "23f984b1a884baefc3c44e4ab697f6eff61dffb6",
+    "version": "6.7.0",
+    "npm_integrity": "sha512-yhIx2ioJYYT1C/tONfYeitC6LhnKmCh+ZwRUOgYuhSc733lGhkkt73zhug9WmLgxoMdKuqIYGCoBfD4fXkOhFw=="
+  },
+  "node": {
+    "version": "24.22.0",
+    "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-x64.tar.xz",
+    "sha256": "cc2f601cee82d9a5a233302fe307abc600727035fd7d2c3a3571755989e95008"
+  },
+  "ghidra": {
+    "version": "12.1.4",
+    "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip",
+    "sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db"
+  },
+  "java": {
+    "version": "21.0.12.1",
+    "home": "/usr/lib/jvm/java-21-openjdk-amd64",
+    "existing_installation": true
+  },
+  "harness": {
+    "repository": "https://github.com/deepseek-ai/deepseek-harness",
+    "version": "0.2.1-rc.2",
+    "npm_integrity": "sha512-tvY+yhfKRifthbqPe/OK0AYxM5ZkvqfYq/jMYgJcEUxiRRL1Vwra3Ti5TB6AXgSWQdiPHYh/Vp6SJa9yHwMNuw==",
+    "runtime_path": ".tools/harness-0.2.1-rc.2",
+    "previous_runtime_path": ".tools/harness"
+  },
+  "zcode": {
+    "repository": "https://github.com/zai-org/ZCode",
+    "repository_version": "3.16.1",
+    "cli_version": "0.17.0",
+    "source_commit": "0a1fc56d279fd1001f78387bd81aec1c26767411",
+    "source_archive_url": "https://codeload.github.com/zai-org/ZCode/tar.gz/0a1fc56d279fd1001f78387bd81aec1c26767411",
+    "source_archive_sha256": "461b630c94a0e34fb466e56c2f692c9557a3c6d91d3eebcb4d519650e620cf15",
+    "runtime_path": ".tools/zcode-3.16.1",
+    "bundle_sha256": "703e00506b7cefeb2bafc1d6b4cd142800d9bf741a3a0c8ce49d261d3f006900",
+    "installation_method": "Official source build; standalone Node CLI and terminal UI",
+    "source_code_modified": false,
+    "node_runtime": {
+      "version": "24.14.0",
+      "url": "https://nodejs.org/dist/v24.14.0/node-v24.14.0-linux-x64.tar.xz",
+      "sha256": "41cd79bb7877c81605a9e68ec4c91547774f46a40c67a17e34d7179ef11729df",
+      "verified_against": "https://nodejs.org/dist/v24.14.0/SHASUMS256.txt"
+    },
+    "package_manager": "pnpm@10.33.2",
+    "project_configuration": "zcode.json",
+    "state_directory": ".zcode-state",
+    "requested_model_family": "Z.ai / GLM",
+    "benchmark_attempts": 0
+  }
+}

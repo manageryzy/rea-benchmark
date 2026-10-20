@@ -1,0 +1,7 @@
+Recover this optimized stripped Linux x86-64 ELF as readable c++11 code.
+Implement std::string reconstructed(const std::vector<std::uint8_t>& data); no main.
+First byte selects handler 0..21; remaining bytes are signed i16LE records. Empty and malformed inputs matter.
+Use only the selected target through read-only REA tools; no source, hidden tests, execution or prior answers.
+Return exactly the same string. Supply one cpp code block and evidence addresses, then close the binary.
+This target uses libstdc++ _GLIBCXX_USE_CXX11_ABI=0.
+Handler entry hints (names replaced): {"0": "0x404fc0", "1": "0x4053b0", "2": "0x407b00", "3": "0x405f60", "4": "0x405440", "5": "0x4056e0", "6": "0x4059c0", "7": "0x405bb0", "8": "0x405dc0", "9": "0x4081d0", "10": "0x4074b0", "11": "0x4086c0", "12": "0x408940", "13": "0x407840", "14": "0x407e50", "15": "0x406100", "16": "0x406900", "17": "0x404870", "18": "0x404410", "19": "0x406300", "20": "0x406e20", "21": "0x404040"}

@@ -1,0 +1,17 @@
+{
+  "id": "lossless-evidence-v1",
+  "harness": "zcode",
+  "files_sha256": {
+    "benchmarks/config/evidence-delivery.json": "24bf0d65f45bdabd7df1993131366d6dac7fc7c5d3919d878650f91674a1b2aa",
+    "benchmarks/config/conditions.json": "cf3d1df57f25348eca35b370987cd987b336a06295e0bb3058cccb98579a68c2",
+    "benchmarks/scripts/environment_profile.py": "72198c2498e1174fba53affd317ea5527fa7a88164a45dadc54a4cf9a5931f92",
+    "benchmarks/scripts/run.py": "49fff090cd3b1f1803c1e4cf7c1634b01482e72156e85aeece2f65f72d892820",
+    "benchmarks/scripts/rea-gateway.mjs": "94e009c79c9024c76f52baf0138192311a38b0963251df37257bcff7fc144099",
+    "benchmarks/scripts/policy.mjs": "7313e4bdc581118e82eda625e753d64ac822a70683b21bd73a989c64ce9596cd",
+    "benchmarks/scripts/tool-catalog.mjs": "bfeb01404ce490d829a5bfeee721f52d3f7a9750341e582b20291260924c5ee5",
+    "benchmarks/scripts/execution-control.mjs": "33cd93b404cbbe29521c53dba2105a9d3f4448ba7d25dd09f12a23afdbb822c9",
+    "benchmarks/harnesses/zcode.py": "125ab5478d160f18667f4d6b7dd03f9257db3d32b599a0651eb909291bb0cd53",
+    "benchmarks/harnesses/zcode-evidence.cjs": "4decdff9a1493df79ddea61a566757a6c6ab9627efd8771baad693237b4b7e73"
+  },
+  "fingerprint": "761658df7eb515bcb8b2396447969dd23f9cc8a3bb4a465f894f43f0d76c3746"
+}

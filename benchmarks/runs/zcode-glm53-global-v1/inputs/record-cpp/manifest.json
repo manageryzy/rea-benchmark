@@ -1,0 +1,27 @@
+{
+  "case_id": "record-parser-v1-cpp",
+  "language": "cpp",
+  "architecture": "x86_64",
+  "format": "ELF",
+  "target_function": "score_record",
+  "binary_sha256": "6aa9d0be17f40ecf83703f45b4b4636662cbf9d8fb4c14bf8e4d2c63886ec04c",
+  "source_sha256": "53bed7ac02319312c5c47f95800cfd251e0ccb7f232aad3e8b32774c1c69e20e",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "build_command": [
+    "g++",
+    "-std=c++20",
+    "-O1",
+    "-g0",
+    "-fno-inline",
+    "/mnt/h/work/rea/benchmarks/authoring/cpp/case.cpp",
+    "-o",
+    "/mnt/h/work/rea/benchmarks/public/cpp/target"
+  ],
+  "postprocess": [
+    "strip",
+    "--strip-debug"
+  ],
+  "original_tests_passed": 1417,
+  "debug_info": false,
+  "symbols_retained": true
+}

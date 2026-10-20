@@ -1,0 +1,9 @@
+{
+  "max_tool_calls": 60,
+  "tool_timeout_ms": 450000,
+  "analysis_tools_file": "/mnt/h/work/rea/benchmarks/runs/zcode-glm53-global-v1/inputs/cpp14-string-abi0/tools.json",
+  "data_limits": {
+    "max_read_bytes": 4096,
+    "max_search_hits": 200
+  }
+}

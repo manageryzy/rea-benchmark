@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+# Preserve the bytes covered by frozen-input and historical-source hashes.
+benchmarks/runs/** -text
+benchmarks/archive/** -text
+**/target -text
+*.png -text
+*.jpg -text
+*.zip -text
+*.gz -text
+*.xz -text

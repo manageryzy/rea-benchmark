@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+REA_ENV_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+. "$REA_ENV_ROOT/env.sh"
+export ZCODE_DATA_BASE_DIR="$REA_ENV_ROOT/.zcode-state"
+export ZCODE_STORAGE_DIR="$REA_ENV_ROOT/.zcode-state/cli"
+export ZCODE_SESSION_DB_PATH="$REA_ENV_ROOT/.zcode-state/cli/db/db.sqlite"
+export ZCODE_LOG_DIR="$REA_ENV_ROOT/.zcode-state/logs"
+mkdir -p "$ZCODE_DATA_BASE_DIR" "$ZCODE_STORAGE_DIR/db" "$ZCODE_LOG_DIR"
+chmod 700 "$ZCODE_DATA_BASE_DIR"
+cd "$REA_ENV_ROOT"
+case "${1:-}" in
+  --help|-h|--version|-v|doctor) ;;
+  *) "$REA_ENV_ROOT/bin/zcode-api-key" --sync-env --quiet ;;
+esac
+exec "$REA_ENV_ROOT/.tools/node-v24.14.0-linux-x64/bin/node" "$REA_ENV_ROOT/.tools/zcode-3.16.1/agent/zcode.cjs" "$@"

@@ -1,0 +1,50 @@
+{
+  "files": {
+    "benchmarks/config/batches.json": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/config/batches.json",
+      "sha256": "9b044a15bf89109eadab2a56d3f9dcd1088c1fd4f3688e11ca687a5a591f4d87"
+    },
+    "benchmarks/scripts/audit.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/scripts/audit.py",
+      "sha256": "4462c2480717e8b68adb19ac3af2bc5f749ca9ec06ec951878e2d786b5a94e18"
+    },
+    "benchmarks/scripts/batch.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/scripts/batch.py",
+      "sha256": "8e57d402edd0350ac742812dff37b432991c0d17fb4ed8a25d3512a2d70f3b4d"
+    },
+    "benchmarks/suites/complex-native-v1/scripts/audit.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/complex-native-v1/scripts/audit.py",
+      "sha256": "c458651591ba8e392a7df5e842bc4add7f97cf4877bb6a72c2a1161d079d9947"
+    },
+    "benchmarks/suites/complex-native-v1/scripts/blind-review.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/complex-native-v1/scripts/blind-review.py",
+      "sha256": "002f9a54b014c4cd7ec770e20f368ca6b8018db40f9cbbdfb87fcf2672f0494c"
+    },
+    "benchmarks/suites/complex-native-v1/scripts/finish-review.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/complex-native-v1/scripts/finish-review.py",
+      "sha256": "ba25294a665cd38a77e8ab68b0bddd2edc2d87ef38ec9dc0277ed1e951dbc862"
+    },
+    "benchmarks/suites/complex-native-v1/scripts/run.mjs": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/complex-native-v1/scripts/run.mjs",
+      "sha256": "85c17df70a71ac30c31a0689857c8907946eefe96c2dd7897d19bb1b63bd1daa"
+    },
+    "benchmarks/suites/record-parser/scripts/run.mjs": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/record-parser/scripts/run.mjs",
+      "sha256": "12cef61073de862fe5b8eec6d770515a5efdd4d0ed02e5931a9ecc2c80d87e01"
+    },
+    "benchmarks/suites/stl-native-v2/scripts/audit.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/stl-native-v2/scripts/audit.py",
+      "sha256": "adf373e9106a0f59f3ac350e59fec54a336b100429dd7bd4f4abd0d480eead7a"
+    },
+    "benchmarks/suites/stl-native-v2/scripts/review.py": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/stl-native-v2/scripts/review.py",
+      "sha256": "7ae2641835570157d3fa9b87668c112be7ebbc7b021c1aa992f1e32f83689957"
+    },
+    "benchmarks/suites/stl-native-v2/scripts/run.mjs": {
+      "archive": "benchmarks/archive/entrypoint-cleanup/benchmarks/suites/stl-native-v2/scripts/run.mjs",
+      "sha256": "9262bb9aff8cacc67a945d0d128efd018c564496335621e1cfbfd126a70f520d"
+    }
+  },
+  "note": "Historical sources only; not executable entrypoints. Frozen run/profile archives remain in place.",
+  "schema_version": 1
+}

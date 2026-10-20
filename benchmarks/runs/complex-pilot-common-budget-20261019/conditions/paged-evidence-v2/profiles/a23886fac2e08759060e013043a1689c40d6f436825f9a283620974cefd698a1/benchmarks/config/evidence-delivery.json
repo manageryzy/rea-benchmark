@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "lossless-evidence-v1",
+  "dsh": {
+    "disabled_plugins": ["spill-policy", "tool-result-pruner"],
+    "compaction_auto": false
+  },
+  "zcode": {
+    "upstream_bundle_sha256": "703e00506b7cefeb2bafc1d6b4cd142800d9bf741a3a0c8ce49d261d3f006900",
+    "server": "rea",
+    "deduplicate_equal_structured_content": true,
+    "model_result_byte_cap": null
+  },
+  "context_overflow": "Fail explicitly; do not spill, prune, summarize, or retry with shortened evidence",
+  "historical_cache_policy": "Preserve original results under their recorded environment; offline replay does not upgrade their scores"
+}
