@@ -3,7 +3,7 @@ PYTHON ?= /usr/bin/python3
 CONFIG ?= benchmarks/config/benchmark.json
 BENCHMARK_FLAGS ?=
 
-.PHONY: setup benchmark reports report benchmark-plan benchmark-run check check-runner check-reports check-environment check-paging build-cpp-points archive-profiles audit-environment audit-condition clean-reports list help review-prepare build-fixtures check-fixtures verify-fixtures
+.PHONY: setup benchmark reports report reports-public check-public benchmark-plan benchmark-run check check-runner check-reports check-environment check-paging build-cpp-points archive-profiles audit-environment audit-condition clean-reports list help review-prepare build-fixtures check-fixtures verify-fixtures
 
 # A clean checkout starts stopped. Existing local state, including a running
 # batch, is never overwritten by setup or by report generation.
@@ -20,6 +20,12 @@ benchmark benchmark-run:
 
 reports report:
 	$(PYTHON) benchmarks/scripts/report.py build
+
+reports-public:
+	$(PYTHON) benchmarks/scripts/report.py public
+
+check-public:
+	$(PYTHON) benchmarks/scripts/check_public_report.py
 
 check:
 	$(PYTHON) benchmarks/scripts/check_structure.py
@@ -83,6 +89,8 @@ help:
 	@echo "make benchmark BENCHMARK_FLAGS=--offline  Require complete valid inference caches; zero provider launches"
 	@echo "make benchmark-plan CONFIG=path.json     Preview configuration without model calls"
 	@echo "make reports        Rebuild every HTML/JSON/CSV report offline from saved records"
+	@echo "make reports-public Rebuild HTML-only Pages output from the sanitized summary cache; no raw data or model calls"
+	@echo "make check-public   Validate privacy boundaries, global metric parity, links and reproducible public builds"
 	@echo "make check          Check artifacts, offline evidence replay, client transports and report reproducibility"
 	@echo "make check-runner   Verify cache reuse and missing-cache dispatch using offline fixtures"
 	@echo "make check-reports  Rebuild twice and compare output hashes and local links"

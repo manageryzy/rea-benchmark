@@ -2,6 +2,11 @@
 
 [Project overview](../README.md) · [Environment setup and startup](../docs/setup.md)
 
+The [public Pages report](https://manageryzy.github.io/rea-benchmark/) is generated
+from an allowlisted summary cache. `make reports` refreshes that cache alongside
+the full local reports. `make reports-public` renders only public HTML/CSS/JS,
+without raw JSON, answers or reasoning; see [publication details](../docs/publishing.md).
+
 Rebuild every report with one offline command from the workspace root:
 
     make reports

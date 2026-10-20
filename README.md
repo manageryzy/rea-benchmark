@@ -47,6 +47,8 @@ environment, while reports are generated offline from saved records.
 
 ## Results summary
 
+[Global HTML report](https://manageryzy.github.io/rea-benchmark/) · [Publication and privacy policy](docs/publishing.md)
+
 Snapshot: **2026-10-20 15:21 JST**, report build `fd481cde4aa1`.
 The active comparison has **58 graded cells out of 66 configured cells**
 (six models × eleven cases). The table includes all active cases and discloses
@@ -78,9 +80,10 @@ debits are unavailable. Cost ranges preserve unresolved billing assumptions.
 The generated global report contains matching-case comparisons, per-case scores,
 runtime charts, historical conditions and evidence-delivery diagnostics. See
 [report reproduction](docs/setup.md#rebuild-benchmark-reports) for details.
-Generated reports and raw attempts are excluded from Git; reproducing these
-measurements requires the matching result dataset. A source-only checkout shows
-pending measurements. This dated summary is not a substitute for that dataset.
+Generated reports and raw attempts are excluded from Git. The public site
+regenerates from a sanitized summary cache; replaying the underlying measurements
+requires the matching private result dataset. This dated summary is not a
+substitute for that dataset.
 
 ## Related projects
 

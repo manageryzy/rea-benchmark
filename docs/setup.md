@@ -40,6 +40,10 @@ their respective licenses; see [third-party notices](../THIRD_PARTY.md).
 
 ## Rebuild benchmark reports
 
+For the HTML-only public site and automated GitHub Pages deployment, see
+[publication and privacy](publishing.md). The private report exports below remain
+local and must not be uploaded to Pages.
+
 Run `make reports` from this workspace to regenerate **all** HTML pages, JSON,
 CSV, source exports and the portable report ZIP from saved records. It runs
 offline, without API keys, model inference, compilation or experiment retries.

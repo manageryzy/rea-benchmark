@@ -867,14 +867,22 @@ def build(output=DEFAULT_OUTPUT):
             output.rename(previous)
         stage.rename(output)
     print('REPORTS BUILT:', output, '·', report.build_id[:12], '· no inference', flush=True)
+    if output == DEFAULT_OUTPUT:
+        import public_report
+        public_report.refresh(report)
     return report.build_id
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', nargs='?', choices=['build', 'clean'], default='build')
-    parser.add_argument('--output', type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument('action', nargs='?', choices=['build', 'clean', 'public'], default='build')
+    parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.action == 'public':
+        import public_report
+        public_report.build(args.output or public_report.OUTPUT)
+        return
+    args.output = args.output or DEFAULT_OUTPUT
     if args.action == 'clean':
         if args.output.exists():
             if not (args.output / '.generated-report.json').exists():

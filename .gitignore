@@ -32,6 +32,7 @@ provider_config.json
 /runs/
 /reports/
 /benchmarks/reports/
+/benchmarks/site/
 __pycache__/
 *.py[cod]
 *.log
