@@ -875,12 +875,14 @@ def build(output=DEFAULT_OUTPUT):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', nargs='?', choices=['build', 'clean', 'public'], default='build')
+    parser.add_argument('action', nargs='?', choices=['build', 'clean', 'public', 'pages'], default='build')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
-    if args.action == 'public':
+    if args.action in ['public', 'pages']:
         import public_report
         public_report.build(args.output or public_report.OUTPUT)
+        if args.action == 'pages':
+            public_report.stage_pages(args.output or public_report.OUTPUT)
         return
     args.output = args.output or DEFAULT_OUTPUT
     if args.action == 'clean':

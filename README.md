@@ -4,7 +4,7 @@ A benchmark of agent-assisted recovery of readable C++, Rust and Go programs fro
 Linux binaries, measuring behavioral correctness, readability, token usage and
 estimated cost.
 
-[Setup and startup](docs/setup.md) · [Detailed protocol and configuration](benchmarks/README.md) · [WTFPL license](LICENSE)
+[Setup and startup](guides/setup.md) · [Detailed protocol and configuration](benchmarks/README.md) · [WTFPL license](LICENSE)
 
 ## Methods
 
@@ -47,7 +47,7 @@ environment, while reports are generated offline from saved records.
 
 ## Results summary
 
-[Global HTML report](https://manageryzy.github.io/rea-benchmark/) · [Publication and privacy policy](docs/publishing.md)
+[Global HTML report](https://manageryzy.github.io/rea-benchmark/) · [Publication and privacy policy](guides/publishing.md)
 
 Snapshot: **2026-10-20 15:21 JST**, report build `fd481cde4aa1`.
 The active comparison has **58 graded cells out of 66 configured cells**
@@ -79,7 +79,7 @@ debits are unavailable. Cost ranges preserve unresolved billing assumptions.
 
 The generated global report contains matching-case comparisons, per-case scores,
 runtime charts, historical conditions and evidence-delivery diagnostics. See
-[report reproduction](docs/setup.md#rebuild-benchmark-reports) for details.
+[report reproduction](guides/setup.md#rebuild-benchmark-reports) for details.
 Generated reports and raw attempts are excluded from Git. The public site
 regenerates from a sanitized summary cache; replaying the underlying measurements
 requires the matching private result dataset. This dated summary is not a

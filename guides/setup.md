@@ -40,7 +40,7 @@ their respective licenses; see [third-party notices](../THIRD_PARTY.md).
 
 ## Rebuild benchmark reports
 
-For the HTML-only public site and automated GitHub Pages deployment, see
+For the HTML-only public site and local GitHub Pages deployment, see
 [publication and privacy](publishing.md). The private report exports below remain
 local and must not be uploaded to Pages.
 

@@ -8,6 +8,7 @@ import math
 from pathlib import Path
 import re
 import os
+import shutil
 import socket
 import subprocess
 from unittest.mock import patch
@@ -102,7 +103,7 @@ def project(report):
     }
 
 
-# A recursive schema rejects unknown fields on CI, including fields manually
+# A recursive schema rejects unknown fields before publication, including fields manually
 # added to the public cache. Free-form answers, errors and provenance are absent.
 NUMBER = (int, float, type(None))
 TEXT = (str, type(None))
@@ -204,7 +205,7 @@ class PublicReport(Report):
         notice = '<p class="notice">Public summary: credentials, raw requests, reasoning, answers and JSON downloads are excluded. Model + harness measurements; model-only attribution is not certified.</p>'
         super().page(name, title, notice + body)
         path = self.output / name
-        html = path.read_text().replace('make reports</code>', 'make reports-public</code>')
+        html = path.read_text().replace('make reports</code>', 'make pages</code>')
         html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; base-uri \'none\'; form-action \'none\'">')
         path.write_text(html)
 
@@ -281,7 +282,7 @@ class PublicReport(Report):
         self.page('diagnostics.html', 'Harness and timing diagnostics', body)
 
     def methodology(self):
-        body = '<section><h2>Benchmark and reporting workflow</h2>' + charts.workflow() + '<p>Models receive only the frozen public ELF, prompt and restricted read-only REA tools. Hidden sources, tests, execution, shell access and compiler feedback are unavailable. Unchanged submissions are compiled and independently checked offline. Correctness, whole-program success, function points and five-dimension source readability are separate measures. Coordinating-AI readability reviews are not an independent blind panel.</p><p>Cached attempts are validated against effective binary, prompt, tool, model and harness inputs. Missing measurements remain pending; environment failures are not zero model scores. Cases run sequentially within each model with up to three model queues sharing the host, which can affect runtime.</p></section><section><h2>Public report reproduction</h2><p>The normal local report command refreshes an allowlisted summary cache from saved records. GitHub Actions renders this cache with network and process creation blocked during the build. It needs no provider credentials, model runtime, raw traces or downloaded toolchain. Only HTML, CSS and JavaScript are deployed; raw JSON, source exports, answers, archives and reasoning are absent.</p><p>Summary audit flags describe the saved local verification at snapshot time; the public build cannot independently replay private traces. Source report identity: <code>' + escape(self.data['source_report_build_id']) + '</code>. Public build identity appears in each footer.</p><p><a href="https://github.com/manageryzy/rea-benchmark">Source repository and detailed documentation</a></p></section>'
+        body = '<section><h2>Benchmark and reporting workflow</h2>' + charts.workflow() + '<p>Models receive only the frozen public ELF, prompt and restricted read-only REA tools. Hidden sources, tests, execution, shell access and compiler feedback are unavailable. Unchanged submissions are compiled and independently checked offline. Correctness, whole-program success, function points and five-dimension source readability are separate measures. Coordinating-AI readability reviews are not an independent blind panel.</p><p>Cached attempts are validated against effective binary, prompt, tool, model and harness inputs. Missing measurements remain pending; environment failures are not zero model scores. Cases run sequentially within each model with up to three model queues sharing the host, which can affect runtime.</p></section><section><h2>Public report reproduction</h2><p>The normal local report command refreshes an allowlisted summary cache from saved records. Local rendering blocks network and process creation and needs no provider credentials, model runtime, raw traces or downloaded toolchain. The generated site is committed under master/docs for GitHub Pages. Only HTML, CSS and JavaScript are deployed; raw JSON, source exports, answers, archives and reasoning are absent.</p><p>Summary audit flags describe the saved local verification at snapshot time; the public build cannot independently replay private traces. Source report identity: <code>' + escape(self.data['source_report_build_id']) + '</code>. Public build identity appears in each footer.</p><p><a href="https://github.com/manageryzy/rea-benchmark">Source repository and detailed documentation</a></p></section>'
         self.page('methodology.html', 'Methods and publication policy', body)
 
     def build(self):
@@ -348,7 +349,7 @@ def denied(*args, **kwargs):
 
 
 def build(output=OUTPUT, snapshot=SNAPSHOT):
-    # Deployment and checkout are separate CI steps. Rendering has no outbound
+    # Building is separate from Git publication. Rendering has no outbound
     # network or child-process path, even if provider credentials exist locally.
     with ExitStack() as guards:
         for obj, name in [(socket.socket, 'connect'), (socket.socket, 'connect_ex'),
@@ -393,7 +394,9 @@ def refresh(report):
         complete = all(not r['receipt'] or (rows.get((r['experiment'], r['case']['id'], r['model'], r['condition']), {}).get('receipt') and (not r['grade'] or rows[(r['experiment'], r['case']['id'], r['model'], r['condition'])]['grade'])) for r in old['records'] + old['condition_records'])
         if not complete:
             print('PUBLIC CACHE RETAINED: local raw dataset is incomplete', flush=True)
-            return build()
+            identity = build()
+            stage_pages()
+            return identity
     SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
     raw = json_text(data)
     if not SNAPSHOT.exists() or SNAPSHOT.read_text() != raw:
@@ -401,4 +404,24 @@ def refresh(report):
             handle.write(raw)
             temporary = Path(handle.name)
         temporary.replace(SNAPSHOT)
-    return build()
+    identity = build()
+    stage_pages()
+    return identity
+
+
+def stage_pages(site=OUTPUT, destination=ROOT / 'docs'):
+    """Copy validated local HTML into the branch-based Pages publishing tree."""
+    site, destination = Path(site).resolve(), Path(destination).resolve()
+    validate_site(site)
+    if site.is_relative_to(destination) or destination.is_relative_to(site):
+        raise ValueError('Pages source and destination must be separate')
+    if destination.exists() and any(destination.iterdir()):
+        validate_site(destination)  # Refuse to overwrite guides or other data.
+    with tempfile.TemporaryDirectory(prefix='.pages-stage-', dir=destination.parent) as temporary:
+        stage = Path(temporary) / 'site'
+        shutil.copytree(site, stage)
+        validate_site(stage)
+        if destination.exists():
+            destination.rename(Path(temporary) / 'previous')
+        stage.rename(destination)
+    print('LOCAL PAGES STAGED:', destination, '· static HTML only', flush=True)

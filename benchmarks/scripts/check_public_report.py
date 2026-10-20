@@ -81,6 +81,16 @@ class PublicAcceptance(unittest.TestCase):
             self.assertTrue((out / 'history/index.html').is_file())
             self.assertTrue((out / 'diagnostics.html').is_file())
             self.assertIn('data-chart-panel="matched"', (out / 'index.html').read_text())
+            pages = Path(tmp) / 'docs'
+            public.stage_pages(out, pages)
+            self.assertEqual(first, hashes(pages))
+            public.stage_pages(out, pages)
+            self.assertEqual(first, hashes(pages))
+            manual = pages / 'manual.md'
+            manual.write_text('Authored document: must not be overwritten')
+            with self.assertRaises(ValueError):
+                public.stage_pages(out, pages)
+            self.assertTrue(manual.is_file())
             for name in ['raw.json', 'raw.jsonl', 'trace.sse', 'data.zip']:
                 path = out / name
                 path.write_text('private canary')

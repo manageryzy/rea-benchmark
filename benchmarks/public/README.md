@@ -6,5 +6,5 @@ provider JSON or transcripts. The public generator validates its exact schema an
 never copies it into the Pages artifact.
 
 Run `make reports` where the matching private dataset exists to refresh it without
-model calls. Run `make reports-public` in any source checkout to regenerate the
-HTML-only global site. See [publication details](../../docs/publishing.md).
+model calls. Run `make pages` in any source checkout to regenerate the
+HTML-only global site and its `docs/` publishing tree. See [publication details](../../guides/publishing.md).

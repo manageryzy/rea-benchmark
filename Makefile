@@ -3,7 +3,7 @@ PYTHON ?= /usr/bin/python3
 CONFIG ?= benchmarks/config/benchmark.json
 BENCHMARK_FLAGS ?=
 
-.PHONY: setup benchmark reports report reports-public check-public benchmark-plan benchmark-run check check-runner check-reports check-environment check-paging build-cpp-points archive-profiles audit-environment audit-condition clean-reports list help review-prepare build-fixtures check-fixtures verify-fixtures
+.PHONY: setup benchmark reports report reports-public pages check-public benchmark-plan benchmark-run check check-runner check-reports check-environment check-paging build-cpp-points archive-profiles audit-environment audit-condition clean-reports list help review-prepare build-fixtures check-fixtures verify-fixtures
 
 # A clean checkout starts stopped. Existing local state, including a running
 # batch, is never overwritten by setup or by report generation.
@@ -23,6 +23,9 @@ reports report:
 
 reports-public:
 	$(PYTHON) benchmarks/scripts/report.py public
+
+pages:
+	$(PYTHON) benchmarks/scripts/report.py pages
 
 check-public:
 	$(PYTHON) benchmarks/scripts/check_public_report.py
@@ -90,6 +93,7 @@ help:
 	@echo "make benchmark-plan CONFIG=path.json     Preview configuration without model calls"
 	@echo "make reports        Rebuild every HTML/JSON/CSV report offline from saved records"
 	@echo "make reports-public Rebuild HTML-only Pages output from the sanitized summary cache; no raw data or model calls"
+	@echo "make pages          Regenerate public HTML locally and stage docs/ for branch-based GitHub Pages"
 	@echo "make check-public   Validate privacy boundaries, global metric parity, links and reproducible public builds"
 	@echo "make check          Check artifacts, offline evidence replay, client transports and report reproducibility"
 	@echo "make check-runner   Verify cache reuse and missing-cache dispatch using offline fixtures"
