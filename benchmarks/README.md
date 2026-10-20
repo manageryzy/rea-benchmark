@@ -1,5 +1,7 @@
 # REA native-recovery benchmarks
 
+[Project overview](../README.md) · [Environment setup and startup](../docs/setup.md)
+
 Rebuild every report with one offline command from the workspace root:
 
     make reports

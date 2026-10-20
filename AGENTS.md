@@ -5,7 +5,7 @@ pinned Node runtime, Ghidra installation, and Java environment. The default
 provider is `ghidra`. Use the `rea` MCP server when it is connected.
 
 Start DeepSeek Harness with `/mnt/h/work/rea/bin/dsh web --no-open`. It has
-workspace-local configuration and workflow instructions. Read `README.md` for
+workspace-local configuration and workflow instructions. Read `docs/setup.md` for
 paths, verification commands, and client registration.
 
 Prefer focused function, assembly, string, and xref queries. Preserve Evidence
