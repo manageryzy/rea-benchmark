@@ -9,48 +9,132 @@ import html
 import io
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 from statistics import median
 from string import Template
 import tempfile
 import zipfile
+import time
 
 import records
+import report_views
+import localization_report
+import i18n_report
+import report_prices
+import report_budget
+from report_states import STATES as STATUSES
 import report_charts as charts
 import glm_diagnostics
 import audit_environment
 import evidence_validation
 import cpp_points
+import action_cache
+import runtime_attestation
+from grading import evidence as grading_evidence
+from grading.c_executor import evidence as c_executor_evidence
+from capabilities import summary_report as capability_summary
+from capabilities import measurements as capability_measurements
+from capabilities import registration_report
 
 ROOT, BENCH = records.ROOT, records.BENCH
 DEFAULT_OUTPUT = BENCH / 'reports'
 ASSETS = Path(__file__).parent / 'report_assets'
 escape = lambda value: html.escape(str(value), quote=True)
-STATUSES = {'graded': 'Graded', 'inference_saved_grading_pending': 'Inference saved; grading pending',
-            'interrupted': 'Interrupted; preserved', 'not_started': 'Not started', 'running': 'Running',
-            'environment_failure': 'Harness/provider failure; not correctness-graded'}
+
 
 
 def json_text(value):
     return json.dumps(value, sort_keys=True, indent=2, ensure_ascii=False) + '\n'
 
 
+def benchmark_timing_summary(status):
+    """Project operational batch timings without private selection/error text."""
+    timing = status.get('timings')
+    if not timing or timing.get('schema_version') != 1:
+        return None
+    failures = status.get('failures', [])
+    offline = status.get('offline') is True
+    if status.get('running'):
+        state = 'running'
+    elif status.get('preparation_failed'):
+        state = 'pre_dispatch_failure'
+    elif status.get('interrupted'):
+        state = 'stopped'
+    elif (offline and failures and status.get('provider_launches') == 0
+            and all(row.get('error') == 'Offline benchmark: missing inference cache; provider launch refused'
+                    for row in failures)):
+        state = 'offline_cache_miss'
+    elif failures or status.get('queue_holds') or status.get('unprocessed_tasks', 0):
+        state = 'incomplete'
+    else:
+        state = 'complete'
+    return {'schema_version': 1, 'mode': 'offline' if offline else 'live', 'status': state,
+            'total_seconds': timing['total_seconds'],
+            'selected_tasks': status['selected_tasks'], 'cache_hits': status.get('cache_hits', 0),
+            'provider_launches': status.get('provider_launches', 0),
+            'model_api_calls': status.get('model_api_calls'),
+            'failures': len(failures), 'unprocessed_tasks': status.get('unprocessed_tasks', 0),
+            **({'queue_holds': len(status['queue_holds'])} if 'queue_holds' in status else {}),
+            'stages': [{key: row[key] for key in ('stage', 'status', 'elapsed_seconds')}
+                       for row in timing['stages']]}
+
+
+def performance_summary():
+    """Only bounded timings/counts enter public data; raw proofs stay private."""
+    warm = records.read(BENCH / 'config/warm-cache-validation.json')
+    cold = records.read(BENCH / 'config/cold-cache-timings.json')
+    result = {'warm': None, 'cold': None}
+    if warm:
+        if warm.get('scope') != 'warm_artifact_integrity' or warm.get('model_api_calls') != 0 or warm.get('provider_launches') != 0:
+            raise ValueError('Invalid offline warm timing receipt')
+        # Track exact consulted bytes in report identity; never rerun acceptance.
+        from concurrent.futures import ThreadPoolExecutor
+        def current(item):
+            name, expected = item
+            path = ROOT.joinpath(*action_cache.relative(name).parts)
+            try:
+                return records.sha(path) == expected
+            except OSError:
+                return False
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            fresh = all(pool.map(current, warm['inputs_sha256'].items()))
+        result['warm'] = {key: warm[key] for key in ('measured_at', 'total_seconds', 'budget_seconds',
+            'prepared_cases', 'native_saved_cases', 'reusable_native_cases', 'retained_changed_input_cases',
+            'accepted_regression_checks', 'verification_cache_hit', 'model_api_calls', 'provider_launches')}
+        result['warm'].update(current=fresh, passed=warm['passed'],
+            stages=[{key: row[key] for key in ('name', 'seconds')} for row in warm['stages']])
+    if cold:
+        result['cold'] = {key: cold[key] for key in ('measured_at', 'total_seconds', 'passed', 'complete')}
+        result['cold']['stages'] = [{key: row[key] for key in ('name', 'seconds', 'exit_code')} for row in cold['stages']]
+    benchmark = benchmark_timing_summary(records.read(BENCH / 'config/benchmark-status.json', {}))
+    if benchmark:
+        result['benchmark'] = benchmark
+    return result
+
+
 def money(cost):
     low, high = cost.get('low_usd'), cost.get('high_usd')
     if low is None:
-        return 'Not reported'
-    value = '$' + f'{low:.5f}'
+        return 'Unknown'
+    value = charts.usd(low)
     if abs(high - low) > 1e-10:
-        value += '–$' + f'{high:.5f}'
-    return value + (' + unreported usage' if not cost.get('usage_complete', True) else '')
+        value += '–' + charts.usd(high) + ' (rate range)'
+    return value + (' known subtotal; missing usage, final cost unknown' if not cost.get('usage_complete', False) else '')
 
 
 def table(headers, rows, identifier=None):
+    rows = list(rows)
     attrs = ' id="' + escape(identifier) + '"' if identifier else ''
-    return '<div class="scroll"><table' + attrs + '><thead><tr>' + ''.join(
-        '<th>' + escape(x) + '</th>' for x in headers) + '</tr></thead><tbody>' + ''.join(
-        '<tr>' + ''.join('<td>' + str(x) + '</td>' for x in row) + '</tr>' for row in rows) + '</tbody></table></div>'
+    if len(rows) > 50:
+        attrs += ' data-page-size="50" data-table-search'
+    caption = ' / '.join(headers)
+    return '<div class="scroll" role="region" tabindex="0" aria-label="' + escape(caption) + '"><table' + attrs + '><caption class="sr-only">' + escape(caption) + '</caption><thead><tr>' + ''.join(
+        '<th scope="col">' + escape(x) + '</th>' for x in headers) + '</tr></thead><tbody>' + ''.join(
+        '<tr>' + ''.join(('<th scope="row">' + str(x) + '</th>') if i == 0 else
+            '<td' + (' class="numeric"' if isinstance(x, (int, float)) or (str(x)[:1].isdigit()) else '') + '>' + str(x) + '</td>'
+            for i, x in enumerate(row)) + '</tr>' for row in rows) + '</tbody></table></div>'
 
 
 def summary(rows, model_catalog):
@@ -72,14 +156,16 @@ def summary(rows, model_catalog):
             'compiled': sum(r['grade']['compiled'] for r in graded),
             'passed': sum(r['grade']['passed'] for r in graded),
             'checks': sum(r['grade']['total'] for r in graded),
+            'case_equal_mean': sum(100*r['grade']['passed']/r['grade']['total'] for r in graded if r['grade']['total']) / len([r for r in graded if r['grade']['total']]) if any(r['grade']['total'] for r in graded) else None,
             'points_passed': sum(r['points_passed'] for r in graded),
             'points_total': sum(r['points_total'] for r in graded),
             'readability_mean': sum(reviews) / len(reviews) if reviews else None,
             'readability_n': len(reviews),
             'accepted_source_n': sum(bool(r['source']) for r in graded),
             'runtime_median_seconds': median(t for t, _ in timed) if timed else None,
+            'runtime_values_seconds': [t for t, _ in timed],
             'runtime_n': len(timed), 'runtime_timeouts': sum(timeout for _, timeout in timed),
-            'total_tokens': sum(r['receipt'].get('reported_usage', {}).get('totalTokens', 0) for r in receipts),
+            'total_tokens': sum(r['receipt'].get('reported_usage', {}).get('totalTokens') or 0 for r in receipts),
             'cost': {'low_usd': sum(c['low_usd'] for c in costs) if costs else None,
                      'high_usd': sum(c['high_usd'] for c in costs) if costs else None,
                      'usage_complete': all(r['cost'].get('usage_complete', False) for r in receipts)},
@@ -105,7 +191,8 @@ class Report:
             answer = ROOT / row['directory'] / 'answer.md'
             if answer.is_file():
                 self.answers[row['directory']] = records.read_bytes(answer).decode()
-        for path in [Path(__file__), Path(records.__file__), Path(charts.__file__), BENCH / 'scripts/pricing.py']:
+        for path in [Path(__file__), Path(records.__file__), Path(charts.__file__), BENCH / 'scripts/pricing.py',
+                     BENCH / 'scripts/usage.py', BENCH / 'scripts/grading/store.py']:
             records.read_bytes(path)
         self.aliases = records.read(BENCH / 'config/report-aliases.json', {})
         self.coverage = records.read(BENCH / 'suites/stl-native-v2/config/coverage.json')
@@ -118,7 +205,32 @@ class Report:
         self.data['evidence_validation'] = evidence_validation.for_report(records.read_bytes)
         self.data['paging_validation'] = evidence_validation.for_report(records.read_bytes, BENCH / 'config/evidence-paging-validation.json')
         self.data['runner_validation'] = evidence_validation.for_report(records.read_bytes, BENCH / 'config/runner-validation.json')
+        self.data['runtime_performance'] = performance_summary()
+        self.data['runtime_attestation'] = runtime_attestation.for_report(records.read_bytes)
+        self.data['grading_runtime'] = grading_evidence.for_report(records.read_bytes)
+        self.data['c_executor'] = c_executor_evidence.for_report(records.read_bytes)
+        self.data['capability_preparation'] = capability_summary.for_report(records.read_bytes)
+        for row in self.data['records'] + self.data.get('condition_records', []):
+            row['runtime_attestation_status'] = runtime_attestation.observation(ROOT / row['directory'], records.read_bytes,
+                started=bool(row.get('receipt')) or row['status'] != 'not_started')
         self.data['benchmark_configuration'] = records.read(BENCH / 'config/benchmark.json')
+        budget_policy = records.read(BENCH / 'config/request-contract.json')
+        self.data['task_budget_policy'] = {'policy_id': budget_policy['id'], 'limits': budget_policy['task_limits']}
+        if budget_policy.get('adaptive_budget'):
+            self.data['task_budget_policy']['adaptive_budget'] = budget_policy['adaptive_budget']
+        if budget_policy.get('wallet_limits'):
+            self.data['task_budget_policy']['wallets'] = [{key: item[key] for key in
+                ('model', 'currency', 'limit_nano', 'semantics', 'max_response_tokens') if key in item} for item in budget_policy['wallet_limits']]
+        self.data['capability_measurements'] = capability_measurements.collect(records.read_bytes,
+            data['models'], self.data['benchmark_configuration'])
+        records.read_bytes(Path(capability_measurements.__file__))
+        self.data['capability_measurements']['validation'] = capability_measurements.validation(records.read_bytes)
+        self.data['capability_registration'] = registration_report.for_report(records.read_bytes, self.data['capability_measurements'])
+        for path in ('registration_report.py', 'registration.py', 'build_metadata.py', 'metrics.py'):
+            records.read_bytes(BENCH / 'scripts/capabilities' / path)
+        dates = [value for value in (self.data.get('data_as_of'), self.data['capability_registration']['data_as_of']) if value]
+        if dates:
+            self.data['data_as_of'] = max(datetime.datetime.fromisoformat(value.replace('Z', '+00:00')) for value in dates).isoformat()
         self.data['benchmark_status'] = records.read(BENCH / 'config/benchmark-status.json', {})
         self.data['entrypoint_archive'] = records.read(BENCH / 'archive/entrypoint-cleanup/manifest.json')
         preservation = records.read(BENCH / 'config/cleanup-preservation.json')
@@ -138,14 +250,14 @@ class Report:
         implementation_current = set(implementation) == expected_auditors and all(
             hashlib.sha256(records.read_bytes(ROOT / name)).hexdigest() == digest for name, digest in implementation.items())
         for entry in live_audit['cases']:
-            entry['inputs_current'] = audit_environment.receipt_current(entry, records.read_bytes) and live_audit.get('auditor_sha256') == auditor_hash and implementation_current
+            entry['inputs_current'] = implementation_current and live_audit.get('auditor_sha256') == auditor_hash and audit_environment.receipt_current(entry, records.read_bytes)
             if not entry['inputs_current']:
                 entry['status'] = 'unverified'
         self.data['condition_evidence_audit'] = live_audit
         archives = records.read(BENCH / 'config/environment-profile-archives.json', {'profiles': {}})
         self.profile_files = {}
         for fingerprint, item in archives['profiles'].items():
-            item['files_current'] = True
+            item['files_current'] = item.get('complete', True) and not item.get('missing_files_sha256')
             for name, digest in item['files_sha256'].items():
                 try:
                     raw = records.read_bytes(ROOT / name)
@@ -163,6 +275,14 @@ class Report:
         for row in data['records']:
             row['environment_delivery'] = self.environment_case(row).get('status', 'unverified')
             row['model_only_comparison_certified'] = False
+        report_prices.prepare(self.data)
+        report_budget.prepare(self.data)
+        localization_overlay = localization_report.load(records.read_bytes)
+        if localization_overlay:
+            self.data['localization_regrades'] = localization_overlay
+        for module in (report_views, report_prices, report_budget, localization_report):
+            records.read_bytes(Path(module.__file__))
+        records.read_bytes(BENCH / 'scripts/report_states.py')
         self.data['input_files_sha256'] = dict(sorted(records.INPUTS.items()))
         self.build_id = hashlib.sha256(json_text(self.data).encode()).hexdigest()
         self.data['report_build_id'] = self.build_id
@@ -202,38 +322,59 @@ class Report:
         path.write_bytes(content if isinstance(content, bytes) else content.encode())
 
     def page(self, name, title, body):
+        seen = set(re.findall(r'id="([^"]+)"', body))
+        def section_anchor(match):
+            base = re.sub('[^a-z0-9]+', '-', html.unescape(match[1]).lower()).strip('-') or 'section'
+            anchor, suffix = base, 2
+            while anchor in seen:
+                anchor, suffix = base + '-' + str(suffix), suffix + 1
+            seen.add(anchor)
+            return '<section id="' + anchor + '"><h2>' + match[1] + '</h2>'
+        body = re.sub(r'<section><h2>([^<]+)</h2>', section_anchor, body)
         parent = Path(name).parent
         link = lambda target: escape(os.path.relpath(target, str(parent)))
+        subtitle = {'index.html': 'Recorded results for native reconstruction and typed capabilities.',
+                    'dimensions.html': 'Measured model profiles across languages, behavior, build conditions and readability; missing evidence remains unmeasured.',
+                    'costs.html': 'Known usage and published-rate estimates across both tracks; actual invoices unavailable.',
+                    'capabilities.html': 'Typed capability observations, strict task scores and execution status.',
+                    'capability-inventory.html': 'Searchable configuration, contracts and build evidence; preparation is not a model score.',
+                    'cases/index.html': 'Native reconstruction cases, model outcomes and saved conditions.'}.get(name,
+                    'Saved task, condition and outcome evidence.' if name.startswith(('attempts/', 'cases/')) else
+                    'Methods, provenance and limitations of the saved benchmark results.')
         navigation = ''.join('<a href="' + link(target) + '">' + label + '</a>' for target, label in [
-            ('index.html', 'Overview'), ('cases/index.html', 'All cases'), ('coverage.html', 'Coverage'),
-            ('compilers.html', 'Compilers & optimization'), ('costs.html', 'Tokens & cost'), ('diagnostics.html', 'Diagnostics'),
-            ('methodology.html', 'Methodology'), ('history/index.html', 'History')])
+            ('index.html', 'Overview'), ('dimensions.html', 'Capability diagrams'), ('comparison.html', 'Native comparison'), ('cases/index.html', 'Native cases'), ('capabilities.html', 'Typed outcomes'),
+            ('costs.html', 'Tokens & cost'), ('coverage.html', 'Coverage'), ('compilers.html', 'Build conditions'),
+            ('diagnostics.html', 'Diagnostics'), ('measurement.html', 'Measurement validity'), ('methodology.html', 'Methodology'), ('history/index.html', 'History')])
         self.write(name, self.template.substitute(title=escape(title), stylesheet=link('assets/report.css'),
-            script=link('assets/report.js'), navigation=navigation, body=body,
-            data_date=escape(self.data_date), build_id=self.build_id[:12]))
+            script=link('assets/report.js'), locale_scripts=''.join('<script src="' + link('assets/' + name) + '" defer></script>' for name in ['locales/en.js', 'locales/zh-CN.js', 'locales/ja.js', 'i18n-config.js', 'i18n.js']), navigation=navigation, body=body,
+            data_date=escape(self.data_date), build_id=self.build_id[:12], subtitle=escape(subtitle)))
 
     def summary_table(self, rows):
-        return table(['Model / harness', 'Graded / planned', 'Programs passed', 'Exact checks',
-                      'Complete points', 'AI readability', 'Median runtime', 'Known tokens', 'Estimated USD equivalent'], [
+        return table(['Model / harness', 'Graded / configured', 'Programs passed',
+                      'Check-weighted pass rate', 'Case-equal mean', 'AI readability'], [
             [escape(item['model_label']) + '<small>' + escape(item['harness']) + '</small>',
              f'{item["graded_attempts"]}/{item["planned_cells"]}',
-             f'{item["programs_passed"]}/{item["graded_attempts"]}',
-             f'{item["passed"]:,}/{item["checks"]:,}', f'{item["points_passed"]}/{item["points_total"]}',
-             f'{item["readability_mean"]:.2f}/10<small>n={item["readability_n"]}</small>' if item['readability_n'] else 'No accepted source<small>n=0</small>' if item['graded_attempts'] and not item['accepted_source_n'] else 'Pending review',
-             f'{item["runtime_median_seconds"] / 60:.1f} min<small>n={item["runtime_n"]}; {item["runtime_timeouts"]} timed out</small>' if item['runtime_n'] else 'Unreported',
-             f'{item["total_tokens"]:,}', money(item['cost'])]
+             f'{item["programs_passed"]}/{item["graded_attempts"]}' if item['graded_attempts'] else 'Not graded (n=0)',
+             f'{100*item["passed"]/item["checks"]:.2f}%<small>{item["passed"]:,}/{item["checks"]:,} checks</small>' if item['checks'] else 'Not graded (n=0)',
+             f'{item["case_equal_mean"]:.2f}%<small>n={item["graded_attempts"]} cases</small>' if item['case_equal_mean'] is not None else 'Not graded (n=0)',
+             f'{item["readability_mean"]:.2f}/10<small>Coordinating AI; n={item["readability_n"]}</small>' if item['readability_n'] else 'No reviewed accepted source (n=0)']
             for item in summary(rows, self.data['models'])])
 
     def case_link(self, row):
         suffix = '' if row.get('condition', 'legacy-recorded') == 'legacy-recorded' else '-' + row['condition']
         return 'cases/' + row['experiment'] + '/' + row['case']['id'] + suffix + '.html'
 
+    def case_anchor(self, row):
+        return row['model'] + (('-' + row['attempt_id'][:12])
+            if not row.get('attempt_current', True) and row.get('attempt_id') else '')
+
     def all_records(self):
         return self.data['records'] + self.data.get('condition_records', [])
 
     def current_records(self):
-        corrected = records.active_condition_rows(self.data)
-        return corrected or [r for r in self.data['records'] if r['role'] == 'primary']
+        # Display current catalogue coverage using all valid saved caches, not
+        # only the newest harness namespace. Individual evidence stays intact.
+        return report_views.aggregate_native_rows(self.data)
 
     def condition_comparison(self):
         corrected = records.active_condition_rows(self.data)
@@ -255,7 +396,7 @@ class Report:
         for label, rows in [('Fixed harnesses', corrected), ('Original harnesses', original)]:
             body += '<h4>' + label + '</h4>' + self.summary_table([r for r in rows if r['model'] in historical_models and (r['experiment'], r['case']['id']) in common])
         active_ids={(r['experiment'],r['case']['id'],r['model'],r['condition']) for r in corrected}
-        diagnostics=[r for r in self.data.get('condition_records',[]) if (r['experiment'],r['case']['id'],r['model'],r['condition']) not in active_ids and r['receipt']]
+        diagnostics=[r for r in self.data.get('condition_records',[]) if (not r.get('attempt_current', True) or (r['experiment'],r['case']['id'],r['model'],r['condition']) not in active_ids) and r['receipt']]
         if diagnostics:
             body += '<h3>Preserved delivery-repair diagnostics and expenditure</h3><p>These v1 hard-case attempts were stopped or rejected by the provider context limit. They are not zero model scores and are not counted twice as completed fixed cases. Their observed tokens and costs remain in this table and the cumulative ledger.</p>' + self.summary_table(diagnostics)
         return body + '<p>Cases run sequentially within each model, with up to three models active together. Shared machine load can affect runtime. These are single-attempt measurements, not a replicated causal study. Token and price estimates use recorded provider usage and the same frozen pricing basis; actual invoices remain unavailable. Removing evidence loss does not equalize different system prompts, model context windows or provider behavior.</p></section>'
@@ -269,79 +410,25 @@ class Report:
                 state = ('All checks passed' if row['program_success'] else
                          'No accepted native source' if (row['receipt'] or {}).get('timed_out') and not row['source'] else
                          'Submission format rejected' if 'Expected' in (grade.get('failure') or '') else
-                         'Compile failed' if not grade['compiled'] else 'Mismatch / stopped')
+                         'Compile failed; semantic checks not executed' if not grade['compiled'] else 'Compiled; behavioral checks not all passed')
             if (row['receipt'] or {}).get('timed_out'):
                 state += '; inference timed out'
+            budget_label = report_budget.outcome_label(row.get('budget_condition', {}).get('outcome'))
+            if grade and budget_label:
+                state += '; ' + budget_label
             elapsed = charts.elapsed_seconds(row['receipt'])
-            result.append(['<a href="' + escape(prefix + self.case_link(row)) + '">' + escape(row['case']['label']) + '</a>',
+            result.append(['<a href="' + escape(prefix + self.case_link(row) + '#' + self.case_anchor(row)) + '">' + escape(row['case']['label']) + '</a><small>' + escape(row['experiment_label'] + ' · output ' + str(row.get('output_language') or row['case']['language'])) + '</small>',
                 escape(row['model_label']) + '<small>' + escape(row.get('condition_label', 'Original harnesses')) + '</small><small>Evidence: ' + escape(self.environment_label(row)) + '</small>', escape(state),
                 f'{grade["passed"]:,}/{grade["total"]:,}' if grade else 'Not graded',
                 f'{row["points_passed"]}/{row["points_total"]}' if grade else '—',
                 str(row['readability']['total']) + '/10' if row['readability'] else 'No accepted native source' if grade and not row['source'] else 'Pending review',
                 f'{elapsed / 60:.1f} min' if elapsed is not None else 'Unreported',
-                f'{row["receipt"].get("reported_usage", {}).get("totalTokens", 0):,}' if row['receipt'] else '—',
+                report_views.count(row['receipt'].get('reported_usage', {}).get('totalTokens')) if row['receipt'] else '—',
                 money(row['cost']) if row['receipt'] else '—'])
         return table(['Case', 'Model', 'Status', 'Exact checks', 'Points', 'Readability', 'Elapsed', 'Known tokens', 'API estimate'], result, identifier)
 
     def overview(self):
-        primary = self.current_records()
-        glm = [r for r in primary if r['harness'] == 'zcode']
-        stopped = self.data['execution']['experiments_stopped']
-        cards = [(len({(r['experiment'], r['case']['id']) for r in primary}), 'Existing native protocol cases'),
-                 (sum(bool(r['grade']) for r in primary), 'Saved native grades'),
-                 (sum(bool(r['grade']) for r in glm), 'GLM cases graded'),
-                 (sum(bool(r['grade']) for r in primary if r['harness'] != 'zcode'), 'DeepSeek / GPT cases graded')]
-        finished = all(r['grade'] for r in primary)
-        status = 'The fixed-harness comparison is complete; all ' + str(len(primary)) + ' cells have saved grades. No experiments are running.' if stopped and finished else 'Experiments are stopped. No automatic restart or retry is enabled.' if stopped else 'Execution is enabled only through an explicit run command.'
-        body = '<section><h2>Global status</h2><div class="cards">' + ''.join(
-            '<div class="card"><strong>' + str(value) + '</strong>' + label + '</div>' for value, label in cards) + '</div><p><strong>' + (
-            status) + '</strong></p>'
-        body += '<p>This is the global report across all recorded experiments and harness conditions. The main charts show the current fixed-harness condition. Original results remain in the before/after tables, case pages and complete cost ledger. Completed, interrupted, ungraded and unstarted cells remain visible; missing usage can add further cost.</p></section>'
-        body += self.condition_comparison()
-        active_ids={(r['experiment'],r['case']['id'],r['model'],r['condition']) for r in primary}
-        measured = [c for c in self.data['condition_evidence_audit']['cases'] if (c['experiment'],c['case'],c['model'],c['condition']) in active_ids]
-        body += '<section><h2>Fixed-condition delivery checks</h2><p>' + str(sum(c.get('status') == 'primary_complete' and c.get('inputs_current') for c in measured)) + '/' + str(len(primary)) + ' planned cells have exact model-facing tool results at the audited layer. DSH is checked against durable model-input records; ZCode against outgoing cached HTTP messages. For paged cases, original hashes, field catalogs and every retrieved slice are also checked. Unrequested pages are available for retrieval and are not claimed as read. Missing or changed audit inputs remain unverified. <a href="data/condition-evidence-audit.json">Per-case delivery evidence</a>.</p></section>'
-        constraints = [(c, e) for c in measured if c.get('inputs_current') for e in c.get('paging', {}).get('backend_resource_constraints', [])]
-        if constraints:
-            body += '<section><h2>Remaining analysis-service limits</h2><p>' + str(len(constraints)) + ' returned tool errors reached REA’s own transport/resource boundary before common paging. These errors were delivered explicitly; they are distinct from silent client clipping. Narrower pseudocode or assembly queries remain available. A complete evidence-delivery audit verifies the returned error and does not certify that an oversized backend result was available through the benchmark catalog.</p>' + table(['Case', 'Model', 'Query', 'Error'], [
-                [escape(c['case']), escape(self.data['models'][c['model']]['label']), escape(e['tool']), escape(e.get('code', 'resource constraint'))] for c, e in constraints]) + '</section>'
-        audit = self.data['environment_audit']
-        dsh = [c for c in audit['cases'] if c['model'] != 'glm-5.3']
-        body += '<div class="notice"><strong>Environment fairness: model-only comparison is not certified.</strong> The original audit found ' + str(sum(c.get('counts', {}).get('spilled', 0) > 0 for c in dsh)) + '/' + str(len(dsh)) + ' DSH attempts with spilled evidence and blocked suggested recovery, and a different ZCode clipping policy. The fixed conditions remove those client controls, but system prompts, providers and context limits still differ. Scores below describe model + harness setups. <a href="diagnostics.html#environment">Read the original cross-harness audit and required controls</a>.</div>'
-        validation = self.data['paging_validation'] if self.data.get('condition_records') else self.data['evidence_validation']
-        state = 'Passed offline replay' if validation.get('passed') else 'Validation pending or stale'
-        body += '<section><h2>Evidence delivery fixes: ' + state + '</h2><p>The current benchmark profile disables DSH spilling, pruning and automatic compaction. A benchmark-only ZCode overlay removes proven duplicate structured data. Both clients share explicit, bounded evidence paging on the harder cases, retaining returned originals by hash. <a href="diagnostics.html#evidence-fixes">See validation and implementation status</a>. Historical scores stay unchanged; fresh attempts are reported separately under the fixed condition.</p></section>'
-        diagnosis = self.data['glm_diagnosis']['cases']
-        timeouts = sum(c['timed_out'] for c in diagnosis)
-        body += '<section><h2>Original GLM cached-trace investigation</h2><p>' + str(timeouts) + ' original GLM attempts reached their wall limit. Their traces show extended reasoning, duplicated tool evidence, clipped results and missing deadline-aware finalization. <a href="diagnostics.html">Read the original evidence and implemented fixes</a>. The fixed condition is a new measurement of those same cases, not a revision of the original scores.</p></section>'
-        native_summary = summary(primary, self.data['models'])
-        body += '<section><h2>Coverage before scores</h2>' + charts.completion(native_summary) + charts.outcome_chart(primary, self.data['models']) + '</section>'
-        completed = {}
-        for row in primary:
-            if row['grade']:
-                completed.setdefault((row['experiment'], row['case']['id']), set()).add(row['model'])
-        shared = {key for key, models in completed.items() if models == set(self.data['models'])}
-        matched = [r for r in primary if (r['experiment'], r['case']['id']) in shared]
-        body += '<section><h2>Compare recovery quality of recorded setups</h2><p>Shared graded cases provide equal coverage across all registered models. Older and lighter GPT baselines use the same existing C++ / Rust / Go cases; pending cells remain visible in the coverage tables. The shared view is selected by default when coverage differs. This does not certify equal evidence delivery or a pure model comparison. Exact checks weight large fixtures more heavily; whole-program and function-point charts show complementary measures.</p><div class="chart-tabs" role="group" aria-label="Comparison scope"><button type="button" data-chart-scope="all" aria-pressed="false">All native cases</button><button type="button" data-chart-scope="matched" aria-pressed="true">Shared graded cases (' + str(len(shared)) + ')</button></div>'
-        body += '<div data-chart-panel="all" hidden><p class="chart-note">Each system uses its own graded subset. Check coverage above before comparing percentages.</p>' + charts.score_charts(native_summary) + charts.runtime_chart(native_summary) + '</div>'
-        body += '<div data-chart-panel="matched"><p class="chart-note">Same ' + str(len(shared)) + ' frozen cases with saved grades for every system; graded inference failures are included. Readability can have fewer samples when no source was returned. This subset can favor easier cases while a batch is incomplete.</p>' + (charts.score_charts(summary(matched, self.data['models'])) + charts.runtime_chart(summary(matched, self.data['models'])) + '<h3>Same-case tokens, cost and runtime</h3>' + charts.token_chart(matched, self.data['models']) + charts.cost_chart(summary(matched, self.data['models'])) + self.summary_table(matched) + '<p class="chart-note">These totals cover this shared set only. Other historical and interrupted charges remain visible in the global expenditure ledger.</p>' if matched else '<p>No cases have grades across every system yet.</p>') + '</div></section>'
-        body += '<section><h2>Current frozen native cases</h2><p>Additional compiler/optimization builds and frontend feature probes are tracked separately on the <a href="compilers.html">Compilers &amp; optimization page</a>; build validation is not a model measurement.</p>' + self.summary_table(primary) + '</section>'
-        for experiment in self.data['experiments']:
-            if experiment['role'] == 'primary':
-                body += '<section><h2>' + escape(experiment['label']) + '</h2>' + self.summary_table(
-                    [r for r in primary if r['experiment'] == experiment['id']]) + '</section>'
-        validation = self.data['runner_validation']
-        status = self.data['benchmark_status']
-        body += '<section><h2>Configured benchmark and cache reuse</h2><p><code>make benchmark</code> selects every enabled model and active primary case from configuration, validates reusable inference, runs only unstarted cells, grades, audits and rebuilds this global report. Historical results remain included for every selection. <code>make benchmark BENCHMARK_FLAGS=--offline</code> refuses missing inference before provider access.</p>'
-        if validation.get('passed'):
-            body += '<p><strong>Offline coordinator verification passed:</strong> ' + str(validation['repeat_runs']) + ' repeated runs × ' + str(validation['cache_hits_per_run']) + ' validated cache hits; zero provider launches. One isolated simulated cache miss dispatched once and was reused on the second call. Changed inputs, corruption and automatic retries were rejected.</p>'
-        else:
-            body += '<p>Coordinator/cache validation is missing or stale; run <code>make check-runner</code>.</p>'
-        if status:
-            body += '<p>Latest configured execution: ' + str(status.get('cache_hits', 0)) + '/' + str(status.get('selected_tasks', 0)) + ' cache hits, ' + str(status.get('provider_launches', 0)) + ' provider launches, ' + str(len(status.get('failures', []))) + ' failures. Correctness, readability, tokens and cost above remain global recorded measurements.</p>'
-        body += '<p><a href="data/benchmark-configuration.json">Selection configuration</a> · <a href="data/benchmark-status.json">Execution receipt</a> · <a href="data/runner-validation.json">Offline acceptance evidence</a> · <a href="data/entrypoint-archive.json">Archived entrypoints</a></p></section>'
-        body += '<section><h2>Rebuild and download</h2><p><code>make reports</code> recreates every page, table, source export and ZIP offline. Reports use no generated reports as inputs.</p><p><a href="data/comparison.json">Global JSON</a> · <a href="data/comparison.csv">CSV</a> · <a href="data/report-inputs.json">Input hashes</a> · <a href="benchmark-report.zip">Portable report ZIP</a></p></section>'
-        self.page('index.html', 'Global benchmark results', body)
+        report_views.overview(self)
 
     def case_pages(self):
         groups = {}
@@ -354,10 +441,11 @@ class Report:
                     ['Language', escape(info['language'])], ['Standard / string ABI', escape(str(info['standard']) + ' / ' + str(info['string_abi']))],
                     ['Tool count / call ceiling', f'{info["tool_count"]} / {info["max_tool_calls"]}'],
                     ['Wall limit / response ceiling', f'{info["timeout_seconds"]} seconds / {info["max_output_tokens"]:,} tokens']]) + '</section>'
-            body += '<section><p>Harness condition: <strong>' + escape(rows[0].get('condition_label', condition)) + '</strong>. <a href="../../index.html#conditions">Global before/after comparison</a>.</p></section>'
+            body += '<section><p>Harness condition: <strong>' + escape(rows[0].get('condition_label', condition)) + '</strong>. <a href="../../history/index.html#conditions">Global before/after comparison</a>.</p></section>'
             for row in rows:
-                body += '<section id="' + escape(row['model']) + '"><h2>' + escape(row['model_label']) + '</h2><p>' + escape(STATUSES[row['status']]) + ' · ' + escape(row['harness']) + '</p>'
+                body += '<section id="' + escape(self.case_anchor(row)) + '"><h2>' + escape(row['model_label']) + '</h2><p>' + escape(STATUSES[row['status']]) + ' · ' + escape(row['harness']) + '</p>'
                 body += '<p class="notice">Environment audit: ' + escape(self.environment_label(row)) + '. This is an observed setup result, not an environment-independent model score. <a href="../../diagnostics.html#environment">Audit details</a>.</p>'
+                body += report_budget.detail(row.get('budget_condition'))
                 if row.get('target_build'):
                     build = row['target_build']
                     body += '<p>Target build: <strong>' + escape(build['compiler_family'] + ' ' + build['compiler_version'] + ' / -' + build['optimization']) + '</strong>; ' + escape(build['standard']) + ', ' + escape(build['standard_library']) + ', string ABI ' + str(build['string_abi']) + ', strip ' + escape(build['strip_mode']) + '. <a href="../../compilers.html">Distinct compiler/optimization test points</a>.</p>'
@@ -413,6 +501,8 @@ class Report:
                     if grade and grade.get('first_mismatches'):
                         body += '<details><summary>First scored mismatches</summary><pre>' + escape(json_text(grade['first_mismatches'])) + '</pre></details>'
                 body += '</section>'
+            body = '<section><h2>Case identity</h2><p>' + escape(report_views.case_identity(rows[0])) + '</p></section>' + body
+            body += report_views.readability_note()
             self.page(self.case_link(rows[0]), info['label'] + ' · ' + rows[0].get('condition_label', condition), body)
         primary = self.current_records()
         body = '<section><h2>At a glance: native recovery</h2><p class="notice">The matrix shows the fixed harnesses. Original results remain in the full table below. <a href="../diagnostics.html#environment">Model-only attribution is not certified</a>; matching cases does not remove system-prompt and provider differences.</p>' + charts.heatmap(primary, self.data['models'], '../') + '</section>'
@@ -420,52 +510,459 @@ class Report:
         self.page('cases/index.html', 'All cases and models', body)
 
     def costs(self):
-        all_rows = self.all_records()
-        p = self.data['glm_pricing']
-        body = '<section><h2>Price and currency basis</h2><p>GLM standard prepaid pricing is CNY ' + str(p['input']) + ' per million fresh input tokens, CNY ' + str(p['cache_read']) + ' per million cached input tokens, and CNY ' + str(p['output']) + ' per million output tokens. Cache storage is listed as temporarily free in the saved snapshot. <a href="' + escape(p['source']) + '">Official BigModel pricing</a>.</p>'
-        body += '<p>USD equivalents use the saved ECB reference cross-rate: ' + f'{p["fx"]["cny_per_usd"]:.6f}' + ' CNY per USD, dated ' + escape(p['fx']['date']) + '. This is a display conversion. <a href="' + escape(p['fx']['source']) + '">ECB reference source</a>.</p><p>DeepSeek and GPT retain each experiment’s frozen published-rate snapshot and pricing-period rules. GPT dollar amounts are Codex API equivalents. Actual invoice debits, prepaid deductions and subscription-credit charges remain unavailable.</p></section>'
-        for model_id, snapshot in self.data['supplemental_pricing'].items():
-            spec = snapshot[model_id]
-            if 'peak_utc_hours' in spec:
-                body += '<section><h2>' + escape(self.data['models'][model_id]['label']) + ' pricing snapshot</h2>' + table(
-                    ['USD per million tokens', 'Fresh input', 'Cached input', 'Cache writes', 'Output'], [
-                        [escape(period.replace('_', ' ').title()), *[spec[period][key] for key in ['input', 'cache_read', 'cache_write', 'output']]]
-                        for period in ['off_peak', 'peak']]) + '<p>Weekday peak UTC hours: ' + escape(', '.join(str(a) + ':00–' + str(b) + ':00' for a, b in spec['peak_utc_hours'])) + '. ' + escape(spec.get('holidays_note', '')) + ' Frozen on ' + escape(snapshot['verified_at_utc']) + '. <a href="' + escape(spec['source']) + '">Official model pricing</a>.</p><p>' + escape(spec.get('selection_note', '')) + ' Published-rate estimates; actual API invoice debit unavailable. Existing experiment snapshots remain unchanged.</p></section>'
-                continue
-            rates = spec['short']
-            body += '<section><h2>' + escape(self.data['models'][model_id]['label']) + ' pricing snapshot</h2><p>Standard USD per million tokens: fresh input ' + str(rates['input']) + ', cached input ' + str(rates['cache_read']) + ', cache writes ' + str(rates['cache_write']) + ', output ' + str(rates['output']) + '. Requests above ' + str(spec['short_context_max_input']) + ' input tokens use the recorded long-context multipliers. Missing cache-write counts produce a cost range. Frozen on ' + escape(snapshot['verified_at_utc']) + '. <a href="' + escape(spec['source']) + '">Official model documentation</a>. ' + escape(spec.get('promotion_note', '')) + '</p><p>Existing experiment snapshots remain unchanged. These GPT amounts are API-equivalent estimates for the Codex plan route; they are not measured subscription or credit debits.</p></section>'
-        body += '<section><h2>All observed expenditure, including all harness conditions, history and interrupted attempts</h2>' + self.summary_table(all_rows) + '</section>'
-        body += '<section><h2>Spending and token mix</h2>' + charts.token_chart(all_rows, self.data['models']) + charts.cost_chart(summary(all_rows, self.data['models'])) + '</section>'
-        timings = []
-        for row in all_rows:
-            evidence = row.get('timing_evidence')
-            elapsed = charts.elapsed_seconds(row['receipt'])
-            if not evidence or elapsed is None:
-                continue
-            timings.append(['<a href="' + escape(self.case_link(row)) + '#' + escape(row['model']) + '">' + escape(row['case']['label']) + '</a>',
-                            escape(row['model_label']), f'{elapsed / 60:.2f} min',
-                            f'{evidence["completed_request_seconds"] / 60:.2f} min',
-                            f'{evidence["tool_seconds_sum"] / 60:.2f} min' if evidence['tool_seconds_sum'] is not None else 'Unreported',
-                            str(evidence['requests_without_end_time']),
-                            'Timed out' if row['receipt'].get('timed_out') else escape(STATUSES[row['status']])])
-        if timings:
-            body += '<section><h2>Where runtime is recorded</h2><p>Saved request ledgers distinguish API waiting from Ghidra tool time. API durations include streaming and network latency, so they do not isolate model compute. Interrupted requests without an end timestamp are omitted from that subtotal; tool durations are summed and can overlap when calls run in parallel. These columns are evidence, not an additive wall-time decomposition. Attempts without a request ledger remain in the other comparisons.</p>' + table(
-                ['Case', 'Model', 'Elapsed inference', 'Completed API request time', 'Summed tool time', 'Requests without end time', 'Status'], timings) + '</section>'
-        entries = []
-        for row in all_rows:
-            if not row['receipt']:
-                continue
-            usage = row['receipt'].get('reported_usage', {})
-            cost = row['cost']
-            cny = ('CNY ' + f'{cost["low_cny"]:.5f}' + ('–' + f'{cost["high_cny"]:.5f}' if cost['low_cny'] != cost['high_cny'] else '')) if cost.get('low_cny') is not None else '—'
-            entries.append([escape(row['case']['label']) + '<small>' + escape(row.get('condition_label', 'Original harnesses')) + '</small>', escape(row['model_label']), escape(STATUSES[row['status']]),
-                f'{usage.get("inputTokens", 0):,}', f'{usage.get("cacheReadTokens", 0):,}',
-                f'{usage["cacheWriteTokens"]:,}' if 'cacheWriteTokens' in usage else 'Unreported',
-                f'{usage.get("outputTokens", 0):,}', f'{usage.get("totalTokens", 0):,}', cny, money(cost)])
-        body += '<section><h2>Provider-reported categories</h2>' + table(
-            ['Case', 'Model', 'Status', 'Fresh input', 'Cached input', 'Cache writes', 'Output', 'Known total', 'CNY estimate', 'USD equivalent'], entries) + '</section>'
-        body += '<section><h2>Accounting rules</h2><p>Token counts use each provider’s tokenizer and include repeated and cached context; they are not counts of unique source-code tokens. Reported output includes reasoning when the provider includes it; reasoning is not added again. Raw GLM stream usage is counted once per HTTP request. Missing cache details produce a rate range. Interrupted streams may omit final usage; displayed amounts then cover observed usage only. Synthetic local fixtures are excluded. Estimates exclude local compute, setup and this coordinating conversation.</p></section>'
-        self.page('costs.html', 'Tokens, prices and cost', body)
+        report_views.costs(self)
+
+    def task_budget_section(self):
+        policy = self.data.get('task_budget_policy')
+        if not policy:
+            return '<section id="task-budgets"><h2>Task spending limits</h2><p>No cumulative task policy was recorded in this saved snapshot. Historical results are unchanged.</p></section>'
+        if policy.get('adaptive_budget'):
+            a = policy['adaptive_budget']
+            return ('<section id="task-budgets"><h2>Task spending limits</h2><p>New lean-evidence-v4 attempts: '
+                + f"{a['max_response_tokens']:,} tokens per response on provider-capped routes. "
+                + ('No turn-count limit. ' if a['max_model_turns'] is None else f"{a['max_model_turns']} turns. " )
+                + 'Codex OAuth has an observed response threshold, not a provider cap. Basic native and its compiler variants have no aggregate token/cost limit. '
+                + 'Other cases use twice the same-model/provider/type mean of complete answers, frozen before each case; the latest complete answer per case contributes once. '
+                + 'Incorrect complete answers are included; incomplete stops are excluded. With no qualifying sample, the first case has no aggregate threshold. '
+                + 'DeepSeek/GLM use separately priced cached input, fresh input and output. Routes without a fixed price use observed total tokens. '
+                + 'The last admitted response may overshoot; this is not a hard invoice cap. Wall-time, tool and zero-retry guards remain active. '
+                + 'Historical results retain their original conditions. Correctness and budget compliance are reported separately. Policy: <code>'
+                + escape(policy['policy_id']) + '</code>.</p></section>')
+        limits = policy['limits']
+        wallets = ''.join('<p>Lean-v4 ' + escape(w['model']) + ': ' + escape(w['currency']) + ' ' + str(w['limit_nano']/10**9) + '/case fixed-price stop threshold.' + (f" Response ceiling {w['max_response_tokens']:,} tokens, reduced to remaining task allowance." if w.get('max_response_tokens') else '') + ' Cache reads use their lower price; full total tokens are still reported. Final response may overshoot; not a hard invoice cap.</p>' for w in policy.get('wallets', []))
+        return '<section id="task-budgets"><h2>Task spending limits</h2><p>Configuration for future launches only; these limits do not retroactively certify or change historical results.</p>' + table(
+            ['Bound', 'Configured limit'], [[label, f'{limits[key]:,}'] for key, label in (
+                ('max_model_turns', 'Model requests / turns'), ('max_response_tokens', 'Default response cap (provider-capped routes only; wallet overrides below)'),
+                ('max_output_tokens', 'Task output-token threshold'),
+                ('max_observed_total_tokens', 'Legacy total-token threshold (replaced by wallet policy on eligible lean-v4 routes)'))]) + '<p>Provider-capped routes reserve each response cap before forwarding; final known output releases unused allowance and missing usage retains the reservation. The separately authorized signed-in Codex OAuth route sends no provider response cap. Its turn, time and tool limits remain active; output and total-token thresholds stop later requests using observed usage. A single response can exceed those thresholds, and missing usage stops further requests. These are distinct budget conditions, not equal output ceilings.</p><p>Reaching a task limit stops this attempt without retry; the configured queue policy may continue to the next case. Incomplete budget-stopped attempts remain ungraded. A complete final candidate can be graded even if its last response crosses an aggregate threshold; it remains labelled budget exceeded / attempt stopped and is not budget-compliant. Correctness is checked offline after submission; hidden tests do not guide live stopping. Recorded request receipts identify each attempt’s actual condition; unidentified historical limits remain unknown. Provider accounting is route-specific. GPT costs are API-equivalent estimates; actual Codex subscription debit is unknown. Policy: <code>' + escape(policy['policy_id']) + '</code>.</p>' + wallets + '</section>'
+
+    def measurement(self):
+        rows = self.all_records()
+        graded = [row for row in rows if row.get('grade')]
+        revised = [row for row in graded if row['grade'].get('grading_version') in ('exact-returns-v2', 'exact-returns-v3')]
+        changed = [row for row in revised if row['grade'].get('original_passed') != row['grade']['passed'] or
+                   row['grade'].get('original_program_success') != row['program_success']]
+        body = '<section><h2>Grading and accounting revisions</h2><p>' + str(len(revised)) + '/' + str(len(graded)) + ' saved grades use the shared exact-byte return protocol. ' + str(len(changed)) + ' attempts have changed passed-check counts or program-success status. Original candidates, inference and grades are retained; offline regrading is not another model attempt.</p><p>Frames include invocation ID, value kind, length and exact bytes. Candidate stdout noise, missing/extra/duplicate IDs and malformed lengths are distinguished. Go restricted imports are inspected through its syntax tree. Native-process frames remain unauthenticated: these revisions do not establish return provenance or certify historical request budgets and runtime identity.</p></section>'
+        body += self.audit_plan_section()
+        body += self.task_budget_section()
+        body += self.runtime_section()
+        body += self.grading_runtime_section()
+        body += self.c_executor_section()
+        body += self.capability_preparation_section()
+        body += '<section><h2>Action cache v3</h2><p>Inference, grading, accounting and report rendering have separate declared inputs. Each action hashes a canonical command, effective environment/platform and a Merkle input tree. The action cache maps that digest to output digests in a local content-addressable store. Report, test, scheduling and storage edits do not invalidate inference or grading. Go import checking affects Go grades only; changing ZCode delivery settings does not invalidate DSH results. Existing byte-verified observations are imported without new model or native evaluation calls. Cache hits reuse an observation, rather than adding a benchmark trial. New inference actions bind the local runtime manifest and resolved provider before hashing. Historical unattested observations keep their original action namespace and are never promoted to an attested execution. Provider budget guards and restricted authenticated-return execution have their own acceptance gates; a cache hit does not retroactively certify either.</p></section>'
+        body += '<section><h2>Selected grades and original baseline</h2>' + table(
+            ['Case', 'Model', 'Condition', 'Selected grader', 'Original checks', 'Selected checks', 'Program passed', 'Return provenance'], [
+                [escape(row['case']['label']), escape(row['model_label']), escape(row.get('condition_label', row['condition'])),
+                 escape(row['grade'].get('grading_version', 'legacy')),
+                 str(row['grade'].get('original_passed', row['grade']['passed'])) + '/' + str(row['grade'].get('original_total', row['grade']['total'])),
+                 str(row['grade']['passed']) + '/' + str(row['grade']['total']), str(row['program_success']),
+                 escape(row['grade'].get('return_provenance', 'legacy; not authenticated'))]
+                for row in graded]) + '</section>'
+        body += '<section><h2>Usage evidence</h2><p>Completeness is derived from request-linked usage evidence, independently of process exit or task success. Explicit incomplete flags survive normal exit; repeated cumulative stream usage is counted once per request. Missing request identities or usage keep the total bill unknown. Published-rate figures cover known usage only and are not invoices.</p>' + table(
+            ['Case', 'Model', 'Condition', 'Usage status', 'Observed USD estimate'], [
+                [escape(row['case']['label']), escape(row['model_label']), escape(row.get('condition_label', row['condition'])),
+                 escape(row['cost'].get('usage_status', 'legacy_unknown')), money(row['cost'])]
+                for row in rows if row.get('receipt')]) + '</section>'
+        self.page('measurement.html', 'Measurement validity and revisions', body)
+
+    def capability_overview(self):
+        value = self.data.get('capability_measurements', capability_measurements.empty())
+        return ('<section><h2>Typed capability coverage</h2><p>' + str(value['scheduled_cells']) +
+                ' enabled scheduled cells out of ' + str(value['configured_cells']) + ' configured cells; ' +
+                str(value['disabled_cells']) + ' disabled. ' + str(value['saved_observations']) +
+                ' unique saved model observations. These are separate from native reconstruction scores. '
+                '<a href="capabilities.html">Capability vectors, denominators and revision history</a>.</p></section>')
+
+    def capability_costs(self):
+        value = self.data.get('capability_measurements', capability_measurements.empty())
+        return ('<section><h2>Typed capability expenditure</h2><p>All unique saved typed attempts, including retired settings and failures. '
+                'Cache copies and grading revisions add no model samples or token charges. Values are known subtotals; '
+                'missing usage remains unknown. Rate estimates are not invoices.</p>' + table(
+                ['Model', 'Saved observations', 'Known tokens', 'Observed USD estimate'], [
+                    [escape(row['model']), row['saved_observations'],
+                     'Unknown' if row['known_tokens']['totalTokens'] is None else f'{row["known_tokens"]["totalTokens"]:,}',
+                     money(row['cost'])] for row in value['totals']]) + '</section>')
+
+    def capability_control_section(self, value):
+        controls = [row for row in value['history'] if row['analysis_condition'] == 'premises-only-v1']
+        if not controls:
+            return ''
+        groups = {(row['model'], row['public_package_sha256'], row['profile_id']) for row in controls}
+        rows = [row for row in value['history']
+                if (row['model'], row['public_package_sha256'], row['profile_id']) in groups]
+        rows.sort(key=lambda row: (row['model'], row['public_package_sha256'], row['analysis_condition'], row['attempt_id']))
+        return ('<section id="premises-only-controls"><h2>Paired evidence-access diagnostics</h2>'
+                '<p>These are separately registered recovery and premises-only observations of the same public packages. '
+                'The control keeps the public premises and original grading contract while withholding target bytes and '
+                'all analysis tools. It does not join recovery capability macros. Grouping by package does not establish '
+                'a causal model-ability claim or an independently reviewed task. Runtime and request-budget certification '
+                'remain visible; missing results are unscored. Readability is not applicable to structured type artifacts.</p>' + table(
+            ['Model', 'Public task', 'Task condition', 'Evidence condition', 'State', 'Checks', 'Capability scores',
+             'Known tokens', 'Observed USD estimate', 'Runtime identity', 'Request budget'], [
+                [escape(row['model']), escape(row['task_id']), escape(row['profile_id']), escape(row['analysis_condition']),
+                 escape(row['status']), str(row['grade']['passed']) + '/' + str(row['grade']['total']) if row['grade'] else 'Unscored',
+                 escape('; '.join(cap + ': ' + ('Unmeasured' if score['score'] is None else f'{100*score["score"]:.2f}%')
+                                  for cap, score in row['grade']['scores'].items())) if row['grade'] else 'Unscored',
+                 'Unknown' if row['known_tokens'].get('totalTokens') is None else f'{row["known_tokens"]["totalTokens"]:,}',
+                 money(row['cost']), escape(row['runtime_status']), escape(row['budget_status'])]
+                for row in rows]) + '</section>')
+
+    def capabilities_page(self):
+        report_views.capabilities(self)
+
+    def capability_inventory_page(self):
+        value = report_views.capability_view(self.data)
+        number = lambda x: 'Unmeasured' if x is None else f'{100*x:.2f}%'
+        validation = value['validation']
+        body = ('<section><h2>Typed measurement status</h2><p>The capability expansion is not released: ' +
+                str(value['released_capabilities']) + '/19 sub-capabilities have passed the release gate. '
+                'The current inventory contains ' + str(value['declared_tasks']) + ' declared task definitions. '
+                'It does not turn preparation controls into model scores.</p>' + charts.capability_coverage(value) +
+                '<p>Denominator status: <code>' + escape(value['schedule_status']) + '</code>. Configuration snapshot: <code>' +
+                escape(value['schedule_id'][:16] or 'not recorded') + '</code>. This current-configuration snapshot is not '
+                'evidence of a denominator frozen before a historical run. Invalid, pending and unstarted enabled cells '
+                'remain in the scheduled denominator. Disabled cells are shown separately.</p><p>Offline collection controls: ' +
+                str(validation['checks']) + '; passed: ' + str(validation['passed']) + '; source current: ' +
+                str(validation['current']) + '. No model, compiler or candidate execution is needed to regenerate this view.</p></section>')
+        body += ('<section><h2>Analysis conditions</h2><p>Default auto-analysis uses '
+                 '<code>paged-evidence-v2</code>. The optional <code>public-given-entrypoints-v1</code> '
+                 'condition initializes anonymous function entries from the task\'s supplied RVAs and public ELF '
+                 'load mappings, making those supplied caller/callee boundaries available to function queries. '
+                 'Localization remains unseeded. The original binaries, public packages and earlier attempts are '
+                 'preserved. These analysis conditions remain separate in the capability summaries.</p>'
+                 '<p>Conditions ending in <code>.role-string-v1</code> additionally deliver an explicit public '
+                 'serialization rule: each record-field role is one identifier string, while supplied semantic paths '
+                 'are arrays. The exact notice is a prompt input bound by the inference action. Earlier cached '
+                 'submissions retain their original condition and grade.</p>'
+                 '<p>Incomplete budget-exhausted attempts retain their observed tokens and estimated costs and remain ungraded. Complete final answers that cross a threshold retain their correctness grade separately from the budget exceeded / attempt stopped label. '
+                 'A correctly bound budget-stop receipt can verify request enforcement independently of task success. '
+                 'Strict runtime certification still requires its completion evidence; saved pre/post checks alone '
+                 'do not retroactively create a missing completion manifest.</p></section>')
+        body += ('<section><h2>Completion, artifact validity and readability</h2>' + table(
+            ['Model', 'Configured', 'Scheduled', 'Graded', 'Valid artifacts', 'Tasks fully correct', 'Readability / 10', 'Reviewed n'], [
+                [escape(row['model']), row['configured_cells'], row['scheduled_cells'], row['graded_cells'],
+                 row['artifact_valid_cells'], row['successful_cells'],
+                 'Unreviewed' if row['readability_mean'] is None else f'{row["readability_mean"]:.2f}', row['readability_n']]
+                for row in value['totals']]) + report_views.localization_note(self.data) + '<p>Localization regrades are separate evidence revisions. Other task kinds retain their original artifact-admission rules.</p>'
+                '<p>Code readability uses the existing five dimensions, each 0–2: names, decomposition, '
+                'language idioms, formatting and explanatory comments. A review must bind the selected source artifact. '
+                'Structured localization/type artifacts do not receive a source-readability score. Stored reviewer provenance '
+                'is shown below; this collector does not establish independent review or a confidence interval.</p></section>')
+        body += ('<section><h2>Capability vectors and family macros</h2><p>Metrics stay separate: L1 uses top-1 success, L2–L4 use F1, '
+                'L5 uses full-chain success with component diagnostics, and C/T use their capability check fraction. '
+                'No applicable semantic fact yields no metric observation, rather than free credit. Variants average within '
+                'a family; related families average within a declared lineage; lineages receive equal weight. '
+                'All current integer-record ABI forms share one lineage. Recovery and full-semantics generation conditions '
+                'are separate rows. Premises-only controls remain in saved history and expenditure, separate from recovery macros. '
+                'An observed-subset macro is descriptive; a full-denominator macro requires every '
+                'scheduled cell to have a grade. Shared-case macros use the same graded public packages across selected models.</p>' + table(
+            ['Model', 'Condition', 'Capability', 'Graded / scheduled', 'Metric n', 'Families observed / scheduled', 'Lineages',
+             'Observed subset', 'Full denominator', 'Shared cells', 'Shared macro'], [
+                [escape(row['model']), escape(row['profile_id']), escape(row['capability_id']),
+                 str(row['graded_cells']) + '/' + str(row['scheduled_cells']), row['metric_observations'],
+                 str(row['observed_families']) + '/' + str(row['scheduled_families']), row['observed_lineages'],
+                 number(row['observed_macro']), number(row['complete_macro']), row['matched_cells'], number(row['matched_macro'])]
+                for row in value['macro_vectors'] if row['metric_observations']]) + '</section>')
+        body += '<section><h2>Per-attempt capability metrics</h2>' + table(
+            ['Attempt', 'Model', 'Evidence condition', 'Capability', 'Score', 'Component diagnostics'], [
+                [escape(row['attempt_id'][:12]), escape(row['model']), escape(row['analysis_condition']), escape(capability), number(metric['score']),
+                 escape('; '.join(name + ': ' + number(score) for name, score in metric['components'].items()))]
+                for row in value['history'] if row['grade'] for capability, metric in row['grade']['scores'].items()]) + '</section>'
+        contracts = {row['task_id']: row for row in value['cells']}
+        body += '<section><h2>Target and output contracts</h2>' + table(
+            ['Public task', 'Build identity', 'Binary SHA', 'Source language', 'Output language', 'Hint profile', 'Analysis condition'], [
+                [escape(row['task_id']), escape((row['build_id'] or 'unprepared')[:12]),
+                 escape((row['binary_sha256'] or 'unprepared')[:12]), escape(row['source_language']),
+                 escape(row['output_language'] or 'structured artifact'), escape(row['hint_profile']), escape(row['analysis_condition'])]
+                for _, row in sorted(contracts.items())]) + '</section>'
+        body += '<section><h2>Configured cells</h2><label>Filter <input data-table-filter="typed-cells" aria-label="Filter capability cells"></label>' + table(
+            ['Public task', 'Family', 'Condition', 'Model', 'Preparation', 'State', 'Capabilities', 'Grading revision'], [
+                [escape(row['task_id']), escape(row['family_id']), escape(row['profile_id']), escape(row['model']),
+                 escape(row['preparation_status']), escape(STATUSES.get(row['status'], row['status'])), escape(', '.join(row['capability_ids'])),
+                 escape(row['observation']['grade']['grading_id'][:12]) if row['observation'] and row['observation']['grade'] else 'Unscored']
+                for row in value['cells']], 'typed-cells') + '</section>'
+        body += self.capability_costs()
+        body += self.capability_control_section(value)
+        body += self.registration_section()
+        body += ('<section><h2>Saved observations and certification</h2><p>' + str(value['duplicate_saved_copies']) +
+                ' duplicate saved copies excluded; ' + str(value['invalid_attempt_records']) +
+                ' invalid attempt records retained as gaps. Retired settings remain in this history and expenditure, '
+                'without joining the current comparison. Infrastructure failures have no correctness score.</p>' + table(
+            ['Attempt', 'Model', 'Public task', 'Condition', 'Evidence condition', 'State', 'Artifact', 'Checks', 'Return evidence', 'Runtime identity', 'Request budget', 'Usage', 'Readability provenance'], [
+                [escape(row['attempt_id'][:12]), escape(row['model']), escape(row['task_id']), escape(row['profile_id']),
+                 escape(row['analysis_condition']), escape(STATUSES.get(row['status'], row['status'])),
+                 ('Valid' if row['grade']['artifact_valid'] else 'Rejected') if row['grade'] else 'Ungraded',
+                 str(row['grade']['passed']) + '/' + str(row['grade']['total']) if row['grade'] else 'Unscored',
+                 escape(row['grade']['return_provenance']) if row['grade'] else 'not_executed',
+                 escape(row['runtime_status']), escape(row['budget_status']), escape(row['usage_status']), escape(row['readability']['provenance'])]
+                for row in value['history']]) + '</section>')
+        revisions = []
+        for row in value['history']:
+            for item in row['grade_revisions']:
+                format_only = report_views.typed_category(row) == 'localization' and (
+                    row.get('localization_revision', {}).get('original_grading_id') == item['grading_id']
+                    or row['status'] == 'localization_format_review' and item['selected'])
+                revisions.append([escape(row['attempt_id'][:12]), escape(item['grading_version']), escape(item['grading_id'][:12]),
+                                  item['selected'], 'Not graded (n=0)' if format_only else str(item['passed']) + '/' + str(item['total']),
+                                  'Unmeasured' if format_only else item['task_success']])
+        body += ('<section><h2>Append-only grading and accounting revisions</h2><p>Selected grades use the explicit saved selection index. '
+                'Other grading revisions remain visible and add no observations. Accounting shown above is derived from the '
+                'current saved pricing under an explicit policy; a saved accounting revision is never chosen by filename order. '
+                'Original request evidence remains unchanged.</p><p>Original localization format grades remain in the evidence archive; they are not semantic correctness scores.</p>' + table(
+            ['Attempt', 'Grader version', 'Grading identity', 'Selected', 'Checks', 'Task success'], revisions))
+        body += table(['Attempt', 'Accounting version', 'Accounting identity', 'Usage status', 'Known USD subtotal'], [
+            [escape(row['attempt_id'][:12]), escape(item['version']), escape(item['accounting_id'][:12]),
+             escape(item['usage_status']), money({**item, 'usage_complete': item['usage_status'] == 'complete'})]
+            for row in value['history'] for item in row['accounting_revisions']]) + '</section>'
+        self.page('capability-inventory.html', 'Typed capability configuration and evidence', '<section><p><a href="capabilities.html">Return to observed outcomes</a>. Catalogue only: configured cells are not evidence of execution.</p></section>' + body)
+
+    def registration_section(self):
+        value = self.data.get('capability_registration', registration_report.empty())
+        proof = value['validation']
+        body = ('<section id="registration"><h2>Immutable pre-run registration</h2><p>New capability dispatch requires an immutable '
+                'schedule and a complete execution binding before any selected queue starts. The schedule fixes selection, '
+                'budgets, metric definitions, family weights and parallelism. The binding fixes original builds, grading '
+                'contracts and every prospective runtime/provider route. Unsupported caps fail before runtime inventory. '
+                'A single-use dispatch intent links each new task to those records. Cached observations keep their original '
+                'provenance; offline reuse creates no new experiment. Registration is local admission evidence, not a remote '
+                'signature or model-weight attestation.</p><p>Saved schedules: ' + str(len(value['schedules'])) +
+                '; invalid records: ' + str(value['invalid_records']) + '; local control records excluded: ' +
+                str(value['control_records_excluded']) + '. Registration controls: ' + str(proof['checks']) +
+                '; passed: ' + str(proof['passed']) + '; source current: ' + str(proof['current']) + '.</p>')
+        body += table(['Registration', 'Created', 'Scheduled', 'Prospective', 'Prior observations', 'Parallel models', 'Complete bindings'], [
+            [escape(row['registration_id'][:12]), escape(row['registered_at']), row['scheduled_cells'], row['prospective_cells'],
+             row['prior_cells'], row['parallel_models'], len(row['bindings'])] for row in value['schedules']])
+        body += table(['Binding', 'Bound cells', 'Dispatch intents', 'Runtime identities', 'Provider route identities'], [
+            [escape(bound['binding_id'][:12]), bound['bound_cells'], bound['dispatch_intents'],
+             escape(', '.join(identity[:12] for identity in bound['runtime_ids'])),
+             escape(', '.join(identity[:12] for identity in bound['provider_ids']))]
+            for row in value['schedules'] for bound in row['bindings']]) + '</section>'
+        build_rows = []
+        for row in value['builds']:
+            metadata = row['metadata']
+            identities = ('build_id', 'binary_sha256', 'compiler_image_id', 'compiler_executable_sha256',
+                          'binutils_image_id', 'flag_summary_sha256')
+            details = ('<details class="build-identities"><summary>Flags and full identities</summary><p>Safe flags: <code>' +
+                       escape(' '.join(metadata['flag_summary'])) + '</code></p><pre>' +
+                       escape('\n'.join(key + ': ' + metadata[key] for key in identities)) + '</pre></details>')
+            build_rows.append([escape(row['task_id']), *[escape(metadata[key]) for key in ('compiler_family', 'compiler_version',
+                'standard', 'optimization', 'standard_library', 'architecture', 'link_mode', 'abi', 'strip_mode')], details])
+        body += ('<section><h2>Original compiler and build conditions</h2><p>These values come from verified saved original-build '
+                'actions and their pinned compiler images, rather than a probe of today’s compiler. Candidate compilation '
+                'has its own grading identity. Private presence/convention macros, linker symbols and source paths are '
+                'excluded. Full commands remain privately bound; only the safe flag summary is shown. Build metadata '
+                'does not establish a new model measurement.</p>' +
+                ('<p class="notice">No verified original-build metadata is available in this saved snapshot.</p>'
+                 if not build_rows else '') + table(
+            ['Public task', 'Compiler', 'Version', 'Standard', 'Optimization', 'Library', 'Architecture', 'Link', 'ABI', 'Strip', 'Reproducibility'],
+            build_rows) + '</section>')
+        body += ('<section><h2>Observation registration and grading compatibility</h2><p>Runtime/budget certification remains '
+                'a separate column in the saved-observation table. Later offline regrading may preserve registered inference '
+                'while changing its scoring contract; that revision is not presented as the originally registered grade.</p>' + table(
+            ['Attempt', 'Registration', 'Execution binding', 'Registration state'], [
+                [escape(row['attempt_id'][:12]), escape((row['registration_id'] or 'unknown')[:12]),
+                 escape((row['binding_id'] or 'unknown')[:12]), escape(row['status'])]
+                for row in value['observations']]) + '</section>')
+        return body
+
+    def has_pointer_cell_conditions(self):
+        return any(row.get('profile_id') in ('pointer_topology_recover', 'pointer_topology_recover_counterfactual')
+                   for row in self.data.get('capability_measurements', {}).get('cells', []))
+
+    def matched_baseline_tasks(self):
+        """Use the saved inventory, so old snapshots keep their historical scope."""
+        profiles = {compiler + '_' + language + '_' + condition
+                    for compiler, languages in (('clang20', ('c', 'cpp')), ('rust', ('c', 'rust')),
+                                                ('go', ('c', 'go')))
+                    for language in languages for condition in ('recover', 'codegen')}
+        return len({row['task_id'] for row in self.data.get('capability_measurements', {}).get('cells', [])
+                    if row['profile_id'] in profiles})
+
+    def audit_plan_section(self):
+        grading = self.data.get('grading_runtime', {})
+        grading_ready = grading.get('controls_passed') and grading.get('controls_current')
+        executor = self.data.get('c_executor', {})
+        executor_ready = executor.get('controls_passed') and executor.get('controls_current')
+        type_scope = self.data.get('capability_preparation', {}).get('supported_capabilities', [])
+        optimized = any(row['id'] == 'optimized_locations' for row in
+                        self.data.get('capability_preparation', {}).get('controls', []))
+        native = any(row['id'] == 'native_abi' for row in
+                     self.data.get('capability_preparation', {}).get('controls', []))
+        optimized_status = ('L6 has real O3/LTO diagnostic originals, byte-reviewed realizations, validated hint-free packages and closed instance grading; coordinator enrollment and independent review remain pending.'
+                            if optimized else 'L6 preparation is not recorded in this snapshot.')
+        if 'L6' in type_scope:
+            optimized_status = 'L6 O3/LTO diagnostic conditions use the normal frozen-package, closed grading, coordinator and cache paths. Independent completeness review, broader baselines and measurement release remain pending.'
+        native_status = ('T7 has pinned Rust-native and Go ABIInternal originals, native/emulated reference comparisons and closed bidirectional description probes. Aggregate grading requires both directions; accidental partial credit cannot pass a task. This development preparation is outside the configured inventory; coordinator enrollment, independent validity and measurement release remain pending.'
+                         if native else 'T7 preparation is not recorded in this snapshot.')
+        if 'T7' in type_scope:
+            native_status = 'T7 Rust-native and Go ABIInternal conditions use the normal coordinator with supplied semantics/layouts, frozen originals and separate native-abi.json artifacts. Aggregate grading requires both directions; accidental partial credit cannot pass a task. Inference remains disabled; independent validity and measurement release remain pending.'
+        variant_status = ('T4 adds active union alternatives, subobject and member offsets with known scalar roles.'
+                          if 'T4' in type_scope else 'T4 preparation is not recorded in this snapshot.')
+        indirect_status = ('T6 adds receiver, callback/context, virtual-slot and compiler-thunk adjustment probes under supplied layouts and signatures. T7 and release gates remain pending.'
+                           if 'T6' in type_scope else 'T6 preparation is not recorded in this snapshot. T6/T7 and release gates remain pending.')
+        if 'T7' in type_scope:
+            indirect_status = indirect_status.replace('T7 and release gates remain pending.', 'Measurement release remains pending.')
+        matched = self.matched_baseline_tasks()
+        c_status = ('C17/C++20 and restricted Rust/Go buffer conditions configured; 0/6 released'
+                    if matched else 'C17/C++20 buffer and lifecycle conditions configured; 0/6 released')
+        diagnostic_enabled = self.data.get('capability_preparation', {}).get('inference_enabled', False)
+        baseline_status = (str(matched) + ' matched compiler/language task definitions use the same coordinator; '
+                           + ('diagnostic inference is enabled; claims remain unreleased. '
+                              if diagnostic_enabled else 'inference remains disabled. ')
+                           if matched else 'Broader language/compiler baseline enrollment remains pending. ')
+        body = '<section id="plan-status"><h2>Implementation plan: incomplete</h2><p>Runtime/provider attestation for new inference is implemented. The full audit repair and capability expansion plan is not finished. Existing results measure the recorded language-reconstruction tasks; they do not establish the nineteen planned localization, C reconstruction and type/ABI sub-capabilities.</p>'
+        prepared = self.data.get('capability_preparation', {})
+        gates = list(prepared.get('controls', []))
+        for section in ('capability_registration', 'capability_measurements'):
+            gate = self.data.get(section, {}).get('validation')
+            if gate:
+                gates.append(gate)
+        ready = sum(bool(gate.get('passed') and gate.get('current')) for gate in gates)
+        premise_delivery = any(gate.get('id') in ('coordinator', 'coordinator_incremental') and gate.get('passed')
+                               and gate.get('current') and gate.get('checks', 0) >= 71
+                               for gate in gates)
+        body += ('<p><strong>Saved engineering status:</strong> '
+                 + str(prepared.get('frozen_tasks', 0)) + ' / '
+                 + str(prepared.get('task_definitions', 0)) + ' frozen task definitions; '
+                 + 'source bindings current: ' + str(bool(prepared.get('frozen_inputs_current')))
+                 + '; ' + str(ready) + ' / ' + str(len(gates))
+                 + ' saved offline validation gates passed with current source bindings. '
+                 + 'These controls are authored tests, not model measurements or independent validity sign-off. '
+                 + 'All nineteen capabilities remain unreleased.</p>')
+        body += table(['Work item', 'Implementation status', 'Remaining acceptance gate'], [
+            ['R1: exact return values', 'Implemented for existing tracks', 'Same-process frames remain unauthenticated; see R6.'],
+            ['R2: Go imports', 'Implemented for single-file submissions', 'Future multi-file artifact admission remains planned.'],
+            ['R3: request budgets', 'Route-specific limits; separately reported', 'Shared DSH/ZCode guards validate supported serialized provider caps. Authorized Codex OAuth uses observed task limits without a provider response cap; it is a distinct comparison condition. Historical unidentified budgets remain unknown.'],
+            ['R4: runtime/provider', 'Implemented for new inference and grades' if grading_ready else 'Inference implemented; grading controls missing or stale', 'Pinned compiler, linker, headers, libraries, Python and executor images; see the saved grading controls below. Historical execution identities remain unknown.'],
+            ['R5: usage accounting', 'Core implementation complete', 'Missing historical usage and actual invoice amounts remain unknown.'],
+            ['R6: authenticated returns', 'Restricted C prototype validated' if executor_ready else 'Prototype validation missing, stale or failed', 'Host-owned C17/x86-64 SysV records; see the controls below. General C++/Rust/Go native frames remain unauthenticated.'],
+            ['Action cache', 'Implemented', 'Declared stage dependencies and unrelated-change invariance have offline controls.'],
+            ['Public task premises', 'Delivery accepted by current coordinator controls' if premise_delivery else 'Delivery repair requires current acceptance', 'Both adapters send prompt.txt and forbid file reads. Required public manifest facts must be included in that hashed prompt. Frozen public packages, private truth and historical results remain separate and unchanged.'],
+            ['L1–L6: localization', 'Preparation in progress: 0/6 released', 'L1–L5 have strict artifacts, closed Python grading and byte-bound semantic instruction reviews. The codec error-initialization anchor and omitted XOR are repaired; required operations and optional legitimate context are separate. ' + optimized_status + ' Independent review of alternative roots/realizations and the full measurement release remain pending.'],
+            ['C1–C6: independent C condition', c_status, 'Matched recovery and full-semantics generation conditions share original binaries, invocation contracts and oracles. The callback/session interfaces use explicit operations, original callback traces and interleaved instances; opaque state layouts may differ. The same coordinator handles preparation, named source artifacts, versioned grading and cached reuse. ' + baseline_status + 'Independent task-validity review, broader interfaces and measurement release remain pending.'],
+            ['T1–T7: type/layout/ABI', self.type_preparation_label() + '; 0/7 released', 'Separate type/layout and call-boundary artifacts drive closed probes. Both directions retain a frozen original endpoint. Integer-record probes cover SysV and ms_abi in ELF. Paired T3 layouts exercise pointers, access, length/capacity and overlap. ' + variant_status + ' ' + indirect_status + ' ' + native_status],
+            ['P7: full release', 'Workflow, registration and typed reporting implemented; release incomplete', 'The normal run prepares selected pending cases. New capability dispatch requires a frozen schedule and complete runtime/provider/build/scoring binding. The global view retains typed observations, denominators, lineage macros and grading/accounting revisions. Independent task validity, model ablations and the remaining capability/publication gates are unfinished; no capability measurements are released.'],
+        ])
+        body += '<p>P1 is complete for the existing tracks; P0 is partial; P2 ' + ('is complete for supported new paths' if grading_ready else 'has pending grading-runtime controls') + '; P3 ' + ('has passed its restricted C prototype gate' if executor_ready else 'has pending executor controls') + '; P4–P5 are in progress; P6 ' + ('has diagnostic preparation in progress' if optimized else 'is planned') + '; P7 is partial. The earlier C-output pilot and compiler/string-ABI build variants do not satisfy the new independent C and type-recovery conditions. ' + ('Capability inference is enabled for explicitly selected diagnostics; all claims remain unreleased. ' if diagnostic_enabled else 'New capability tasks stay disabled. ') + 'Historical results and their limitations remain preserved.</p></section>'
+        return body
+
+    def runtime_section(self):
+        rows = self.all_records()
+        states = Counter(row.get('runtime_attestation_status', 'historical_unknown') for row in rows)
+        audit = self.data.get('runtime_attestation', {})
+        body = '<section id="runtime-attestation"><h2>Runtime and provider attestation</h2><p>New launches resolve the provider, credential mode, protocol, model and HTTPS endpoint before hashing. Content manifests bind REA and dependencies, Ghidra and custom scripts, Java, Node, the selected harness, adapters, native shared libraries, TLS trust and sealed runtime settings. Fresh checks before and after execution refuse runtime or route drift. Credential values and credential-file hashes are excluded.</p>'
+        body += table(['Recorded execution evidence', 'Attempts / cells'], [[escape(key), value] for key, value in sorted(states.items())])
+        body += '<p><strong>Historical runtime/provider identity remains unknown where it was not recorded.</strong> Reused results retain their correctness, readability, tokens and cost; current installations cannot certify past execution. Reviewed source-upgrade compatibility applies only to those original observations. No model experiment was rerun for attestation.</p>'
+        body += '<h3>Saved offline installation inventory</h3><p>Status: ' + escape(audit.get('status', 'not_recorded')) + '; attestor/configuration bytes current: ' + str(bool(audit.get('inputs_current'))) + '. This inventory describes the installation when locally inspected; report rendering does not inspect installed tools or read account state.</p>'
+        body += '<p>Offline attestation controls: ' + str(audit.get('checks', 0)) + '; passed: ' + str(bool(audit.get('controls_passed'))) + '; test inputs current: ' + str(bool(audit.get('controls_current'))) + '; model API calls: 0.</p>'
+        components = [[escape(harness), escape(name), '<code>' + escape(item['sha256'][:16]) + '</code>', item['files'], f'{item["bytes"]:,}']
+                      for harness, value in sorted(audit.get('runtimes', {}).items()) for name, item in sorted(value['components'].items())]
+        body += table(['Harness', 'Logical runtime component', 'Content digest prefix', 'Files', 'Bytes'], components)
+        body += '<p>These are local content receipts, not remote signatures or model-weight attestations. They do not prevent a privileged host from modifying a running process between checks. Historical request budgets and runtime identities remain uncertified; native returns remain unauthenticated. Public pages publish only bounded status and digest summaries.</p></section>'
+        return body
+
+    def grading_runtime_section(self):
+        audit = self.data.get('grading_runtime', {})
+        graded = [row['grade'] for row in self.all_records() if row.get('grade')]
+        closed = sum(bool(grade.get('grading_runtime', {}).get('id')) or grade.get('grading_runtime_status') == 'verified_closed_image' for grade in graded)
+        body = '<section id="grading-runtime"><h2>Closed grading runtimes</h2><p>Candidate compilation and execution use content-addressed images containing the selected compiler, linker, headers, libraries, ELF loader, Python interpreter and bubblewrap executor. The image is fully hashed on extraction and checked for drift before and after execution. Worker sources are copied from declared action inputs; host bytecode caches are excluded. CPU capabilities and kernel enter grading identity. An explicit refresh selects host toolchain upgrades; unrelated host software and report edits do not change a pinned image.</p>'
+        body += '<p>Saved offline controls: ' + str(audit.get('checks', 0)) + '; passed: ' + str(bool(audit.get('controls_passed'))) + '; inputs current: ' + str(bool(audit.get('controls_current'))) + '; model API calls: 0. ' + str(closed) + '/' + str(len(graded)) + ' selected grades contain evidence of closed-image execution. Missing evidence is not backfilled from the current installation.</p>'
+        body += table(['Candidate language', 'Compiler', 'Image digest prefix', 'Declared files', 'Bytes'], [
+            [escape(language), escape(profile['compiler_version']), '<code>' + escape(profile['id'][:16]) + '</code>', profile['files'], f'{profile["bytes"]:,}']
+            for language, profile in sorted(audit.get('profiles', {}).items())])
+        return body + '<p>Versioned offline regrading preserves original model outputs and grades. This closes the toolchain dependency boundary for new grades; it does not authenticate native return frames or certify historical inference environments.</p></section>'
+
+    def c_executor_section(self):
+        audit = self.data.get('c_executor', {})
+        ready = audit.get('controls_passed') and audit.get('controls_current')
+        body = '<section id="c-executor"><h2>Host-owned restricted C returns</h2>' + charts.executor_workflow()
+        body += '<p>Status: ' + ('validated prototype' if ready else 'validation missing, stale or failed') + '; offline controls: ' + str(audit.get('checks', 0)) + '; failed: ' + str(audit.get('failed', 0)) + '; source inputs current: ' + str(bool(audit.get('controls_current'))) + '; model API calls: 0.</p>'
+        body += '<p>The host invokes a static freestanding C17 function under a fixed x86-64 virtual CPU. Guest code receives only the current invocation and explicit prior state, with no host syscalls, original target or hidden expected results. Exact-byte memory permissions, stack and preserved-register checks, instruction/time limits and host-recorded callbacks are enforced. Output records are collected after a valid call boundary. Printing a native grading marker cannot supply a return record.</p>'
+        body += table(['Engine', 'Sealed module digest prefix', 'Base compiler/Python image', 'Module files', 'Module bytes'], [[
+            escape(audit.get('engine_version') or 'Not recorded'), escape(audit.get('engine_id', '')[:16] or '—'),
+            escape(audit.get('base_image', '')[:16] or '—'), audit.get('module_files', 0), f'{audit.get("module_bytes", 0):,}']])
+        return body + '<p>This is an executor control result, not a new model measurement or completion of C1–C6. Existing native C++/Rust/Go scores and return-provenance labels are retained. General native runtimes and dynamic ELF loading are outside the prototype; the emulator, loader and host kernel remain trusted.</p></section>'
+
+    def type_preparation_label(self):
+        supported = self.data.get('capability_preparation', {}).get('supported_capabilities', [])
+        names = [name for name in supported if name.startswith('T')]
+        return '/'.join(names) + ' preparation' if names else 'Type/ABI preparation not recorded'
+
+    def capability_preparation_section(self):
+        value = self.data.get('capability_preparation', capability_summary.empty())
+        body = '<section id="capability-preparation"><h2>Capability conditions: offline preparation</h2>'
+        body += '<p>' + str(value['families']) + ' reusable C++ families; ' + str(value['task_definitions']) + ' task definitions; ' + str(value['frozen_tasks']) + ' public packages recorded as frozen. These task definitions cover ' + escape(', '.join(value['supported_capabilities'])) + ' preparation; they are distinct from the nineteen sub-capabilities in the full plan. Model inference enabled: ' + str(value['inference_enabled']) + '. Frozen source inputs current: ' + str(value['frozen_inputs_current']) + '.</p>'
+        body += '<p><strong>How offline checks work:</strong> authored correct artifacts must pass, observationally equivalent artifacts must also pass, and deliberately incorrect claims must fail. Trusted originals and generated probes execute as real compiled programs under the pinned native/emulated controls. Separate reference implementations check defined observations; cached traces and dummy loopback providers exercise harness delivery and spending limits. This verifies the behaviors exercised by those controls. It does not measure model performance, establish realistic difficulty, exhaust possible answers or replace independent task-validity review and premises-only model ablations.</p>'
+        body += table(['Offline gate', 'Passed', 'Source inputs current', 'Controls', 'Failed'], [[
+            escape(row['id']), str(row['passed']), str(row['current']), row['checks'], row['failed']]
+            for row in value['controls']])
+        body += charts.preparation_workflow()
+        body += '<p>The configured run prepares selected new/stale capability cases under the existing batch lock, once per case across models. A separate Merkle preparation action caches the exact public package, private grading specification and checked index record. Missing files can be restored without original compilation or candidate evaluation. Reports, model routes, prices and run budgets do not enter preparation identity; inference and grading retain their own keys.</p>'
+        body += '<p>Read-only planning includes every selected pending/invalid cell and never prepares credentials, builds or models. Invalid immutable bytes are not overwritten. Preparation failure/cancellation preserves the scheduled denominator, records zero provider launches and releases the lock. Stop requests remain effective through preparation; a previously ready target or run configuration cannot change before provider work.</p>'
+        body += '<p>The existing coordinator accepts named artifact blocks and keeps append-only typed grades. Localization JSON is graded in a pinned Python image. C17 and original-language C++20 candidates receive only one invocation at a time under the same host-owned executor. Their original ELF bytes, entry, vectors and oracle agree; the parent compares status, length, exact output bytes and preserved memory. Independent full-semantics controls in both languages test code generation without requiring binary analysis.</p>'
+        body += '<p>The paired C++ profile uses a pinned GCC compiler and freestanding, nonallocating C++20. Header-only algorithms, arrays, spans, lambdas and local record methods are exercised by readable controls. General C++ runtime services, heap allocation, exceptions and TLS remain outside this profile. The candidate-source byte budget excludes the trusted forced declaration in both languages.</p>'
+        body += charts.cpp_pairing_workflow()
+        body += '<p><strong>Explicit callback and persistent-state preparation:</strong> the C5/C6 path has two stripped original interfaces in the existing callback/session families. C17 and original-language C++20 have separate recovery and full-semantics generation packages, sharing the same binary and all 106 original calls. Source-bound controls check callback arguments/count, failure rollback, output preservation, destroy/recreate, reset and interleaved instances. Candidate-owned opaque state and guest globals persist within a scenario and start fresh between scenarios. Whole-task correctness and C5/C6 component vectors are separate. Preparation, admission and grading use the existing configured coordinator; no separate experiment runner is added. Independent validity review and release remain pending. Controls and cached machine executions add no model observations, tokens or cost.</p>'
+        body += '<p>Preparation validates the frozen private grading specification before provider preparation or workspace creation. Missing data, a changed digest or a conflicting artifact/score contract fail before a model attempt. Valid private-only revisions preserve inference identity.</p>'
+        body += '<p>Completion review: the typed task separates source and output language; generic adapter receipts follow the output contract, with contradictory cached labels rejected. Capability score selection is a grading action input. Localization questions identify the complete scalar operation and define each semantic role and dispatch condition. Static instruction review found a codec check anchor on error-return initialization and an omitted salt XOR. Exact-binary, byte-checked required operations replace those anchors. Legitimate local context is accepted but cannot substitute for required operations; partial instruction ranges and old anchor-only truth cannot receive a full score. This is a coordinating-agent review, with independent review of alternative roots/realizations still required.</p>'
+        body += '<p>Type/ABI conditions separate scalar recovery with layout supplied, layout recovery with scalar types supplied, and ABI recovery with the complete type supplied. Submitted descriptions generate probes linked with the same frozen original caller/callee object. Return-slot guards, nested arrays, scalar boundaries, register/stack transfers and hidden return pointers are checked under the host-owned executor. Only defined values and observable effects count; equivalent padding/alignment descriptions are accepted. These are instrumented Linux ELF conditions, not Windows/MSVC compatibility or Rust-native/Go-internal ABI scores.</p>'
+        body += '<p>The three integer-record forms share one interface/probe lineage. Twelve counterfactual conditions vary observable scalar width/sign or physical layout across the same three families and two conventions. Paired prompts, tool catalogs and supplied nonmeasured facts agree. Offline controls test correct descriptions, equivalent ordering and fixed baseline/counterfactual guesses rebound only to the other binary identity. The selected header and declared source alias enter the original compiler action; unrelated variants and gold-control facts do not.</p>'
+        body += '<p>These fixed-description controls do not estimate LLM no-binary performance or exhaust all equivalent descriptions. A separate premises-only model ablation, broader scalar kinds and independent task-validity review remain release gates. Compiler/emulator agreement validates the mechanism; it does not establish that a task requires reverse engineering.</p>'
+        body += charts.abi_workflow()
+        body += charts.abi_counterfactual_workflow()
+        pointer_cells = self.has_pointer_cell_conditions()
+        if pointer_cells:
+            body += '<p><strong>T3 pointer/object preparation:</strong> four configured conditions vary physical layouts and pointer paths under identical supplied signatures, scalar roles, prompts and tools. They share one interface lineage. Submitted descriptions drive offsets, pointer-cell loads, access, extent and overlap checks in both original-endpoint directions. The host compares buffers, status, produced length, preserved descriptors, separate pointer cells and guards. Fourteen nonce vectors per original cover short/full/empty buffers, null/capacity errors and overlap. Native, emulated and Python references calibrate the originals; gold descriptions and wrong-depth/cell-mutation controls check the mechanism. The source-bound gate table records current acceptance. These conditions do not recover erased ownership or exact unused allocation size, and do not establish arbitrary graph or runtime support. Independent validity, model ablations and release remain pending.</p>'
+        else:
+            body += '<p><strong>T3 pointer/object preparation:</strong> two paired physical layouts share the same supplied signature, scalar roles, prompts and tools under one interface lineage. The submitted pointer-object description drives physical offsets, pointer dereferences, read/write access, scalar extent bindings and overlap checks. The host compares memory, status, produced length and preserved descriptors/guards in both original-endpoint directions. Fourteen nonce vectors per target cover short/full/empty buffers, null/capacity errors and overlapping regions. Native calibration, emulator execution and a separate Python oracle agree on the original reference. Exact unused allocation size and erased ownership are outside this score; depth-two hypotheses are checked but these originals use depth one.</p>'
+        body += charts.pointer_workflow(pointer_cells)
+        if 'T4' in value['supported_capabilities']:
+            body += '<p><strong>T4 tagged variants and subobjects:</strong> paired layouts change discriminants, base offsets, union placement and pair-member order while sharing the same public premises. A submitted description drives tag tests and concrete memory accesses against unchanged original caller/callee objects. Native execution, emulation and a separate Python reference compare defined active values and protected memory, including unknown-tag errors. Correct and equivalent descriptions must pass; wrong tag mappings, subobject/payload offsets and cross-layout guesses must fail. The source-bound gate below records acceptance status. Nominal inheritance, exact unused allocation size and erased source names are outside this condition; independent validity review and model ablations remain open.</p>'
+            body += charts.variant_object_workflow()
+        if 'T6' in value['supported_capabilities']:
+            body += '<p><strong>T6 indirect and object-call preparation:</strong> the complete supplied root layout and call signatures isolate receiver/function/context associations, virtual-method slots and signed receiver adjustments. Paired C++ originals use real nonprimary bases, compiler-generated adjustment thunks and function-pointer callbacks. A submitted calls.json drives actual vtable calls and, in a complementary probe, calls to the supplied original implementation with the claimed receiver adjustment. A generated root also calls the unchanged original callee. The host compares both object states, both callback-context states, counters, return bits and preserved memory. Native execution, emulation and a separate Python reference calibrate the originals. A wrong slot or adjustment may pass the bridge while failing the replacement; every check must pass for whole-task success. These are bounded GCC/Linux conditions, with no nominal class recovery, virtual inheritance, Rust-native or Go-internal ABI claim. The source-bound gate below records acceptance status; independent task validity and premises-only model ablations remain open.</p>'
+            body += charts.indirect_call_workflow()
+        if any(row['id'] == 'optimized_locations' for row in value['controls']):
+            body += '<p><strong>L6 optimized-location diagnostic preparation:</strong> two real GCC O3 originals compare separate translation units with cross-unit LTO. They contain distinct inline bodies, actual specialization clones, hot/cold partitions and receiver-adjusting thunks; LTO removes a verified cross-unit boundary. Both builds agree with a separate Python reference on 216 native calibration calls, including near-misses and the cold branch. Same-build DWARF 4/5 supplies physical source-instance provenance; a separate exact-instruction review checks arithmetic, branch destinations and explicit receiver premises against final bytes. A bounded instance artifact and one-to-one closed grader accept equivalent ranges and reject missing paths, wrong adjustments, near-misses and overclaims. Verified receiver wrappers and the LTO inline adjustment path are accepted alternatives. Hint-free packages and grading are checked against the original build; host-side scoring patches cannot replace the sealed worker. The categories describe private compiler provenance; solvers are not asked to infer unobservable source history. Its offline gate records preparation status. Independent completeness review, task validity and measurement release remain pending.</p>'
+            body += ('<p>The L6 conditions are configured in the normal task inventory; inference remains disabled.</p>'
+                     if 'L6' in value['supported_capabilities'] else '<p>L6 enrollment is pending.</p>')
+            body += charts.optimized_location_workflow('L6' in value['supported_capabilities'])
+        if any(row['id'] == 'native_abi' for row in value['controls']):
+            body += '<p><strong>T7 native-language ABI diagnostic preparation:</strong> pinned Rust 1.91.1 and Go 1.23.2 Linux AMD64 originals use ordinary Rust function boundaries and Go ABIInternal. Known 24-byte input/output layouts and complete scalar semantics isolate the physical transfer problem. A distinct Rust C FFI control does not count as native-ABI success. Sixty native calibration observations, 24 emulated original observations and 48 bidirectional gold checks compare defined fields with a separate Python reference. A submitted description generates a replacement called by the unchanged original caller, and a bridge calling the unchanged original callee. The host owns result collection and enforces code, memory, return-slot and runtime-context guards. Both directions must pass for whole-task success; a wrong nonce register that coincides at zero retains partial credit only. Malformed or wrong-binary artifacts launch no probes. Aggregate grades, compiled descriptions and individual observations have separate cache actions; changing the private vector selection reuses matching observations. This bounded preparation does not certify heap/GC behavior, captured closures, unwinding, other compiler versions or historical native results. Independent validity and model ablations remain pending.</p>'
+            body += ('<p>The T7 conditions are configured in the normal task inventory; inference remains disabled.</p>'
+                     if 'T7' in value['supported_capabilities'] else '<p>T7 enrollment is pending.</p>')
+            body += charts.native_abi_workflow('T7' in value['supported_capabilities'])
+        controls = {row['id']: row for row in value['controls']}
+        if 'coordinator_incremental' in controls:
+            body += ('<p><strong>Incremental coordinator acceptance:</strong> the original coordinator row retains '
+                     'the historical 104-check baseline. The separate coordinator_incremental row counts current '
+                     'focused checks for an explicitly reviewed, digest-bound change set. It does not mean all '
+                     '104 checks were rerun or that their current action keys matched. Registration, analysis-context '
+                     'and task-family admission remain separate.</p>')
+        matched = self.matched_baseline_tasks()
+        if 'matched_baselines' in controls:
+            body += '<h3>Compiler and language baseline preparation</h3>'
+            body += '<p>Eighteen additional stripped original points cover the same six families with Clang 20 at O2, Rust optimization level 2 and Go compiler-default optimization. Their controls compare exact status, length, output and preserved memory with the existing GCC originals and independent Python semantics. '
+            body += (str(matched) + ' paired task definitions are configured in the existing coordinator: C17 and the original language each have independent recovery and full-semantics generation conditions. Their current selection, observations, token usage and cost are shown in the capability inventory and history.</p>'
+                     if matched else 'These development points are outside the configured model inventory; they add no model cells, samples, tokens or cost.</p>')
+            if controls['matched_baselines']['passed'] and controls['matched_baselines']['current']:
+                body += '<p>The current matrix receipt verifies all 1,026 original/GCC/Python observations, C17 controls across all eighteen points and C++20 controls against the six Clang originals. A warm pass forbids compiler, original and candidate workers. Original-compiler conditions and candidate-language conditions remain distinct.</p>'
+            else:
+                body += '<p>Matched-matrix acceptance is pending or no longer current. Its preparation must not be treated as a completed comparison.</p>'
+            for name, language, boundary in (
+                    ('rust_buffers', 'Rust', 'Rust 2021 no_std, static linking and a C buffer boundary'),
+                    ('go_buffers', 'Go', 'Go ABIInternal, supplied R14 context and argument spill slots')):
+                row = controls.get(name, {})
+                status = ('current offline acceptance passed' if row.get('passed') and row.get('current')
+                          else 'offline acceptance pending or no longer current')
+                body += '<p><strong>' + language + ' candidate preparation:</strong> ' + status + '. The restricted profile uses ' + boundary + '. The host owns returns and exact memory observations. Heap/GC use, runtime startup, syscalls and general native runtime support are outside these profiles. Successful source-bound controls cover 342 original-language gold observations, wrong semantics, memory effects, modified oracles and warm cache reuse; the table records whether that acceptance is available.</p>'
+            body += charts.matched_baseline_workflow(bool(matched))
+            remaining = ('Independent validity review, model ablations and release acceptance remain pending.' if matched else
+                         'These preparations still require configured paired task enrollment, independent validity review, model ablations and release acceptance.')
+            body += '<p>Compiler, one-call execution and aggregate grading use separate action identities. Private vectors and oracle changes preserve compilation; execution-source changes invalidate affected observations and grades. ' + remaining + '</p>'
+        remaining = ('Independent validity review, broader type/ABI interfaces and the full release gates remain unfinished.' if matched else
+                     'Matched baseline enrollment, broader type/ABI interfaces and the full release gates remain unfinished.')
+        return body + '<p>Preparation controls are not model samples, token measurements or cost observations. No existing model score gains a capability score. ' + remaining + '</p></section>'
 
     def compilers_page(self):
         value = self.data['cpp_build_points']
@@ -553,19 +1050,19 @@ class Report:
             self.write('history/' + experiment['id'] + '/report.md', '\n'.join(lines) + '\n')
         body = '<section><h2>All recorded experiments</h2>' + table(['Experiment', 'Role', 'Cells', 'Graded'], rows) + '</section>'
         body += '<section><h2>Historical distinctions</h2><p>The earlier six C-output reconstructions remain an output-language baseline. Two earlier C++ output-budget attempts remain transport diagnostics. Their usage and expenditure appear in the ledger but are excluded from matched native totals.</p><p><a href="stl-rust-data-v2-20261019/diagnosis.html">Cached DeepSeek failure investigation</a></p></section>'
-        self.page('history/index.html', 'Benchmark history', body)
+        self.page('history/index.html', 'Benchmark history', body + self.condition_comparison())
         diagnosis = self.data['diagnosis']
         body = '<section><h2>Saved investigation</h2><p>This assessment used cached model outputs and evidence. It does not launch inference, repair candidates or change grading.</p><p class="notice">A later <a href="../../diagnostics.html#environment">cross-harness audit</a> found DSH tool-result spills with blocked recovery. Read this earlier semantic diagnosis alongside that environment evidence; it does not certify an environment-independent model ranking.</p><pre>' + escape(json_text(diagnosis)) + '</pre></section>'
         self.page('history/stl-rust-data-v2-20261019/diagnosis.html', 'Cached failure investigation', body)
 
     def methodology(self):
         body = '<section><h2>One reproducible report pipeline</h2><p><code>make reports</code> builds all global, case, history, JSON, CSV, source and ZIP artifacts from saved run records, frozen pricing, stored reviews and templates. It requires no API credentials, model requests, target execution or compiler runs. Generated files are not inputs.</p><p><code>make check</code> verifies preserved artifacts, source paths, offline cached-evidence replay, real-client loopback transports, local links and two clean report builds with identical file hashes. <code>make check-environment</code> runs only the evidence replay and transport checks. HTML timestamps come from recorded data; ZIP timestamps and ordering are deterministic.</p></section>'
-        body += '<section><h2>One configured execution pipeline</h2><p><code>make benchmark</code> uses <code>benchmarks/config/benchmark.json</code> and the model, experiment and condition registries. All enabled models and active primary cases are selected by default. Budgets, language, ABI and target inputs remain frozen with each registered case. Compiler/optimization expansion remains separately build-verified and unmeasured by models until registered for inference.</p><p>Inference identity covers model/reasoning, binary, prompt, tool catalog, target manifest, limits and effective adapter code. Scheduling, display labels, pricing and report changes do not invalidate inference. Every cache hit verifies its committed artifacts and original source profile. The reviewed legacy migration binds only exact recorded task hashes and preserves their original environment labels. Grade/source keys and the global report build ID are separate. Interrupted attempts and incompatible caches fail explicitly without automatic retry.</p><p><code>make check-runner</code> repeats the configured suite with provider dispatch blocked and tests a simulated missing cache. Historical per-suite runners and cohort-specific audit/review scripts are archived with original hashes. <a href="data/runner-validation.json">Acceptance receipt</a> · <a href="data/entrypoint-archive.json">Archive manifest</a>.</p></section>'
+        body += '<section><h2>One configured execution pipeline</h2><p><code>make benchmark</code> uses <code>benchmarks/config/benchmark.json</code> and the model, experiment and condition registries. All enabled models and active primary cases are selected by default. Budgets, language, ABI and target inputs remain frozen with each registered case. Compiler/optimization expansion remains separately build-verified and unmeasured by models until registered for inference.</p><p>Inference identity covers model/reasoning, binary, prompt, tool catalog, target manifest, limits and effective adapter code. Scheduling, display labels, reporting prices and report changes do not invalidate inference. Wallet enforcement rates and thresholds are frozen inference inputs. Every cache hit verifies its committed artifacts and original source profile. The reviewed legacy migration binds only exact recorded task hashes and preserves their original environment labels. Grade/source keys and the global report build ID are separate. Interrupted attempts and incompatible caches fail explicitly without automatic retry.</p><p><code>make check-runner</code> repeats the configured suite with provider dispatch blocked and tests a simulated missing cache. Historical per-suite runners and cohort-specific audit/review scripts are archived with original hashes. <a href="data/runner-validation.json">Acceptance receipt</a> · <a href="data/entrypoint-archive.json">Archive manifest</a>.</p></section>'
         body += '<section><h2>From binary to benchmark report</h2>' + charts.workflow() + '</section>'
         body += '<section><h2>Isolation and first attempts</h2><p>Task prompts, ELF hashes, tool catalogs and budgets are frozen by protocol. ZCode uses an isolated temporary workspace and data directory, a restricted REA gateway and a recorder that verifies model, tools and wire limits. Native shell, filesystem, web, workflow and agent tools are removed; skills, memory and plugins are disabled. API headers are excluded from saved model traffic.</p><p>Each saved first attempt remains immutable. Interrupted attempts do not restart automatically. Grading runs after inference without repair or model feedback. Candidate execution uses the existing isolated bwrap grader.</p></section>'
         body += '<section><h2>Correctness and readability</h2><p>Results use their recorded grading protocol. C++11/14 and the Rust data-tool cohort use the numbered byte-frame amendment; original line-based scores remain diagnostic. Compile errors, uncaught exceptions, missing returns and exact byte mismatches count as failures.</p><p>Readability is a saved coordinating-AI source review: formatting, names, decomposition, native idioms and explanatory comments, each scored 0–2. It is subjective and separate from correctness. Earlier reviews masked model labels; additional GLM reviews disclose that model identity was visible. Fixed-condition reviews use source files without model labels or grades in the review pack, but the coordinating reviewer has run context, so they are not an independent blind panel. They are not an independent human panel. Missing reviews remain pending; report generation does not ask a model to invent a score.</p></section>'
         body += '<section><h2>Model and harness interpretation</h2><p>GLM runs in ZCode, while DeepSeek/GPT run in DeepSeek Harness. System prompts, provider adapters, tokenizers, cache behavior and reasoning implementations differ. The <a href="diagnostics.html#environment">environment audit</a> also found model-visible DSH spill previews with recovery tools blocked by the benchmark allowlist. Behavioral grading remains reproducible for the submitted code, but model-only attribution is not certified. Equal tasks or a shared-case filter do not remove these confounds. Scores are never silently adjusted to guess the effect of missing evidence.</p></section>'
-        body += '<section><h2>Current evidence delivery condition</h2><p>The reused basic runs use <code>lossless-evidence-v1</code>; the eight harder cases use <code>paged-evidence-v2</code> for every model. Both disable DSH spill, prune and automatic compaction and apply the benchmark-only ZCode overlay. v2 adds common, read-only evidence paging with exact reassembly checks and a 24,000-character response bound. Task fingerprints include profile and adapter hashes. Old cache hits remain their recorded condition; replaying cached evidence does not change their scores or create a new model attempt. <a href="diagnostics.html#evidence-fixes">Implemented controls, exact replay counts and remaining limits</a>.</p><p>The saved validation receipt is checked against code, configuration and cached-input hashes during every report build. Missing or changed inputs make validation unverified. Client code and the network are never loaded by report generation.</p></section>'
+        body += '<section><h2>Current evidence delivery condition</h2><p>New DeepSeek/GLM launches use lean-evidence-v4: compact case-local references, pointer-only catalogs and exact cross-tool deduplication of fully delivered views. Original evidence remains addressable. Their wallet policy prices cached input separately and replaces the raw total-token stop; response, output, turn and time guards remain. Historical scores retain their recorded conditions.</p><p>The reused basic runs use <code>lossless-evidence-v1</code>; the eight harder cases use <code>paged-evidence-v2</code> for every model. Both disable DSH spill, prune and automatic compaction and apply the benchmark-only ZCode overlay. v2 adds common, read-only evidence paging with exact reassembly checks and a 24,000-character response bound. Task fingerprints include profile and adapter hashes. Old cache hits remain their recorded condition; replaying cached evidence does not change their scores or create a new model attempt. <a href="diagnostics.html#evidence-fixes">Implemented controls, exact replay counts and remaining limits</a>.</p><p>The saved validation receipt is checked against code, configuration and cached-input hashes during every report build. Missing or changed inputs make validation unverified. Client code and the network are never loaded by report generation.</p></section>'
         body += '<section><h2>Migration and provenance</h2><p>Historical run directories stay in place. A registry maps imported GLM attempts to existing experiment cases. Case sources, binaries and vectors are retained byte-for-byte; moved executable paths are recorded by the migration audit.</p><p><a href="data/migration.json">Migration record</a> · <a href="data/report-inputs.json">Complete report input hashes</a></p></section>'
         self.page('methodology.html', 'Methodology and reproducibility', body)
 
@@ -668,11 +1165,85 @@ class Report:
         if archives:
             body += '<h3>Exact source profiles retained</h3><p>Each saved task retains its original environment fingerprint. These archives contain the exact benchmark harness code and configuration bytes used by those profiles; historical profiles are not relabeled as current code.</p>' + table(['Profile', 'Harness', 'Saved tasks', 'Archived bytes'], [
                 ['<a href="' + ('data/environment-profiles/' + escape(fingerprint) + '/profile.json' if 'data/environment-profiles/' + fingerprint + '/profile.json' in self.profile_files else 'data/environment-profile-archives.json') + '">' + escape(item['profile']['id']) + ' · ' + fingerprint[:12] + '</a>',
-                 escape(item['profile']['harness']), len(item['attempt_tasks']), 'Verified' if item['files_current'] else 'Unverified']
+                 escape(item['profile']['harness']), len(item['attempt_tasks']),
+                 ('Incomplete: ' + str(len(item['missing_files_sha256'])) + ' historical source files unavailable')
+                 if item.get('missing_files_sha256') else ('Verified' if item['files_current'] else 'Unverified')]
                 for fingerprint, item in sorted(archives.items())])
         inline = self.data['evidence_validation']
         inline_status = 'also passes against its recorded code and input hashes' if inline.get('passed') and inline.get('inputs_current') else 'is retained but does not certify the current code'
         return body + '<p><code>make check-paging</code> replays cached originals and validates both real clients against local fixtures. <code>make reports</code> consumes the saved <a href="data/evidence-paging-validation.json">current paging receipt</a> and validates its hashes without running a client, compiler or model. The separate <a href="data/evidence-validation.json">inline replay receipt</a> ' + inline_status + '. Complete data availability does not certify a pure model comparison or a particular accuracy gain.</p></section>'
+
+    def runtime_storage_section(self):
+        body = ('<section id="local-performance"><h2>Local startup and temporary runtime storage</h2>'
+            '<p>The runtime launcher detects WSL workspaces on Windows-backed mounts. It extracts a pinned archive of public installed tools to Linux temporary storage, '
+            'then runs the coordinator in a private mount namespace at the original workspace paths. Random temporary paths do not enter action identities. '
+            'Results and the action cache stay in the workspace; credentials and raw traces are never packed.</p>'
+            + table(['Reviewed bottleneck', 'Implemented change'], [
+                ['Full 153-case inventory for a two-case selection', 'Run preparation validates selected cases only; full inventory remains an explicit preparation command.'],
+                ['Repeated original admission and shared gates', 'One original-binding validation per inspection; shared kind/harness gates are admitted once per registration.'],
+                ['Small-file runtime I/O on Windows mounts', 'Temporary native-Linux copies of REA, Ghidra, Node, DSH and ZCode, exposed at stable paths.'],
+                ['Nested MCP setup reported executable EACCES', 'A private standard /dev permits /dev/null streams; real-client loopback controls run inside the same temporary namespace.'],
+                ['Unused analysis startup in premises-only sessions', 'DSH omits and disables the REA connector when the allowed tool catalog is empty.'],
+                ['Temporary-file lifetime', 'Context-manager cleanup on success, errors and signals; lock-protected stale cleanup after a forced kill.']])
+            + '<p>Offline controls cover real bind mounts, attestation/action-key invariance across different temporary paths, mutation rejection and cleanup. '
+            'The first run packs installed runtime dependencies; later runs reuse the verified archive. Refresh the archive explicitly after updating installed tools. '
+            'Launcher source and storage configuration are runtime-attestation inputs; unrelated scripts and random temporary names remain outside those inputs. '
+            'These are environment performance repairs, not new model observations or corrected historical scores. '
+            'Model reasoning, output budgets and provider latency remain separate limitations.</p>')
+        body += ('<p>Capability attempts use a stable logical trial in the inference action and an action-addressed result directory. '
+            'A matching legacy attempt retains its original path and key. Changed runtime/provider inputs select a separate immutable attempt; '
+            'the same stopped action remains blocked. Reports retain all actions and require explicit action selection when several share one configured cell; '
+            'rendering never probes a provider to choose a current result.</p>')
+        performance = self.data.get('runtime_performance', {})
+        benchmark = performance.get('benchmark')
+        if benchmark:
+            state = {'offline_cache_miss': 'Offline: missing inference caches; provider launches refused',
+                     'pre_dispatch_failure': 'Stopped before model dispatch', 'stopped': 'Interrupted; attempts preserved',
+                     'incomplete': 'Incomplete; saved failures and attempts retained',
+                     'running': 'Running; timing snapshot is partial', 'complete': 'Completed'}[benchmark['status']]
+            body += '<h3>Latest benchmark command: measured stage timings</h3><p><strong>' + escape(state) + '</strong>. '
+            body += 'Mode: ' + escape(benchmark['mode']) + '; recorded coordinator time: <strong>' + f'{benchmark["total_seconds"]:.3f} seconds</strong>. '
+            body += f'Selected tasks: {benchmark["selected_tasks"]}; cache hits: {benchmark["cache_hits"]}; '
+            body += f'failures: {benchmark["failures"]}; unprocessed cells: {benchmark["unprocessed_tasks"]}. '
+            if 'queue_holds' in benchmark:
+                body += f'Model queues held after a completed final: {benchmark["queue_holds"]}. '
+            body += 'Harness launch markers: ' + str(benchmark['provider_launches']) + '; API requests: '
+            body += ('unknown' if benchmark['model_api_calls'] is None else str(benchmark['model_api_calls'])) + '.</p>'
+            body += '<p>Selection, preparation and binding measure startup; execute includes cache checks, model waiting and grading. '
+            body += 'An offline cache miss checks refusal behavior and produces no new model result. A failed or interrupted command does not demonstrate model correctness. '
+            body += 'These timings start at task selection and exclude launcher extraction and Python imports. '
+            body += 'Harness launch markers do not establish the number of HTTP requests. Finalization measures report generation when enabled.</p>'
+            body += table(['Benchmark stage', 'Status', 'Seconds'], [[escape(row['stage']), escape(row['status']),
+                'in progress' if row['elapsed_seconds'] is None else f'{row["elapsed_seconds"]:.3f}']
+                for row in benchmark['stages']])
+        warm = performance.get('warm')
+        body += ('<h3>Warm verification and cold regression are separate</h3><p><code>make check</code> or <code>make check-warm</code> '
+            'checks accepted cache receipts, recomputes prepared action keys, verifies frozen packages and saved artifacts, '
+            'and freshly seals dependency bytes. It performs no builds, grading, runtime inventory, or model calls. '
+            'Missing, changed or corrupt inputs fail instead of silently starting cold work. '
+            '<code>make check-cold</code> explicitly runs the full build/fixture/corruption/transport regression suite; '
+            'it records each command duration separately. Fresh runtime/provider attestation still belongs to an actual model run.</p>')
+        if warm:
+            body += '<p>Saved warm measurement: <strong>' + f'{warm["total_seconds"]:.3f} seconds</strong> '
+            body += '(' + escape(warm['measured_at']) + '). Dependency proof: <strong>' + ('current' if warm['current'] else 'stale; rerun warm verification') + '</strong>. '
+            body += f'{warm["prepared_cases"]} prepared cases, {warm["native_saved_cases"]} saved native cases; '
+            body += f'{warm["reusable_native_cases"]} previously accepted reusable native cases and {warm["retained_changed_input_cases"]} retained known input mismatches. '
+            body += f'Budget: {warm["budget_seconds"]} seconds. Provider launches and model calls: 0.</p>'
+            body += table(['Warm stage', 'Seconds'], [[escape(row['name']), f'{row["seconds"]:.3f}'] for row in warm['stages']])
+            maximum = max((row['seconds'] for row in warm['stages']), default=1) or 1
+            body += '<div aria-label="Measured warm verification stage durations">' + ''.join(
+                '<div class="chart-row"><div class="chart-label">' + escape(row['name']) + '</div>'
+                '<div class="stack-track"><div class="bar" style="width:' + f'{100 * row["seconds"] / maximum:.2f}'
+                + '%;background:var(--accent,#4f78df);height:16px"></div></div></div>' for row in warm['stages']) + '</div>'
+        else:
+            body += '<p>No warm timing measurement is recorded in this summary.</p>'
+        cold = performance.get('cold')
+        if cold:
+            body += '<h3>Explicit cold regression command timings</h3><p>' + ('Complete' if cold['complete'] else 'Partial') + ' command run, including the setup stage.</p>'
+            body += table(['Cold command', 'Seconds', 'Exit code'], [[escape(row['name']), f'{row["seconds"]:.3f}', row['exit_code']] for row in cold['stages']])
+        body += '<p>Broad regression tests construct and grade fixtures and exercise cold caches. This is a different workload from warm verification; '
+        body += 'the times do not establish a model or Ghidra execution speedup. New action-cache entries remain in the persistent workspace cache while temporary runtimes and scratch files are removed.</p></section>'
+        return body
 
     def diagnostics(self):
         diagnosis = self.data['glm_diagnosis']
@@ -682,7 +1253,7 @@ class Report:
         primary_cuts = sum(entry.get('primary_cut') is True for entry in clips)
         matches = sum(c['reasoning_history_matches'] for c in cases)
         differences = sum(c['reasoning_history_differences'] for c in cases)
-        body = self.environment_diagnostics()
+        body = self.environment_diagnostics() + self.runtime_storage_section()
         fixed_glm = [r for r in self.current_records() if r['model'] == 'glm-5.3' and r['grade']]
         if fixed_glm:
             fixed_timeouts = [r for r in fixed_glm if r['receipt'].get('timed_out')]
@@ -696,7 +1267,7 @@ class Report:
                 caps = [q['max_tokens'] for q in receipt.get('requests', []) if type(q.get('max_tokens')) is int]
                 cap_label = str(min(caps)) + ('–' + str(max(caps)) if min(caps) != max(caps) else '') if caps else 'Unreported'
                 timing_rows.append([
-                    '<a href="' + escape(self.case_link(row)) + '#glm-5.3">' + escape(row['case']['label']) + '</a>',
+                    '<a href="' + escape(self.case_link(row)) + '#glm-5.3">' + escape(row['case']['label']) + '</a><small>' + escape(row['experiment_label'] + ' · output ' + str(row.get('output_language') or row['case']['language'])) + '</small>',
                     f'{row["grade"]["passed"]}/{row["grade"]["total"]}',
                     'Timed out' if receipt.get('timed_out') else 'Finished',
                     f'{elapsed / 60:.2f} min' if elapsed is not None else 'Unreported',
@@ -783,6 +1354,8 @@ class Report:
         self.data['shared_case_comparison'] = {'cases': [list(k) for k in sorted(shared)], 'totals': summary([r for r in active if (r['experiment'], r['case']['id']) in shared], self.data['models'])}
         self.write('data/comparison.json', json_text(self.data))
         self.write('data/report-inputs.json', json_text({'build_id': self.build_id, 'files_sha256': self.data['input_files_sha256']}))
+        self.write('data/capability-measurements.json', json_text(self.data['capability_measurements']))
+        self.write('data/capability-registration.json', json_text(self.data['capability_registration']))
         self.write('data/migration.json', json_text(self.migration))
         for filename, key in [('benchmark-configuration', 'benchmark_configuration'),
                               ('benchmark-status', 'benchmark_status'), ('runner-validation', 'runner_validation'),
@@ -830,15 +1403,19 @@ class Report:
     def build(self):
         self.write('assets/report.css', self.css)
         self.write('assets/report.js', self.js)
+        for name, content in i18n_report.assets().items(): self.write(name, content)
         self.overview()
         self.case_pages()
         self.costs()
+        self.measurement()
+        self.capabilities_page()
         self.compilers_page()
         self.coverage_page()
         self.history_pages()
         self.methodology()
         self.diagnostics()
         self.exports()
+        i18n_report.audit(self.output)
         self.write('.generated-report.json', json_text({'generator': 'benchmarks/scripts/report.py', 'build_id': self.build_id}))
         with zipfile.ZipFile(self.output / 'benchmark-report.zip', 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for path in sorted(self.output.rglob('*')):
@@ -851,25 +1428,51 @@ class Report:
 
 
 def build(output=DEFAULT_OUTPUT):
+    from report_io import snapshot, timed, metadata_snapshot
+    from grading.metadata_admission import metadata_validation_cache
+    stages = []
+    started = time.perf_counter()
     output = Path(output).resolve()
     if output in [ROOT, BENCH] or output == ROOT / 'benchmarks/runs':
         raise ValueError('Refusing to replace source or run directories')
     output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='.report-build-', dir=output.parent) as temporary:
+    with snapshot(output / 'data/report-inputs.json') as inputs, tempfile.TemporaryDirectory(prefix='rea-report-') as temporary:
         stage = Path(temporary) / 'reports'
         stage.mkdir()
-        report = Report(stage, records.collect())
-        report.build()
-        if output.exists():
-            if not (output / '.generated-report.json').exists() and output != DEFAULT_OUTPUT:
-                raise ValueError('Output directory is not marked as generated report output')
-            previous = Path(temporary) / 'previous'
-            output.rename(previous)
-        stage.rename(output)
+        with timed('collect_records', stages), metadata_snapshot():
+            data = records.collect()
+        with timed('collect_report_evidence', stages), metadata_snapshot(), metadata_validation_cache():
+            report = Report(stage, data)
+        action = action_cache.reporting(report.data)
+        local = action_cache.Cache()
+        with timed('render_private', stages):
+            hit = local.lookup(action)
+            if hit:
+                local.restore(hit, stage)
+            else:
+                report.build()
+                local.capture(action, stage)
+        with timed('seal_inputs', stages):
+            inputs.seal()
+        with tempfile.TemporaryDirectory(prefix='.report-publish-', dir=output.parent) as publication:
+            ready = Path(publication) / 'reports'
+            shutil.copytree(stage, ready)
+            if output.exists():
+                if not (output / '.generated-report.json').exists() and output != DEFAULT_OUTPUT:
+                    raise ValueError('Output directory is not marked as generated report output')
+                output.rename(Path(publication) / 'previous')
+            ready.rename(output)
     print('REPORTS BUILT:', output, '·', report.build_id[:12], '· no inference', flush=True)
     if output == DEFAULT_OUTPUT:
         import public_report
-        public_report.refresh(report)
+        with timed('public_and_pages', stages):
+            public_report.refresh(report)
+        timing = {'schema_version': 1, 'seconds': round(time.perf_counter() - started, 6),
+                  'stages': stages, 'model_api_calls': 0}
+        (BENCH / 'config/report-timings.json').write_text(json_text(timing))
+        from report_io import publish_timing
+        publish_timing()
+    print(f'REPORT TOTAL: {time.perf_counter() - started:.3f}s', flush=True)
     return report.build_id
 
 

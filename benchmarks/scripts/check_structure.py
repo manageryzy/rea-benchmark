@@ -36,10 +36,15 @@ def main():
         actual = ROOT / target
         assert actual.exists() and hashlib.sha256(actual.read_bytes()).hexdigest() == expected, 'Changed fixture: ' + path
         fixtures += 1
-    for name in ['authoring', 'grading', 'public', 'zcode']:
+    for name in ['authoring', 'grading', 'zcode']:
         assert not (BENCH / name).exists(), 'Old duplicate structure remains: ' + name
+    # public/ now contains the allowlisted report snapshot, not old binary inputs.
+    assert {str(p.relative_to(BENCH / 'public')) for p in (BENCH / 'public').rglob('*') if p.is_file()} == {'summary.json', 'README.md'}
     assert not (BENCH / 'scripts/runtime.mjs').exists()
-    sources = list((BENCH / 'scripts').glob('*.py')) + list((BENCH / 'harnesses').glob('*.py')) + list(BENCH.glob('suites/*/scripts/*.py'))
+    sources = (list((BENCH / 'scripts').glob('*.py'))
+               + list((BENCH / 'scripts/grading').rglob('*.py'))
+               + list((BENCH / 'scripts/capabilities').rglob('*.py'))
+               + list((BENCH / 'harnesses').glob('*.py')) + list(BENCH.glob('suites/*/scripts/*.py')))
     for path in sources:
         ast.parse(path.read_text(), filename=str(path))
     node = ROOT / '.tools/node-v24.22.0-linux-x64/bin/node'

@@ -9,9 +9,14 @@ estimated cost.
 ## Methods
 
 Models inspect frozen x86-64 ELF inputs through REA and headless Ghidra, then submit
-source in the target's original language. The same per-case binary, prompt, tool
-catalog and budgets apply across models. Reference sources, test vectors, previous
+source in the target's original language. Task configurations share the per-case
+binary, prompt, tool catalog and configured budgets across models. Reference sources, test vectors, previous
 answers, shell access and compiler feedback are unavailable to the model.
+
+New inference binds the resolved provider route, effective settings and reviewed
+runtime content before execution, with checks for changes before and after the
+attempt. Historical runs without those records retain unknown runtime identity.
+See the [attestation method and limits](guides/runtime-attestation.md).
 
 | Suite | Cases | Main coverage |
 | --- | ---: | --- |
@@ -37,6 +42,14 @@ check to pass. Readability is a separate source-only coordinating-AI review acro
 five 0–2 dimensions; missing reviews stay unscored. This reviewer has run context
 and is not an independent blind panel.
 
+Current offline grading preserves exact return bytes in numbered, length-checked
+frames and validates Go imports using its syntax tree. Versioned regrading keeps
+the original candidate and grades. Native frames do not authenticate return
+provenance; historical provider budgets and full runtime identity remain uncertified.
+Usage completeness requires request-linked evidence and is independent of task success.
+New grades use [pinned compiler, linker, library and executor images](guides/grading-runtimes.md).
+This improves grading identity without certifying historical inference or native return provenance.
+
 DeepSeek and GPT use DeepSeek Harness; GLM uses ZCode. All configured models use
 high reasoning. Current delivery disables
 DSH spilling, pruning and automatic compaction, fixes ZCode clipping, and exposes
@@ -45,45 +58,51 @@ separate. The scores describe **model + harness setups**; model-only attribution
 not certified. Validated caches preserve the original inference and its recorded
 environment, while reports are generated offline from saved records.
 
+The unreleased capability track separates function localization, independent C
+reconstruction and type/layout/ABI recovery. Description-generated probes retain
+an unchanged original caller or callee in each direction, including pointer
+depth, buffer extents and overlap. Host-owned execution supplies return and memory
+observations. These offline preparation controls add no model scores or spending;
+the [implementation plan](guides/audit-implementation-plan.md) records the remaining
+conditions, validity reviews and release gates. Future supported launches enforce
+the [configured task token and turn limits](guides/request-budgets.md).
+
+## Runtime dependencies
+
+Linux/WSL needs **Bubblewrap**, **squashfs-tools**, **zstd**, and optionally
+**SquashFUSE + fuse3** with access to `/dev/fuse`. The rootless tool image pins
+REA, Ghidra, harnesses, Node, Java, Python and the GCC/Clang/Rust/Go compiler
+environment. It uses FUSE when available and otherwise reuses an extracted cache;
+per-run temporary files are cleaned separately. No systemd container or Docker
+daemon is required. See [installation, image setup and cleanup](guides/runtime-image.md)
+for commands, captured dependencies and the remaining host boundary.
+
 ## Results summary
 
 [Global HTML report](https://manageryzy.github.io/rea-benchmark/) · [Publication and privacy policy](guides/publishing.md)
 
-Snapshot: **2026-10-20 15:21 JST**, report build `fd481cde4aa1`.
-The active comparison has **58 graded cells out of 66 configured cells**
-(six models × eleven cases). The table includes all active cases and discloses
-unequal completion; it is not a ranking on matched coverage.
+<!-- benchmark-results:start -->
 
-| Model | Graded / planned | Programs passing / graded | Behavioral checks passed / total | Readability / 10 | Reported tokens | Estimated USD |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| DeepSeek V4.1 Flash 1017 | 11/11 | 4/11 | 21,340/27,971 | 8.90 (n=10) | 24,473,622 | $0.65104 |
-| DeepSeek V4 Pro 0813 | 3/11 | 3/3 | 4,251/4,251 | 7.50 (n=2) | 1,428,833 | ≥ $0.68557 |
-| GPT-6.1 Sol | 11/11 | 10/11 | 26,681/27,971 | 9.09 (n=11) | 10,744,408 | $4.51048–$5.30051 |
-| GLM-5.3 | 11/11 | 4/11 | 20,702/27,971 | 8.78 (n=9) | 24,369,808 | ≥ $12.06500 |
-| GPT-6 Luna | 11/11 | 2/11 | 10,436/27,971 | 7.70 (n=10) | 5,145,223 | $0.16515–$0.19039 |
-| GPT-5.6 Sol | 11/11 | 6/11 | 23,989/27,971 | 8.73 (n=11) | 11,875,765 | $12.39434–$14.05745 |
+Cached inference through **2026-10-27T19:00:43.694540+00:00**; report build `b3baad9ef5d6`.
 
-DeepSeek Pro completed the three basic cases, then stopped on a harness/provider
-failure in complex C++; seven cases remain unstarted. That failure is not assigned
-a model correctness score. Its three graded cases cannot establish performance on
-the harder suite. On the three basic cases shared by all six models, Pro,
-GPT-6.1 Sol, GLM-5.3 and GPT-5.6 Sol passed all three programs; Flash and GPT-6 Luna
-passed two each.
+**166/252** active cells have grades. Unequal completion is disclosed; this is not a matched-coverage ranking.
 
-Readability means include only reviewed sources, with `n` shown. Tokens aggregate
-provider-reported usage across requests, including repeated context and cache
-reads. Tokens and cost retain observed usage from failed active attempts; `≥`
-marks incomplete usage. Costs use frozen published-rate snapshots. GPT figures
-are API equivalents for the Codex route; actual invoice, prepaid and subscription
-debits are unavailable. Cost ranges preserve unresolved billing assumptions.
+| Model | Graded / planned | Programs passing / graded | Checks passed / total | Readability / 10 | Known tokens | Observed USD estimate |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| DeepSeek V4.1 Flash 1017 | 32/42 | 1/32 | 52,432/93,158 | Unreviewed | 63,149,311 | $2.7923 |
+| DeepSeek V4 Pro 0813 | 30/42 | 0/30 | 47,493/87,228 | Unreviewed | 68,495,234 | $12.1985 |
+| GPT-6.1 Sol | 24/42 | 9/24 | 66,715/69,438 | Unreviewed | 17,688,006 | $7.8937–$9.1369 (rate range) |
+| GLM-5.3 | 29/42 | 1/29 | 33,874/84,632 | Unreviewed | 50,206,948 | $26.3331 known subtotal; missing usage, final cost unknown |
+| GPT-6 Luna | 22/42 | 0/22 | 14,863/63,262 | Unreviewed | 12,466,821 | $0.3782–$0.4317 (rate range) |
+| GPT-5.6 Sol | 29/42 | 8/29 | 57,289/76,523 | Unreviewed | 18,217,689 | $22.9747–$25.7129 (rate range) |
 
-The generated global report contains matching-case comparisons, per-case scores,
-runtime charts, historical conditions and evidence-delivery diagnostics. See
-[report reproduction](guides/setup.md#rebuild-benchmark-reports) for details.
-Private reports and raw attempts are excluded from Git. Public HTML is generated
-locally from a sanitized summary cache and committed under `docs/`. Replaying the underlying measurements
-requires the matching private result dataset. This dated summary is not a
-substitute for that dataset.
+Across all conditions, 328/328 saved grades use exact-byte grading; 0 differ in passed checks or program success from their previously selected grades. Offline regrading reuses the original model outputs and preserves historical grades.
+
+Tokens include repeated context and cache reads. Costs cover observed usage at frozen published rates; missing request linkage or usage leaves the total unknown. GPT amounts are API equivalents, not measured subscription debits. Readability averages include only reviewed sources. Environment failures and unstarted cases receive no model correctness score.
+
+[Measurement validity and revisions](https://manageryzy.github.io/rea-benchmark/measurement.html) · [Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.
+
+<!-- benchmark-results:end -->
 
 ## Related projects
 

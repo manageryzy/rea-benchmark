@@ -1,0 +1,6 @@
+{
+  "schema_version": 2,
+  "mode": "auto",
+  "temporary_root": "/tmp",
+  "cleanup_grace_seconds": 10
+}

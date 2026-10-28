@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "typed-family-macros-v2",
+  "metrics": {
+    "L1": "top1_success",
+    "L2_L3_L4": "f1_with_precision_and_coverage",
+    "L5": "full_chain_success_with_components",
+    "L6": "instance_f1_with_precision_and_coverage",
+    "C_T": "capability_check_fraction"
+  },
+  "weights": {
+    "variants": "equal_within_family",
+    "families": "equal_within_lineage",
+    "lineages": "equal",
+    "conditions": "separate"
+  },
+  "lineage_rules": {
+    "abi_probe": "integer_record_interfaces_v1",
+    "pointer_probe": "pointer_object_interfaces_v1",
+    "variant_object": "variant_object_interfaces_v1",
+    "indirect_call": "indirect_call_interfaces_v1",
+    "optimized_localization": "optimized_mix_locations_v1",
+    "native_abi": "native_aggregate_interfaces_v1",
+    "default": "family_id"
+  },
+  "readability": {
+    "rubric": ["names", "decomposition", "language_idioms", "formatting", "explanatory_comments"],
+    "points_per_dimension": 2,
+    "structured_artifacts": "not_applicable"
+  },
+  "comparison": {
+    "matched": "identical_public_packages_all_selected_models",
+    "missing": "unscored",
+    "infrastructure_invalid": "unscored"
+  }
+}

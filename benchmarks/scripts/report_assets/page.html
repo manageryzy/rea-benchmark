@@ -7,14 +7,17 @@
 <link rel="stylesheet" href="$stylesheet">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to results</a>
 <header>
 <small>REA / GHIDRA · GLOBAL BENCHMARK</small>
 <h1>$title</h1>
-<p>Cumulative C++ / Rust / Go reconstruction results. Every page is generated from saved records, frozen pricing and stored assessments.</p>
-<nav aria-label="Report navigation">$navigation</nav>
+<p>$subtitle</p>
+<small>Saved data as of $data_date · Build $build_id</small>
+<details class="report-navigation" open><summary>Report navigation</summary><nav aria-label="Report navigation">$navigation</nav></details>
 </header>
-<main>$body</main>
+<main id="main-content" tabindex="-1"><div class="export-controls"><button type="button" data-print-report>Print selected view</button><span>Export keeps the selected comparison and visible rows.</span></div><p class="print-context">$title · Data as of $data_date · Build $build_id. Selected comparison: <span data-print-scope>As shown on this page</span>.</p>$body</main>
 <footer>Data as of $data_date · Build $build_id · Rebuild all reports: <code>make reports</code>. No model calls are needed.</footer>
 <script src="$script" defer></script>
+$locale_scripts
 </body>
 </html>

@@ -1,0 +1,750 @@
+{
+  "schema_version": 1,
+  "compiler_matrix_config": "benchmarks/config/cpp-build-points.json",
+  "cases": [
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--gcc13--O0",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--gcc13--O0",
+      "inputs_sha256": {
+        "target": "6190905b54d920f4dc6907f6b04b3dc6f0fbb2b6fe0af344b4f6a2a9894ba633",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "883f28e0fda909807350ddb8d2a1cd502ff905a373390596f10174508e8f17ee"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/5a958c8304bed45dea11c27233bac19ed8e9705a4af1512d159680e4863ef64e/validation.json",
+      "build_receipt_sha256": "acffa2488e50952ec8b901faa2b5e75a1e282458ea2d430216259d5c1bff96a1",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--gcc13--O2",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--gcc13--O2",
+      "inputs_sha256": {
+        "target": "9661fbc3fa1df67b97186c1532297f643fb6aabe3d553aa6753ff923044a196c",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "e2f27685b343c178c9d0bdd2e41639ec7d71e3e529e31bd586791596350bce4d"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/41f4d39afdd8187e20d8f6c483fc835b94103f4334ebc265ad4c6c2dc958a3c9/validation.json",
+      "build_receipt_sha256": "afcdeae6700be196e3d7f6f4809690cd3fd33ed965be1b983f15cd2c16cef5bb",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O2",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--gcc13--O3",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--gcc13--O3",
+      "inputs_sha256": {
+        "target": "ba483d4d5f8ab807666bd512c114f60fb2abfc1a9061054fdc1c113ccbfc6568",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "d9942f216a5853f736662ae0f42c5da6c9479e154a9b632830a52dd0aebaca41"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/da480cc7fd9ac6a210a21c555c74a3947e37eac821951615ad855f3afe29c56a/validation.json",
+      "build_receipt_sha256": "e0ee8f039da4ee11890cf6f5212c1cca946538618d32d2394ce066e2a00e5e8f",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--clang20--O0",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--clang20--O0",
+      "inputs_sha256": {
+        "target": "3bdc3aaa9f2da5ec72e80af3e381fd3d6764645f43ce265387f099f3c07031d5",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "74f5734bff326d770579f309116d1b1520087857df0d34866d3e518060f99f5f"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/51e6b06ded6acc106f8e24811ad0713e5cc43e2e6b19ea34ccd4965bca1bb100/validation.json",
+      "build_receipt_sha256": "e4f9d2fced1d17afcc77cf5b707519c82aa2ecce97268c97791ea42ec02118e9",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--clang20--O2",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--clang20--O2",
+      "inputs_sha256": {
+        "target": "10c0ccbf6b85c2560668b17b2c5cb1e5fa5e219b38d48660cad35c326f56e7f1",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "f124515aa287e78ac199e65b3cca9fd2672e8f267d4b6b0448f26d4f274b6212"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/dcafa8eb603f3a9c10d40a741779d615f4e2b87b0a35c8340576fb9a7de4a2c6/validation.json",
+      "build_receipt_sha256": "91d35573b5a6d509c4ac26a77912ad9375bf73a1f6b8ff8d239cd0946dff8153",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "native-pilot-20261019",
+      "suite": "record-parser",
+      "id": "cpp--clang20--O3",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/record-parser/public/build-points/cpp--clang20--O3",
+      "inputs_sha256": {
+        "target": "c5daa566558d549de6bf5bf9c3f8c55011499b12189530af22cf9b5c558ecc76",
+        "prompt.txt": "7deb306a1b949f973d890e24eb34db0b5da8d51fda05d9c86f1d32691855fbe3",
+        "manifest.json": "875dbc23f7290c66c9b8a4e4ef41f7a711c8d582b8059f39df4b092248d37e0f"
+      },
+      "build_receipt": "benchmarks/suites/record-parser/private/build-points/b98fd06b3db5c809aa6f3c85d7a3f9c30b6e3b6fa53f391b58d77f4e15e9cfcc/validation.json",
+      "build_receipt_sha256": "9cfbfc3c0c3e2c97f72be3684f20727187ec6995eec62a06080479f78ede7545",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "debug"
+      }
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "suite": "complex-native-v1",
+      "id": "cpp--gcc13--O0",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/complex-native-v1/public/build-points/cpp--gcc13--O0",
+      "inputs_sha256": {
+        "target": "4dfb5ae8c4df793e77c81569e3250ff99d4cd07be3985f67c4c6c1e306e54852",
+        "prompt.txt": "80612d83d86c7d42fde5d7f9d1256bbb375ddaab5bc66968dd2497009782290d",
+        "manifest.json": "191fbda59efb10d87f9a9fbe48f3692a512ba54d7822e1f5c627f36cd988d6c4"
+      },
+      "build_receipt": "benchmarks/suites/complex-native-v1/private/build-points/6eb846c5974209a42400b38840df8bee15ec46dc761540144a62406995396878/validation.json",
+      "build_receipt_sha256": "41990592a97f6e082cfc690dbe0c16f7c3653da16e6428f774759116c4eecf22",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "suite": "complex-native-v1",
+      "id": "cpp--gcc13--O3",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/complex-native-v1/public/build-points/cpp--gcc13--O3",
+      "inputs_sha256": {
+        "target": "ec4c9c2268a3ef395426ca27475f59a476f46cab76961e1bd89f36c14d6eacc3",
+        "prompt.txt": "e02011324e775225ee15fd2fc6556275a3fb78bac16f03943f862c10e16e858e",
+        "manifest.json": "956f67d4afad4bd8c7e9e03afc96a6aa3187b056d6b9a7f4d79132610e6c6fd5"
+      },
+      "build_receipt": "benchmarks/suites/complex-native-v1/private/build-points/57ffd163dac81d623f9b8d591f3b4fa98b49be5639763ab9e2ec3fb60d962e9d/validation.json",
+      "build_receipt_sha256": "c24a7800a5ef4a36b8add7ff38346e78dd7e463671ac9af434f2b7caaa6c60a0",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "suite": "complex-native-v1",
+      "id": "cpp--clang20--O0",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/complex-native-v1/public/build-points/cpp--clang20--O0",
+      "inputs_sha256": {
+        "target": "b2463718cb8fa5b34b232ab8390479630daa0370cffa047f060e0d540c3e1d95",
+        "prompt.txt": "bee60e459044617c282f321bfbf4c2c105595d686223da6835093cec311157c8",
+        "manifest.json": "0209f19dfc36d7666ad32e9002e0ba26dcdddf8f321e83a65fa6ce1a231bf8e6"
+      },
+      "build_receipt": "benchmarks/suites/complex-native-v1/private/build-points/aab4cbc421a6f911d519705cc8d967165812fd89fff8547f13687fc34f89e33f/validation.json",
+      "build_receipt_sha256": "85e66ef0ecc4398887250821b831ac0bebf002188d92a8dcc276813f9eaca2e3",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "suite": "complex-native-v1",
+      "id": "cpp--clang20--O2",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/complex-native-v1/public/build-points/cpp--clang20--O2",
+      "inputs_sha256": {
+        "target": "4053f7e8d2413bca16b11f59131a7db1497888591dcd8ebde42120b4c3850016",
+        "prompt.txt": "e1bf3ef6c6f36f0a5d3a6af22c9dfc44dc19b3d6638f7a0a9c5abd5f41c04849",
+        "manifest.json": "d1e8578a311ab25eb5153686792bbc93d99282b8c8ca796239ed8bc4de82ba38"
+      },
+      "build_receipt": "benchmarks/suites/complex-native-v1/private/build-points/8298e8f1aeaa392d6c27f81d31651848ec59169b1fa9bba6d879968a6adf8a03/validation.json",
+      "build_receipt_sha256": "22a5ea8aa02572e722f9d4bdc774894b365ba52afeb0d68b6dc55bbe5e4b64f3",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "complex-pilot-common-budget-20261019",
+      "suite": "complex-native-v1",
+      "id": "cpp--clang20--O3",
+      "base_case": "cpp",
+      "public_directory": "benchmarks/suites/complex-native-v1/public/build-points/cpp--clang20--O3",
+      "inputs_sha256": {
+        "target": "5e084ec8cb28d7b424924a2564217949aed587f183a5ffa4686cb1cbef44e07f",
+        "prompt.txt": "24fe7e23fc6fb3b441d917faf251b8a454bb583639fbf982ac7fb46edc8d8033",
+        "manifest.json": "1c9df1ad74b6f8578275da7a1417acd5b42dfadaa84ae0db8f795996f7f24a2c"
+      },
+      "build_receipt": "benchmarks/suites/complex-native-v1/private/build-points/42b7511bfd475c0f807ed6bd38edcd3eb90527f4a5cdf63396d28850a227c478/validation.json",
+      "build_receipt_sha256": "18ee0ec1da6406aed3c4b50a1ee3dc54fd7851d6c2c19fce93fb21609d4fdffc",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++20",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi0--gcc13--O0",
+      "base_case": "cpp11-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi0--gcc13--O0",
+      "inputs_sha256": {
+        "target": "9b9f94932118c5a7d877942d1acfb6612e52b392cca3d6d307360f2a0b1288ac",
+        "prompt.txt": "98ab2e7679bdcbad28262b37b61503a8d129466386d95446867c9ae93556ec87",
+        "manifest.json": "4dd0d4275b2b7a65c7896131d096e3846dc6676194a28b1a357ed331e4fa723f"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/d9455f0cb93cf02a3b9735d79f3de0ea71842c4d46f7e70ffc731f39df592b24/validation.json",
+      "build_receipt_sha256": "e27457c7a9f6c46bb81c70a58668ab1d3cce6316b7f26ad41ab4e2c5415220eb",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++11",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi0--gcc13--O3",
+      "base_case": "cpp11-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi0--gcc13--O3",
+      "inputs_sha256": {
+        "target": "ab6824dd062c430dc0b74e03e4f8bd2e675104cebc5a06617124423a546196e6",
+        "prompt.txt": "50be14c7edfb9b47d6fe8e23579165c9b20fdc4882ace77f88ba0646bd98863d",
+        "manifest.json": "70c4dc5db14b87476fa519891bebf14a24deabe528691005599a33c5f2564e21"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/0f6df934105aafa402a22c588c3261583170980ef617c5374c75abf0c3da6290/validation.json",
+      "build_receipt_sha256": "124af695bd92a3abd7cc7d352952e22035aab39961afdde1ba7c0775921e0a7b",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++11",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi0--clang20--O0",
+      "base_case": "cpp11-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi0--clang20--O0",
+      "inputs_sha256": {
+        "target": "528d3955a00fa3e6c748f4aa3894e44375c57f35918df3dd8ca29b27ca807ff9",
+        "prompt.txt": "cf50c0f5b0d67dc135bbbf73816cd604a05ac7cfcb62adafdc05737305f58247",
+        "manifest.json": "2c5aa7078695644e024d489c12e5c302e9848370a24acbe9bad54de0870faa0d"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/40c951f805ec9fd8ff2ca0b4e93c281ca91c931271a65ad5188a551dd488865e/validation.json",
+      "build_receipt_sha256": "d784a21295e22510e5ea9cd4579c3324f555186a9bda09e73c5b97829b2242b6",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++11",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi0--clang20--O2",
+      "base_case": "cpp11-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi0--clang20--O2",
+      "inputs_sha256": {
+        "target": "a5d9304a38de612dc165c31d34a5b4fa2ad9e83f948d52f652218ce7de42329d",
+        "prompt.txt": "79d279594b0156d2a9041ebecef5a417f41dca0b186b2013fe4162bff9067d59",
+        "manifest.json": "a3f9aab7a247569abedf55fb239b2b03d56e32ee59fa5fc8e91769912a04d529"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/f082f9552bde3b46f38f341cf4b59a7fcc62bdb9d77b6c6c9836500a2cc6d959/validation.json",
+      "build_receipt_sha256": "96bab8b662d07704781c759dc3cf97072f11e1c25f66ea81fcfadce897a14ee8",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++11",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi0--clang20--O3",
+      "base_case": "cpp11-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi0--clang20--O3",
+      "inputs_sha256": {
+        "target": "5232f99c2a66cda198de26125f83435e84c37035f1332696fdd4f2bd8923b394",
+        "prompt.txt": "809872ae5ebe4205f54bbd8dd497f5c09b792c76768f0e4e0b492f3710c5e71f",
+        "manifest.json": "3eacb912cae279111eed0206b043a9fddc74681fbcf02800f605aa9aee287f16"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/f0754b54c144aeea833a17b0d11c80c31aa6b0966bceabe6a9a168f1c1c6405c/validation.json",
+      "build_receipt_sha256": "2bfda11889afa5d2f16b821534aea8aa419f3eee565acba4320e6d6fb07b7ab6",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++11",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi1--gcc13--O0",
+      "base_case": "cpp11-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi1--gcc13--O0",
+      "inputs_sha256": {
+        "target": "30d47a327863d8fc2bb6aa8c39bf265e0af740e49c3a792355e285ad7e871504",
+        "prompt.txt": "c8383e384459f6308dd805bd2c296573db1630761c61552cf1eb9c7b13775898",
+        "manifest.json": "cd0ceb96f50b9ea7b21c2b87f798dfb49ad3a02b0b6f80cf3ec2cb232f3f7e0d"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/c7c730610787e5ba932f4b49d7154f3ad8128a7fbd13d8f8c5a186d0d0fa73e8/validation.json",
+      "build_receipt_sha256": "f554048e5d206e50f6c5c4f68e6e6dfd22c808d4c3eea4101696463c4de4f21a",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++11",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi1--gcc13--O3",
+      "base_case": "cpp11-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi1--gcc13--O3",
+      "inputs_sha256": {
+        "target": "167a55ab1ea54692bacb03d260e37b2f4865a4624600ca4dde346eaccc428aee",
+        "prompt.txt": "f9f934da785430d55fb267c2e5ba5640445a5562b5bfbc7448aa5c44ff68db6c",
+        "manifest.json": "ea6c1c8a85bb930106106c20289b08d41e1098b8aaae618ac90b430bbc935ee6"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/0ae4c741688852556059b1b666ea92bad9c4e0627ad0d6e9beda253631d0343c/validation.json",
+      "build_receipt_sha256": "26552f4eab2d9e1a7cf2e2d12e12e01d3859b8fd87ebd4e4189c835ea91b3395",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++11",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi1--clang20--O0",
+      "base_case": "cpp11-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi1--clang20--O0",
+      "inputs_sha256": {
+        "target": "552cfe9493555dc023148e174f067d42cd719931ad96da5f286dc73c61f6c03c",
+        "prompt.txt": "061ec1371524b0f173a1f98801e09cf679d8d048b0ef478c4a2547c44de3f77f",
+        "manifest.json": "796a245e1aaa3f50ce914585ea5bc76b0dcbe01756e562dd251ae3d0890762d5"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/67d21d9e7b75cb7dd9069015b2013c08e2d51d4f38831d242f28bf85b09ed1ba/validation.json",
+      "build_receipt_sha256": "dff1465febc4bbd99db8891ca2c4bfabbcc65124d58e0a64456b79a83da6d30b",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++11",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi1--clang20--O2",
+      "base_case": "cpp11-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi1--clang20--O2",
+      "inputs_sha256": {
+        "target": "dfa260cefcb969264a69a0aadddb4f8dc1db81ac36160b9116a12c6bd5fff3cf",
+        "prompt.txt": "17ee2ebde5a4496b05bff4ca49e10825837f8d64c2a43f2c0d2be781453292f2",
+        "manifest.json": "bc3aae4e3d0d07d03ebb2e2392ca2b4b6c31ea20dac3d64d7b0a659aa05edbe3"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/ee9600903142b93daf373e926406f59a4f8241c197e81ba33344398c46407bcb/validation.json",
+      "build_receipt_sha256": "8cb94b26f87ab6b71764bae7b6912a661634c65ea648f42e922bc3c793c3cf6a",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++11",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp11-string-abi1--clang20--O3",
+      "base_case": "cpp11-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp11-string-abi1--clang20--O3",
+      "inputs_sha256": {
+        "target": "20c041967b179290c478fad1a6b8121fda2748dc3c86b3d5b61eb89bd39ba6e3",
+        "prompt.txt": "ce40ae4185306dfc479d16bc18fbdcc45d159a8698d6481673158d6e48bf0463",
+        "manifest.json": "129a0ea4b0146951d8e6226d562867444b6828ba4e120c7f4b4e6bc4d29a234e"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/ea10462225a6de4e2597995897d0bd0e0f1352a62cead13a6bb11119e6bbbad0/validation.json",
+      "build_receipt_sha256": "b43ab46f7774be7ffa4f556c38da2ec03dd373f26f0b8d89d6a97ba30c608f42",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++11",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi0--gcc13--O0",
+      "base_case": "cpp14-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi0--gcc13--O0",
+      "inputs_sha256": {
+        "target": "de7a7d1afaf2a2bfa32c8efbe2dcda21e046d79f904214c24f75ebad00f14e15",
+        "prompt.txt": "697bb074b6801faf3d57d11b38a5e21bbd56e48458bb17feb7a2f60ebd10dc77",
+        "manifest.json": "a5bf1c2b4c2eed076d46e52b0818317a7b330b106a24545dc0193e02d437905b"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/b56f15496ba87527f990e761a1b8c357dad93de37accacff57855dc95d9ec52e/validation.json",
+      "build_receipt_sha256": "14da6af0bf5601fc1ae4f6c84c6437866ab87f28d6b745509fcdab5418cf0b64",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++14",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi0--gcc13--O3",
+      "base_case": "cpp14-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi0--gcc13--O3",
+      "inputs_sha256": {
+        "target": "dbf10f8efa22030e0ff505ab768f2da348d18b19ec0f2e5accda247b289303bd",
+        "prompt.txt": "ae448e958a70437ba434adcb81533506a8440ebf19744a6f3b09f8e6a9e3df50",
+        "manifest.json": "ac1b74ef0612b93b43b3bc3f4f70d9f2a21aea4f443f01d9c16d17b4e620ac55"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/9dea47caa72e65039e66701c8ce3f41aff6d94fd09ef92b39f3e09c30429a402/validation.json",
+      "build_receipt_sha256": "c8a9137ce3356566bd2059651bd1e32fc3b4bd699a8beb2c9f196b48450838bf",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++14",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi0--clang20--O0",
+      "base_case": "cpp14-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi0--clang20--O0",
+      "inputs_sha256": {
+        "target": "ae3668dd7d82e8c2d487bf9f399dd20ba9c361dc69ae8ee93637d3ddb09cc8a9",
+        "prompt.txt": "589caef801f2de14738f47dc46f351015d062b84a4f6b2431eb8b51dc077f8d2",
+        "manifest.json": "36d68da2fd4a73d61bd6a704847ac7c96cb3051fc07a93fbdfb261e06ea9d37c"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/e8558b7dee01880dd0b7e1779115b7a7a6a0d405e954bc3aefb5c0de3b8770a0/validation.json",
+      "build_receipt_sha256": "2dd10a67d26bc0b6d3152058d12882b174b66d69861011036d81294ae1ea54ac",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++14",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi0--clang20--O2",
+      "base_case": "cpp14-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi0--clang20--O2",
+      "inputs_sha256": {
+        "target": "ce446a5c8cae94621066487a76c49ccba251dfc54c111212629984344c3170cc",
+        "prompt.txt": "abd5419a7a1162f60b890a58f38d54a0169634d0980c19b64da63e2a9c8cd8a0",
+        "manifest.json": "50af3d08fc4988b7375efb547a95e904010ef6efe5d8287c6ba4aa88b2e5ac7f"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/67b9468020473d1f47d3efc8ac03abb4326dd650d1124234bd7c4ac9fe7a5d2c/validation.json",
+      "build_receipt_sha256": "8af90c054311257fa64232b8456a97d38a8e13f50ca5f62866b9f82c7a786b2d",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++14",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi0--clang20--O3",
+      "base_case": "cpp14-string-abi0",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi0--clang20--O3",
+      "inputs_sha256": {
+        "target": "6e8fd1aef4c57f4dd42bda084ee5b83b903fa743ecf4f0c729d53c4be7e81254",
+        "prompt.txt": "a426e40cd21d02af64026af4ef462b6e1ad5129a3431e83cd9a2c2bb5f0ab84b",
+        "manifest.json": "83a6fe02abd6b0719a5e4092c3226f456d37ff1191c1f7276f50e4c1bcdb7b9c"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/6c5b0967cb634f8025bd57b79cb6907eeb8657eaa426031104e0030d62333fbc/validation.json",
+      "build_receipt_sha256": "e9b3d2b9a0e178610fde58e4d9881233f6dfe9f05a33285d8b8924cdcdbae0d2",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++14",
+        "string_abi": 0,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi1--gcc13--O0",
+      "base_case": "cpp14-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi1--gcc13--O0",
+      "inputs_sha256": {
+        "target": "b271df1335570196673452b81d8f9587ac5e0538cb6a52f3175210320080d1c9",
+        "prompt.txt": "a81d3ddb9e0f37a394280e10c14bb9d531e8f8545aed3e308e595ebfc21b7a36",
+        "manifest.json": "77c14572eab188e2a8a07b25b5d68f436b65b7b33c551569c3c917834e647abd"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/bfaa3aab440043246e24a6d1a8ff9b81e2aac582cca0a8e2e2080dbc3d655ba1/validation.json",
+      "build_receipt_sha256": "999e9fb8666b86c38545509f7970754febcc75d512ff1e613744d295ecf1ed6f",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O0",
+        "standard": "c++14",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi1--gcc13--O3",
+      "base_case": "cpp14-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi1--gcc13--O3",
+      "inputs_sha256": {
+        "target": "bae3268e89cbd4d372d65dd85f0de624a835c2b836303ae2b1b6b205d752c92a",
+        "prompt.txt": "7946ccad888db5edd60d4c6559477a8f29f8526d8a3a92c002829b7c0935d95e",
+        "manifest.json": "6df898d9e5775474f3eb344ca47c1901632fe14bb09f5de441a6ac6b000127d0"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/bd85a5a06ebcbf236e0d0b38719c8b03da092b89d9893f28cb48ef0635f603cb/validation.json",
+      "build_receipt_sha256": "df3da54deacd5fe688bab5ac8fef9044ad46f1c19f701b6e6bf5408cc3441f0d",
+      "target_build": {
+        "compiler_id": "gcc13",
+        "compiler_family": "GCC",
+        "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+        "optimization": "O3",
+        "standard": "c++14",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi1--clang20--O0",
+      "base_case": "cpp14-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi1--clang20--O0",
+      "inputs_sha256": {
+        "target": "48c81e297aaa867db083d3f37eb2c9b8d0688c233650c7d87079d4060c844a20",
+        "prompt.txt": "eb3d78ed352f59fb26bcee141ac6938986584696542df7a2bd413ed5f38d8cce",
+        "manifest.json": "3fe413ee13176dab0506fc901ea9f06015c48ddcf7d046518cd0065ba19a6cd8"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/ba7a12aa53570344400a7ea5b12d57ffee9deda608ad02d0e409e384d39203c9/validation.json",
+      "build_receipt_sha256": "92a64b2b13db4221729765e68068889b9cbc777d1ba14806157f70d1a80a9b9b",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O0",
+        "standard": "c++14",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi1--clang20--O2",
+      "base_case": "cpp14-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi1--clang20--O2",
+      "inputs_sha256": {
+        "target": "aa844c839ac41c3f4605f7628743299bd1d3691c8b07bdbdf6803e9d96259c12",
+        "prompt.txt": "c5ab9e600d4ea6735c7e9b513329116a4fea507327ebd71943df701c93cafe0a",
+        "manifest.json": "380c1db83d81f7f74197c50169915462da4efcac57081fb62b133fc173c1b14e"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/01573bafab39dc1fdc8ed02176eb9cf62d42ab8464ef239fbda2590d0a1cb9b7/validation.json",
+      "build_receipt_sha256": "0aadedf7f371dd1a2fa3a7bbaef28d30db312563785f8819dcb61577ff39884e",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O2",
+        "standard": "c++14",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    },
+    {
+      "experiment": "stl-rust-data-v2-20261019",
+      "suite": "stl-native-v2",
+      "id": "cpp14-string-abi1--clang20--O3",
+      "base_case": "cpp14-string-abi1",
+      "public_directory": "benchmarks/suites/stl-native-v2/public/build-points/cpp14-string-abi1--clang20--O3",
+      "inputs_sha256": {
+        "target": "3cd40db794964a551a2ac246e796e868d2b93f2352b48272e6df560a2ad5d82a",
+        "prompt.txt": "21e7498c302f0b92d16a7a5b713810da94bdaa74f0c8b98ac7ea4b4e88964d7b",
+        "manifest.json": "b242611e40ce32dee04de6d51e201b33458d9491ae5cca472f509f662c590906"
+      },
+      "build_receipt": "benchmarks/suites/stl-native-v2/private/build-points/ff8c2fc38f00f3e2fc204b84ee6fddc8eb8273eb0f39dd0866e806ae076d5d49/validation.json",
+      "build_receipt_sha256": "c98a5e77df15fe7ff4eb427a545268679f319e32f586085323522afb41a733b8",
+      "target_build": {
+        "compiler_id": "clang20",
+        "compiler_family": "Clang",
+        "compiler_version": "Ubuntu clang version 20.1.2 (0ubuntu1~24.04.3)",
+        "optimization": "O3",
+        "standard": "c++14",
+        "string_abi": 1,
+        "standard_library": "libstdc++ 13",
+        "strip_mode": "all"
+      }
+    }
+  ]
+}

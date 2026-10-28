@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "id": "closed-native-grading-v1",
+  "platform": "linux-x86_64",
+  "python": "/usr/bin/python3",
+  "source_date_epoch": "0",
+  "languages": {
+    "c": {"compiler": "/usr/bin/gcc", "version": "13.3.0"},
+    "cpp": {"compiler": "/usr/bin/g++", "version": "13.3.0"},
+    "rust": {"compiler": "rustc", "version": "1.91.1"},
+    "go": {"root": "@workspace/.tools/go1.23.2", "version": "go1.23.2"}
+  }
+}

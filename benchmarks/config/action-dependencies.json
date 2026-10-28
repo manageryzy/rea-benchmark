@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "inference": {
+    "common": [
+      "benchmarks/scripts/rea-gateway.mjs",
+      "benchmarks/scripts/policy.mjs",
+      "benchmarks/scripts/tool-catalog.mjs",
+      "benchmarks/scripts/execution-control.mjs",
+      "benchmarks/harnesses/dispatch.py"
+    ],
+    "harness": {
+      "deepseek-harness": [
+        "benchmarks/harnesses/deepseek-harness.mjs"
+      ],
+      "zcode": [
+        "benchmarks/harnesses/zcode.py",
+        "benchmarks/harnesses/zcode-evidence.cjs"
+      ]
+    },
+    "condition": {
+      "paged-evidence-v2": [
+        "benchmarks/scripts/evidence-paging.mjs"
+      ],
+      "compact-evidence-v3": [
+        "benchmarks/scripts/evidence-paging.mjs",
+        "benchmarks/config/evidence-paging-compact.json"
+      ],
+      "lean-evidence-v4": [
+        "benchmarks/scripts/evidence-paging.mjs",
+        "benchmarks/config/evidence-paging-lean.json",
+        "benchmarks/scripts/adaptive_budget.py"
+      ]
+    }
+  },
+  "grading": {
+    "common": [
+      "benchmarks/scripts/grading/native.py",
+      "benchmarks/scripts/grading/returns.py",
+      "benchmarks/scripts/grading/process.py",
+      "benchmarks/scripts/grading/runtime.py",
+      "benchmarks/scripts/grading/image_manifest.py",
+      "benchmarks/scripts/grading/worker.py",
+      "benchmarks/scripts/grading/__init__.py",
+      "benchmarks/scripts/grade.py",
+      "benchmarks/scripts/startup_policy.py"
+    ],
+    "language": {
+      "go": [
+        "benchmarks/scripts/grading/go_imports.go"
+      ]
+    }
+  },
+  "accounting": {
+    "common": [
+      "benchmarks/scripts/usage.py",
+      "benchmarks/scripts/pricing.py"
+    ]
+  },
+  "report": {
+    "common": [
+      "benchmarks/scripts/report.py",
+      "benchmarks/scripts/report_charts.py",
+      "benchmarks/scripts/records.py",
+      "benchmarks/scripts/public_report.py",
+      "benchmarks/scripts/usage.py",
+      "benchmarks/scripts/pricing.py",
+      "benchmarks/scripts/grading/store.py",
+      "benchmarks/scripts/audit_environment.py",
+      "benchmarks/scripts/evidence_validation.py",
+      "benchmarks/scripts/runtime_attestation.py",
+      "benchmarks/scripts/grading/evidence.py",
+      "benchmarks/scripts/grading/c_executor/evidence.py",
+      "benchmarks/scripts/capabilities/summary.py",
+      "benchmarks/scripts/capabilities/baselines/report.py",
+      "benchmarks/scripts/capabilities/lifecycle_evidence.py",
+      "benchmarks/scripts/capabilities/cpp_lifecycle/evidence.py",
+      "benchmarks/scripts/capabilities/pointers/evidence.py",
+      "benchmarks/scripts/capabilities/variant_objects/evidence.py",
+      "benchmarks/scripts/capabilities/indirect_calls/evidence.py",
+      "benchmarks/scripts/capabilities/optimized_locations/evidence.py",
+      "benchmarks/scripts/capabilities/native_abi/evidence.py",
+      "benchmarks/scripts/capabilities/measurements.py",
+      "benchmarks/scripts/capabilities/metrics.py",
+      "benchmarks/scripts/capabilities/registration_report.py",
+      "benchmarks/scripts/capabilities/build_metadata.py",
+      "benchmarks/scripts/report_io.py",
+      "benchmarks/scripts/report_views.py",
+      "benchmarks/scripts/report_prices.py",
+      "benchmarks/scripts/report_states.py",
+      "benchmarks/scripts/native_case_registry.py",
+      "benchmarks/scripts/report_budget.py",
+      "benchmarks/scripts/capabilities/summary_report.py",
+      "benchmarks/scripts/validation_cache.py",
+      "benchmarks/scripts/native_attempts.py",
+      "benchmarks/scripts/i18n_report.py",
+      "benchmarks/scripts/report_assets/i18n.js",
+      "benchmarks/scripts/report_assets/locales/en.json",
+      "benchmarks/scripts/report_assets/locales/zh-CN.json",
+      "benchmarks/scripts/report_assets/locales/ja.json",
+      "benchmarks/scripts/localization_report.py"
+    ]
+  },
+  "public_report": {
+    "common": [
+      "benchmarks/scripts/report.py",
+      "benchmarks/scripts/public_report.py",
+      "benchmarks/scripts/report_charts.py",
+      "benchmarks/scripts/records.py",
+      "benchmarks/scripts/capabilities/summary.py",
+      "benchmarks/scripts/capabilities/baselines/report.py",
+      "benchmarks/scripts/capabilities/lifecycle_evidence.py",
+      "benchmarks/scripts/capabilities/cpp_lifecycle/evidence.py",
+      "benchmarks/scripts/capabilities/pointers/evidence.py",
+      "benchmarks/scripts/capabilities/variant_objects/evidence.py",
+      "benchmarks/scripts/capabilities/indirect_calls/evidence.py",
+      "benchmarks/scripts/capabilities/optimized_locations/evidence.py",
+      "benchmarks/scripts/capabilities/native_abi/evidence.py",
+      "benchmarks/scripts/capabilities/measurements.py",
+      "benchmarks/scripts/capabilities/metrics.py",
+      "benchmarks/scripts/capabilities/registration_report.py",
+      "benchmarks/scripts/capabilities/build_metadata.py",
+      "benchmarks/scripts/report_io.py",
+      "benchmarks/scripts/report_views.py",
+      "benchmarks/scripts/report_prices.py",
+      "benchmarks/scripts/report_states.py",
+      "benchmarks/scripts/native_case_registry.py",
+      "benchmarks/scripts/report_budget.py",
+      "benchmarks/scripts/capabilities/summary_report.py",
+      "benchmarks/scripts/validation_cache.py",
+      "benchmarks/scripts/native_attempts.py",
+      "benchmarks/scripts/i18n_report.py",
+      "benchmarks/scripts/report_assets/i18n.js",
+      "benchmarks/scripts/report_assets/locales/en.json",
+      "benchmarks/scripts/report_assets/locales/zh-CN.json",
+      "benchmarks/scripts/report_assets/locales/ja.json",
+      "benchmarks/scripts/localization_report.py"
+    ]
+  },
+  "c_compile": {
+    "common": [
+      "benchmarks/scripts/grading/__init__.py",
+      "benchmarks/scripts/grading/c_executor/__init__.py",
+      "benchmarks/scripts/grading/c_executor/runtime.py",
+      "benchmarks/scripts/grading/process.py",
+      "benchmarks/scripts/grading/runtime.py",
+      "benchmarks/scripts/grading/image_manifest.py",
+      "benchmarks/scripts/grading/c_executor/compile_worker.py",
+      "benchmarks/scripts/grading/c_executor/helpers.c",
+      "benchmarks/scripts/grading/c_executor/link.ld",
+      "benchmarks/scripts/grading/c_executor/context.py",
+      "benchmarks/scripts/grading/c_executor/image.py",
+      "benchmarks/scripts/startup_policy.py"
+    ]
+  },
+  "c_execute": {
+    "common": [
+      "benchmarks/scripts/grading/__init__.py",
+      "benchmarks/scripts/grading/c_executor/__init__.py",
+      "benchmarks/scripts/grading/c_executor/runtime.py",
+      "benchmarks/scripts/grading/process.py",
+      "benchmarks/scripts/grading/runtime.py",
+      "benchmarks/scripts/grading/image_manifest.py",
+      "benchmarks/scripts/grading/c_executor/worker.py",
+      "benchmarks/scripts/grading/c_executor/elf.py",
+      "benchmarks/scripts/grading/c_executor/machine.py",
+      "benchmarks/scripts/grading/c_executor/context.py",
+      "benchmarks/scripts/grading/c_executor/image.py",
+      "benchmarks/scripts/grading/returns.py",
+      "benchmarks/scripts/startup_policy.py"
+    ]
+  }
+}

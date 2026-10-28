@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "id": "closed-structured-grading-v1",
+  "platform": "linux-x86_64",
+  "limits": {
+    "wall_seconds": 15,
+    "cpu_seconds": 3,
+    "memory_bytes": 536870912,
+    "input_bytes": 4194304,
+    "output_bytes": 262144,
+    "open_files": 32
+  }
+}

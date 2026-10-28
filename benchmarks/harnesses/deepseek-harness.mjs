@@ -2,7 +2,8 @@ import { readFile,writeFile,mkdir,chmod } from 'node:fs/promises';
 import { unlinkSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { stringify,parse } from 'yaml';
+import { stringify } from 'yaml';
+import { credentialsFor } from './provider-auth.mjs';
 import { loadToolCatalog } from '../scripts/tool-catalog.mjs';
 import { spawn, execFile } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
@@ -21,35 +22,24 @@ export const config=JSON.parse(await readFile(configPath,'utf8'));
 export const evidenceDelivery=JSON.parse(await readFile(`${bench}/config/evidence-delivery.json`,'utf8'));
 export const {path:catalogPath,catalog}=await loadToolCatalog(root,config);
 export const tools=catalog.tools;
-export async function prepareHome(){
+export async function prepareHome(plan){
  await mkdir(home,{recursive:true,mode:0o700});await chmod(home,0o700);
- const saved=parse(await readFile(`${root}/.harness/.credentials.yaml`,'utf8'));
- const deepseek=process.env.DEEPSEEK_API_KEY??saved.refs?.DEEPSEEK_API_KEY;
- if(!deepseek)throw new Error('Missing DeepSeek credentials in Harness Settings → Models');
- const auth=JSON.parse(await readFile('/mnt/c/Users/mana/.codex/auth.json','utf8'));
- const credentials={version:1,refs:{DEEPSEEK_API_KEY:deepseek},records:{}};
- if(process.env.OPENAI_API_KEY||auth.OPENAI_API_KEY){
-  credentials.refs.OPENAI_API_KEY=process.env.OPENAI_API_KEY??auth.OPENAI_API_KEY;
- }else{
-  const t=auth.tokens??{};if(!t.access_token)throw new Error('Missing OpenAI/Codex sign-in');
-  const claims=JSON.parse(Buffer.from(t.access_token.split('.')[1],'base64url').toString());
-  if(claims.exp*1000<Date.now()+3600000)throw new Error('Codex sign-in expires too soon; refresh it before the benchmark');
-  credentials.records['llm-pi-ai/openai-codex']={kind:'grant',payload:{type:'oauth',access:t.access_token,refresh:t.refresh_token??'',expires:claims.exp*1000}};
- }
+ const credentials=await credentialsFor(plan);
  await writeFile(`${home}/.credentials.yaml`,stringify(credentials),{mode:0o600});await chmod(`${home}/.credentials.yaml`,0o600);
  await mkdir(`${home}/empty-skills`,{recursive:true});
- return {deepseek:true,gpt_transport:credentials.refs.OPENAI_API_KEY?'openai':'openai-codex'};
+ return plan;
 }
-export function environment(){
+export function environment(sealed={}){
  // Only an explicit launch subset is passed; no API keys enter child environments.
- const env={PATH:`${root}/.tools/node-v24.22.0-linux-x64/bin:/usr/bin:/bin`,DSH_HOME:home,DSH_AGENTS_HOME:`${home}/empty-skills`,DSH_TOOLS_MODE:'native',NO_COLOR:'1',LANG:'C.UTF-8'};
- for(const key of ['HOME','USER','LOGNAME','TMPDIR','SSL_CERT_FILE','SSL_CERT_DIR','HTTP_PROXY','HTTPS_PROXY','NO_PROXY'])if(process.env[key])env[key]=process.env[key];
+ const env={PATH:`${root}/.tools/node-v24.22.0-linux-x64/bin:/usr/bin:/bin`,HOME:home,TMPDIR:'/tmp',DSH_HOME:home,DSH_AGENTS_HOME:`${home}/empty-skills`,DSH_TOOLS_MODE:'native',NO_COLOR:'1',LANG:'C.UTF-8',...sealed};
  return env;
 }
 
 // The coordinator supplies existing suite tasks; this adapter defines no cases.
 export async function executeTask(task) {
   await assertExecutionAllowed();
+  if(!task.runtime_attestation||process.env.REA_ATTESTED_DISPATCH!==task.runtime_attestation.identity)
+    throw new Error('Runtime-attested coordinator dispatch is required');
   if(!task.environment_profile?.files_sha256)throw new Error('Benchmark task lacks environment identity');
   for(const [path,expected] of Object.entries(task.environment_profile.files_sha256)) {
     if(!path.startsWith('benchmarks/'))throw new Error('Invalid benchmark profile input');
@@ -59,9 +49,17 @@ export async function executeTask(task) {
   const publicDir = task.input_directory;
   const directory = root + '/' + task.directory;
   await mkdir(directory, {recursive:true});
-  const auth = await prepareHome();
+  const auth = await prepareHome(task.runtime_attestation.provider);
+  const localTransport=process.env.REA_BENCHMARK_TRANSPORT_URL;
+  if(!/^http:\/\/127\.0\.0\.1:[0-9]+\/v1$/.test(localTransport??'')||!task.request_contract)
+    throw new Error('Validated request-budget transport is required');
+  if(auth.provider==='openai-codex'&&(task.request_contract.protocol!=='openai-codex-responses'||
+     task.request_contract.mode!=='observed_task_limits'||task.request_contract.cap_field!==null))
+    throw new Error('Codex account requires the explicit observed-limits condition');
   const model = {id:task.model,label:task.label,reasoning:task.reasoning,
-    provider:task.model.startsWith('gpt-') ? auth.gpt_transport : 'deepseek-official'};
+    provider:auth.provider,baseURL:localTransport};
+  const sealed=Object.fromEntries(Object.entries(task.runtime_attestation.runtime.manifest.environment)
+    .map(([key,value])=>[key,value.replaceAll('@workspace',root)]));
   const patch = await makePatch(task.language,model,directory,{publicDir});
   const prompt = await readFile(publicDir+'/prompt.txt','utf8');
   await writeFile(directory+'/prompt.txt',prompt,{flag:'wx'});
@@ -69,8 +67,11 @@ export async function executeTask(task) {
   const stream = createWriteStream(directory+'/events.jsonl',{flags:'wx'});
   const startedAt = new Date().toISOString(), started = performance.now();
   let buffer = '', errors = '', timedOut = false;
+  const deadline = Number(process.env.REA_BENCHMARK_DEADLINE_MS);
+  if(!Number.isFinite(deadline)||deadline>Date.now()+task.timeout_seconds*1000||deadline<=Date.now())
+    throw new Error('Invalid frozen execution deadline');
   const child = spawn(node,[runtime,'--profile','headless','--patch',patch,'--json',prompt],
-    {cwd:publicDir,env:environment(),stdio:['pipe','pipe','pipe'],detached:true});
+    {cwd:publicDir,env:environment(sealed),stdio:['pipe','pipe','pipe'],detached:true});
   child.stdin.end();
   let forceStop;
   const stop = () => {
@@ -78,7 +79,7 @@ export async function executeTask(task) {
     forceStop ??= setTimeout(()=>{try{process.kill(-child.pid,'SIGKILL');}catch{}},15000);
   };
   process.on('SIGINT',stop); process.on('SIGTERM',stop);
-  const timer = setTimeout(()=>{timedOut=true;stop();},task.timeout_seconds*1000);
+  const timer = setTimeout(()=>{timedOut=true;stop();},Math.max(0,deadline-Date.now()));
   const parse = line => {
     try {
       const event=JSON.parse(line);
@@ -92,6 +93,7 @@ export async function executeTask(task) {
   });
   child.stderr.on('data',chunk=>{errors+=chunk.toString();});
   const exitCode=await new Promise((done,reject)=>{child.on('error',reject);child.on('close',done);});
+  timedOut ||= Date.now() >= deadline;
   clearTimeout(timer);clearTimeout(forceStop);process.off('SIGINT',stop);process.off('SIGTERM',stop);
   await new Promise(done=>stream.end(done));
   if(buffer.trim())parse(buffer);
@@ -102,43 +104,66 @@ export async function executeTask(task) {
   const receipt={model:task.model,model_label:task.label,provider:model.provider,harness:'DeepSeek Harness',harness_version:config.harness_version,
     reasoning:task.reasoning,case_id:task.id,language:task.language,output_language:task.language,
     environment_profile:task.environment_profile,condition:task.condition,
+    runtime_attestation_id:task.runtime_attestation.identity,
     binary_sha256:task.binary_sha256,prompt_sha256:createHash('sha256').update(prompt).digest('hex'),
     started_at:startedAt,completed_at:new Date().toISOString(),elapsed_seconds:(performance.now()-started)/1000,
     exit_code:exitCode,timed_out:timedOut,reported_usage:usage,usage_observations:observations,
     tool_calls:trace.length,tool_errors:trace.filter(t=>t.is_error).length,
     explicit_close:trace.some(t=>t.tool==='close_binary'&&!t.is_error),actual_cost_usd:null};
-  await writeFile(directory+'/result.json',JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});
+  await writeFile(directory+'/harness-result.json',JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});
   await promisify(execFile)('/usr/bin/python3',[bench+'/scripts/collect_answer.py',directory]);
   try{unlinkSync(home+'/.credentials.yaml');}catch{}
-  if(exitCode!==0&&!timedOut) {
+  const responseLimit=exitCode===1&&responseLimitStop(events);
+  // The transport ledger independently certifies this stop. Do not create a
+  // misleading immutable harness-failure marker for DSH's normal limit exit.
+  if(exitCode!==0&&!timedOut&&!responseLimit) {
     await writeFile(directory+'/harness-failure.json',JSON.stringify({...receipt,classification:'harness_or_provider_failure',model_correctness_grade_allowed:false},null,2)+'\n',{flag:'wx'});
     throw new Error('DSH/provider failed; preserve traces without a model correctness grade');
   }
   return receipt;
 }
+export function responseLimitStop(events) {
+  return events.findLast(e=>e.type==='status'&&e.phase==='turn_end')?.reason?.kind==='max-tokens';
+}
+// The attested per-task deadline owns cancellation. A second, shorter SDK
+// timer mislabels quiet reasoning as TIMEOUT and prevents transport recovery.
+export function codexStreamIdleTimeoutMs(contract, timeoutSeconds) {
+ const seconds=contract?.wall_seconds??timeoutSeconds;
+ if(!Number.isFinite(seconds)||seconds<=0)throw new Error('Invalid frozen task deadline');
+ return Math.min(2147483647,Math.ceil(seconds*1000)+15000);
+}
 export async function makePatch(language,model,runDir,{fixtureBaseUrl,publicDir=`${bench}/suites/record-parser/public/${language}`}={}){
  await mkdir(runDir,{recursive:true});
+ const outputCeiling=config.request_contract?.output_ceiling??config.max_output_tokens;
  const defaultProvider=model.provider;
  const disabled=['agent-instructions','skill-filesystem','skill-badge','tool-skill','session-title-llm','tool-plugin-manager','plugin-manager','tool-bash','tool-pwsh','tool-jobs','tool-fs','tool-fs-search','tool-subagent','tool-subagent-fork','tool-subagent-control','tool-subagent-list-agents','tool-workflow','workflow-ptc','tool-todo','tool-goal','tool-ralph','tool-web','subagent','subagent-spawn-in-process','subagent-fork-in-process','plan-mode'];
  const providers={};
- if(defaultProvider==='openai-codex')providers['openai-codex']={reasoning:'high',transport:'sse',streamIdleTimeoutMs:180000,retryPolicy:{mode:'normal',maxRetries:0},models:[{id:model.id,name:model.label,contextWindow:1050000,maxTokens:config.max_output_tokens,reasoningEfforts:{low:'low',medium:'medium',high:'high',xhigh:'xhigh',max:'max'}}]};
- if(defaultProvider==='openai')providers.openai={apiKeyEnv:'OPENAI_API_KEY',api:'openai-responses',reasoning:'high',models:[{id:model.id,contextWindow:1050000,maxTokens:config.max_output_tokens,reasoningEfforts:{high:'high'}}]};
+ // Codex maxTokens is SDK catalogue metadata, not a serialized response cap.
+ // SSE keeps all requests on the loopback gate; websocket fallback is disabled.
+ const retry=config.request_contract?.transport_recovery;
+ const codexRetry=retry?{mode:'normal',maxRetries:retry.max_retries_per_request,
+  retryableCodes:['TRANSPORT'],backoff:{initialDelayMs:retry.initial_delay_ms,maxDelayMs:retry.max_delay_ms,jitterRatio:0.1}}:
+  {mode:'normal',maxRetries:0};
+ if(defaultProvider==='openai-codex')providers['openai-codex']={...(model.baseURL?{baseURL:model.baseURL}:{}),reasoning:'high',transport:'sse',streamIdleTimeoutMs:codexStreamIdleTimeoutMs(config.request_contract,config.timeout_seconds),retryPolicy:codexRetry,models:[{id:model.id,name:model.label,contextWindow:1050000,maxTokens:outputCeiling,reasoningEfforts:{low:'low',medium:'medium',high:'high',xhigh:'xhigh',max:'max'}}]};
+ if(defaultProvider==='openai')providers.openai={...(model.baseURL?{baseURL:model.baseURL}:{}),apiKeyEnv:'OPENAI_API_KEY',api:'openai-responses',reasoning:'high',models:[{id:model.id,contextWindow:1050000,maxTokens:outputCeiling,reasoningEfforts:{high:'high'}}]};
  let selected={provider:defaultProvider,model:model.id,reasoningEffort:model.reasoning};
  if(fixtureBaseUrl){
-  providers['benchmark-fixture']={apiKeyEnv:'BENCHMARK_FIXTURE_KEY',api:'openai-completions',baseURL:fixtureBaseUrl,defaultMaxTokens:config.max_output_tokens,retryPolicy:{mode:'normal',maxRetries:0},models:[{id:'rea-client-fixture',contextWindow:1000000}]};
+  providers['benchmark-fixture']={apiKeyEnv:'BENCHMARK_FIXTURE_KEY',api:'openai-completions',baseURL:fixtureBaseUrl,defaultMaxTokens:outputCeiling,retryPolicy:{mode:'normal',maxRetries:0},models:[{id:'rea-client-fixture',contextWindow:1000000}]};
   selected={provider:'benchmark-fixture',model:'rea-client-fixture'};
  }
- const patches=[...[...disabled,...evidenceDelivery.dsh.disabled_plugins].map(id=>({id,disabled:true})),
+ // Withheld-evidence controls have no tools. Do not launch an unused analysis
+ // server against their empty target, including any inherited REA connector.
+ const patches=[...[...disabled,...evidenceDelivery.dsh.disabled_plugins,...(tools.length?[]:['rea-mcp'])].map(id=>({id,disabled:true})),
   {id:'compaction-basic',config:{auto:evidenceDelivery.dsh.compaction_auto}},
   {id:'credentials',disabled:false,config:{path:`${home}/.credentials.yaml`,watch:false}},
   {id:'tools',config:{mode:'native',maxParallelSubCalls:1}},
   {id:'system-prompt',config:{personaPrefix:'You are a binary reverse-engineering analyst. Use only the supplied REA tools. Reconstruct behavior from evidence and obey the task limits.',personaSuffix:`Your workspace is ${publicDir}. The only input artifact is target. No source code or test answers are available.`}},
   {id:'llm-pi-ai',config:{providers}},
-  {id:'llm-deepseek',config:{apiKeyEnv:'DEEPSEEK_API_KEY',reasoningEffort:'high',maxTokens:config.max_output_tokens,models:[{id:'deepseek-flash',name:'DeepSeek V4.1 Flash 1017',contextWindow:1000000,maxTokens:config.max_output_tokens}],retryPolicy:{mode:'normal',maxRetries:0}}},
+  {id:'llm-deepseek',config:{...(defaultProvider==='deepseek-official'&&model.baseURL?{baseURL:model.baseURL}:{}),apiKeyEnv:'DEEPSEEK_API_KEY',reasoningEffort:'high',maxTokens:outputCeiling,models:[{id:'deepseek-flash',name:'DeepSeek V4.1 Flash 1017',contextWindow:1000000,maxTokens:outputCeiling}],retryPolicy:{mode:'normal',maxRetries:0}}},
   {id:'agent-default-model',config:selected},
   {insert:[...(config.schema_version>=3?[{id:'benchmark-lossless-output',name:`${bench}/suites/complex-native-v1/scripts/lossless-output.mjs`,config:{path:`${runDir}/assistant-messages.jsonl`}}]:[]),
    {id:'benchmark-policy',name:`${bench}/scripts/policy.mjs`,config:{allowedTools:tools.map(t=>`mcp__rea__${t.name}`),auditPath:`${runDir}/tool-audit.jsonl`}},
-   {id:'rea-mcp',name:'@deepseek-ai/dsh-mcp-client',config:{serverName:'rea',transport:'stdio',command:node,args:[`${bench}/scripts/rea-gateway.mjs`,`${publicDir}/target`,`${runDir}/tool-calls.jsonl`,configPath],cwd:publicDir,toolCallTimeoutMs:config.tool_timeout_ms,failOnStartupError:true}}]}
+   ...(tools.length?[{id:'rea-mcp',name:'@deepseek-ai/dsh-mcp-client',config:{serverName:'rea',transport:'stdio',command:node,args:[`${bench}/scripts/rea-gateway.mjs`,`${publicDir}/target`,`${runDir}/tool-calls.jsonl`,`${publicDir}/gateway.json`],cwd:publicDir,toolCallTimeoutMs:config.tool_timeout_ms,failOnStartupError:true}}]:[])]}
  ];
  const path=`${runDir}/runtime.patch.yml`;await writeFile(path,stringify(patches));return path;
 }

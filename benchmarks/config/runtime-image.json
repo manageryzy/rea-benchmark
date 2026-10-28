@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "cache_root": "~/.cache/rea/runtime-images",
+  "backend": "auto",
+  "compression": "lz4",
+  "processors": 4,
+  "workspace_extra": [".tools/go1.23.2", ".tools/benchmark-format"],
+  "system_directories": ["/usr/include", "/usr/lib/gcc", "/usr/libexec/gcc", "/usr/lib/llvm-20/lib/clang", "/usr/lib/jvm/java-21-openjdk-amd64", "/usr/lib/python3.12", "/usr/lib/python3/dist-packages", "/usr/lib/locale/C.utf8"],
+  "commands": ["sh", "bash", "env", "true", "false", "cat", "cp", "mv", "rm", "mkdir", "rmdir", "chmod", "ln", "readlink", "realpath", "stat", "touch", "ls", "find", "xargs", "sort", "uniq", "head", "tail", "tee", "wc", "cut", "tr", "sed", "grep", "awk", "date", "uname", "id", "getconf", "dirname", "basename", "pwd", "sleep", "timeout", "kill", "ps", "pgrep", "make", "git", "tar", "gzip", "bzip2", "xz", "zstd", "unzip", "file", "ldd", "readelf", "objdump", "objcopy", "nm", "strip", "ar", "as", "ld", "gcc", "g++", "cc", "c++", "clang-20", "clang++-20", "python3", "java", "javac", "bwrap"]
+}

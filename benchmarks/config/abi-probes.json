@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "original-endpoint-abi-v1",
+  "platform": "linux-x86_64",
+  "compiler_image": "cpp",
+  "families": ["record_codec", "numeric_aggregation", "variable_objects"],
+  "conventions": ["sysv_amd64", "ms_x64"],
+  "compiler_flags": ["-std=c++20", "-O2", "-g", "-gdwarf-4", "-Wall", "-Wextra", "-ffreestanding", "-fno-builtin", "-fno-exceptions", "-fno-rtti", "-fno-stack-protector", "-fno-pie", "-fno-plt", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables", "-fno-ipa-icf", "-fno-optimize-sibling-calls", "-fno-tree-loop-distribute-patterns", "-fcf-protection=none", "-mno-red-zone", "-march=x86-64", "-mtune=generic", "-ffile-prefix-map=/work=.", "-fdebug-prefix-map=/work=."],
+  "link_flags": ["-nostdlib", "-nodefaultlibs", "-static", "-no-pie", "-Wl,--build-id=none", "-Wl,--no-undefined"],
+  "limits": {"source_bytes": 262144, "object_bytes": 1048576, "elf_bytes": 4194304, "compile_wall_seconds": 120, "compile_cpu_seconds": 90, "compile_memory_bytes": 4294967296, "pipe_bytes": 16777216}
+}

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "id": "provider-request-contract-v11",
+  "budget_semantics": "complete-current-response-stop-before-next-v1",
+  "mode": "certified",
+  "max_request_bytes": 134217728,
+  "request_overhead_allowance": 4,
+  "max_retries": 0,
+  "task_limits": {
+    "max_model_turns": 12,
+    "max_response_tokens": 8192,
+    "max_output_tokens": 32768,
+    "max_observed_total_tokens": 200000
+  },
+  "routes": {
+    "anthropic-messages": {
+      "path": "/v1/messages",
+      "cap_field": "max_tokens",
+      "minimum": 1,
+      "cap_units": "provider_output_tokens",
+      "reasoning_accounting": "provider_output_cap; no separate thinking budget is certified",
+      "reference": "https://api-docs.deepseek.com/guides/anthropic_api/"
+    },
+    "openai-responses": {
+      "path": "/v1/responses",
+      "cap_field": "max_output_tokens",
+      "minimum": 16,
+      "cap_units": "all_generated_tokens_including_reasoning",
+      "reasoning_accounting": "reasoning, visible output and non-visible formatting share the cap",
+      "reference": "https://developers.openai.com/api/docs/guides/token-counting"
+    },
+    "openai-chat-completions": {
+      "path": "/v4/chat/completions",
+      "cap_field": "max_tokens",
+      "minimum": 1,
+      "cap_units": "provider_output_tokens",
+      "reasoning_accounting": "GLM documented output cap; cross-provider reasoning-token equivalence is not asserted",
+      "reference": "https://docs.z.ai/api-reference/llm/chat-completion"
+    },
+    "openai-codex-responses": {
+      "path": "/v1/codex/responses",
+      "enforcement": "observed_task_limits",
+      "cap_field": null,
+      "minimum": null,
+      "cap_units": "not_enforced",
+      "reasoning_accounting": "No provider response cap. Task output and total usage thresholds are observed stop rules and may overshoot in the last response.",
+      "reference": "https://learn.chatgpt.com/docs/auth"
+    }
+  },
+  "unsupported_routes": {},
+  "wallet_limits": [
+    {
+      "model": "deepseek-flash",
+      "provider": "deepseek-official",
+      "protocol": "anthropic-messages",
+      "host": "api.deepseek.com",
+      "currency": "USD",
+      "limit_nano": 41611514,
+      "rates_nano_per_token": {
+        "inputTokens": 300,
+        "cacheReadTokens": 6,
+        "cacheWriteTokens": 300,
+        "outputTokens": 1200
+      },
+      "semantics": "observed_cost_stop_before_next",
+      "reference": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "pricing_note": "Peak rates; fixed protection estimate, not an invoice",
+      "max_response_tokens": 32768,
+      "response_allocation": "remaining_task_output_v1",
+      "limit_basis": {
+        "kind": "twice_mean_component_cost",
+        "condition": "lean-evidence-v4",
+        "snapshot_at": "2026-10-26T05:55:32.462098+00:00",
+        "complete_attempts": 19,
+        "token_components": {
+          "inputTokens": 323672,
+          "cacheReadTokens": 1636096,
+          "cacheWriteTokens": 0,
+          "outputTokens": 240326
+        },
+        "multiplier": 2,
+        "rounding": "ceil_native_currency_nano",
+        "source_summary_sha256": "7bb8419b987819ddbbfe37b968da0e0340e0a8088536a4fc6ae0616c07870b31"
+      }
+    },
+    {
+      "model": "glm-5.3",
+      "provider": "bigmodel-standard-api",
+      "protocol": "openai-chat-completions",
+      "host": "open.bigmodel.cn",
+      "currency": "CNY",
+      "limit_nano": 1236720000,
+      "rates_nano_per_token": {
+        "inputTokens": 8000,
+        "cacheReadTokens": 2000,
+        "cacheWriteTokens": 8000,
+        "outputTokens": 28000
+      },
+      "semantics": "observed_cost_stop_before_next",
+      "reference": "https://docs.bigmodel.cn/cn/guide/start/pricing",
+      "pricing_note": "Mainland standard API rates; native currency, no FX in budget",
+      "max_response_tokens": 32768,
+      "response_allocation": "remaining_task_output_v1",
+      "limit_basis": {
+        "kind": "twice_mean_component_cost",
+        "condition": "lean-evidence-v4",
+        "snapshot_at": "2026-10-26T05:55:32.462098+00:00",
+        "complete_attempts": 11,
+        "token_components": {
+          "inputTokens": 210922,
+          "cacheReadTokens": 643072,
+          "cacheWriteTokens": 0,
+          "outputTokens": 136730
+        },
+        "multiplier": 2,
+        "rounding": "ceil_native_currency_nano",
+        "source_summary_sha256": "7bb8419b987819ddbbfe37b968da0e0340e0a8088536a4fc6ae0616c07870b31"
+      }
+    }
+  ],
+  "adaptive_budget": {
+    "id": "type-mean2x-v1",
+    "condition": "lean-evidence-v4",
+    "multiplier": 2,
+    "max_response_tokens": 65536,
+    "max_model_turns": null,
+    "basic_suites": [
+      "record-parser"
+    ],
+    "sample_policy": "latest_complete_answer_per_case",
+    "bootstrap": "no_aggregate_limit"
+  },
+  "deadline_outcome": "completed_not_passed",
+  "transport_recovery": {
+    "id": "codex-transient-retry-v1",
+    "protocol": "openai-codex-responses",
+    "max_retries_per_request": 2,
+    "max_retries_per_task": 6,
+    "allowed_causes": [
+      "SSLEOFError",
+      "RemoteDisconnected",
+      "IncompleteRead"
+    ],
+    "initial_delay_ms": 1000,
+    "max_delay_ms": 5000,
+    "unknown_usage": "retain_unknown_do_not_impute_zero"
+  }
+}

@@ -4,7 +4,7 @@ from decimal import Decimal
 
 def estimate(receipt, prices):
     observations = receipt.get('usage_observations') or [
-        {'finished_at': receipt['started_at'], 'usage': receipt.get('reported_usage', {})}
+        {'finished_at': receipt.get('started_at'), 'usage': receipt.get('reported_usage', {})}
     ]
     if not any(o['usage'] for o in observations):
         return {'low_usd': None, 'high_usd': None, 'actual_billed_usd': None,
@@ -15,9 +15,16 @@ def estimate(receipt, prices):
     unknown_writes = False
     for observation in observations:
         usage = observation['usage']
-        when = datetime.fromisoformat(observation['finished_at'].replace('Z', '+00:00')).astimezone(timezone.utc)
+        timestamp = observation.get('finished_at') or receipt.get('completed_at') or receipt.get('started_at')
+        if not timestamp:
+            return {'low_usd': None, 'high_usd': None, 'actual_billed_usd': None,
+                    'note': 'Usage timestamp missing; pricing period cannot be established.'}
+        when = datetime.fromisoformat(timestamp.replace('Z', '+00:00')).astimezone(timezone.utc)
         model = receipt['model']
-        spec = prices[model]
+        spec = prices.get(model)
+        if spec is None:
+            return {'low_usd': None, 'high_usd': None, 'actual_billed_usd': None,
+                    'note': 'No saved price for this model; cost is unknown.'}
         if 'peak_utc_hours' in spec:
             peak = when.weekday() < 5 and any(a <= when.hour < b for a, b in spec['peak_utc_hours'])
             period = 'peak' if peak else 'off_peak'
@@ -44,7 +51,7 @@ def estimate(receipt, prices):
             'actual_billed_usd': None, 'periods': sorted(periods),
             'cache_write_count_unknown': unknown_writes,
             'basis': 'Published token rates; recorded step completion timestamps determine pricing period. No local compute or setup costs.',
-            'billing_mode': 'Codex plan/credits; API-equivalent estimate only' if receipt['provider'] == 'openai-codex' else 'API rate-based estimate; invoice debit unavailable'}
+            'billing_mode': 'Codex plan/credits; API-equivalent estimate only' if receipt.get('provider') == 'openai-codex' else 'API rate-based estimate; invoice debit unavailable'}
 
 def display(low, high):
     if low is None:

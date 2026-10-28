@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "id": "compact-evidence-v3",
+  "inline_characters": 24000,
+  "default_page_characters": 12000,
+  "maximum_page_characters": 24000,
+  "catalog_entries": 24,
+  "compact_semantic_views": true,
+  "note": "Deliver one exact normalized REA view, including short pseudocode, without repeating raw and normalized payloads. Full original results and all metadata remain retrievable by content hash and JSON pointer. Applies to basic and compiler/optimization variants as well as complex native cases."
+}

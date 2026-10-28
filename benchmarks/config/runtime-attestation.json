@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "verification_mode": "startup_once",
+  "policy": "local-content-and-provider-v1",
+  "components": {
+    "benchmark-tool-surface": {
+      "paths": [
+        "benchmarks/scripts/rea-gateway.mjs",
+        "benchmarks/scripts/policy.mjs",
+        "benchmarks/scripts/tool-catalog.mjs",
+        "benchmarks/scripts/execution-control.mjs",
+        "benchmarks/scripts/evidence-paging.mjs",
+        "benchmarks/harnesses/dispatch.py",
+        "benchmarks/scripts/request_contract.py",
+        "benchmarks/config/request-contract.json"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "dsh-adapter": {
+      "paths": [
+        "benchmarks/harnesses/deepseek-harness.mjs",
+        "benchmarks/suites/complex-native-v1/scripts/lossless-output.mjs",
+        "benchmarks/scripts/collect_answer.py",
+        "benchmarks/harnesses/provider-transport.py"
+      ],
+      "harnesses": [
+        "deepseek-harness"
+      ]
+    },
+    "zcode-adapter": {
+      "paths": [
+        "benchmarks/harnesses/zcode.py",
+        "benchmarks/harnesses/zcode-evidence.cjs"
+      ],
+      "harnesses": [
+        "zcode"
+      ]
+    },
+    "launchers": {
+      "paths": [
+        "bin/rea",
+        "env.sh"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "rea-and-mcp-dependencies": {
+      "paths": [
+        "node_modules"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "analysis-node": {
+      "paths": [
+        ".tools/node-v24.22.0-linux-x64/bin/node"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "ghidra": {
+      "paths": [
+        ".tools/ghidra_12.1.4_PUBLIC"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "java": {
+      "paths": [
+        "/usr/lib/jvm/java-21-openjdk-amd64"
+      ],
+      "exclude": [
+        "docs",
+        "include",
+        "jmods",
+        "legal",
+        "man"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "dsh": {
+      "paths": [
+        ".tools/harness-0.2.1-rc.2/node_modules"
+      ],
+      "harnesses": [
+        "deepseek-harness"
+      ]
+    },
+    "zcode": {
+      "paths": [
+        ".tools/zcode-3.16.1/agent",
+        ".tools/node-v24.14.0-linux-x64/bin/node"
+      ],
+      "harnesses": [
+        "zcode"
+      ]
+    },
+    "coordinator-python": {
+      "paths": [
+        "/usr/bin/python3",
+        "/usr/lib/python3.12",
+        "/usr/lib/python3/dist-packages"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    },
+    "shell-and-tls": {
+      "paths": [
+        "/bin/sh",
+        "/bin/bash",
+        "/usr/bin/ldd",
+        "/usr/bin/expr",
+        "/usr/bin/readlink",
+        "/usr/bin/dirname",
+        "/usr/bin/uname",
+        "/usr/bin/grep",
+        "/usr/bin/sed",
+        "/usr/bin/head",
+        "/usr/bin/tr",
+        "/usr/bin/cat",
+        "/etc/ld.so.cache",
+        "/etc/ssl/certs/ca-certificates.crt"
+      ],
+      "harnesses": [
+        "deepseek-harness",
+        "zcode"
+      ]
+    }
+  },
+  "approved_system_roots": [
+    "/usr/lib",
+    "/usr/bin",
+    "/etc/java-21-openjdk",
+    "/etc/ssl",
+    "/etc/python3.12",
+    "/usr/share/python-babel-localedata"
+  ],
+  "runtime_environment": {
+    "PATH": "@workspace/.tools/node-v24.22.0-linux-x64/bin:/usr/lib/jvm/java-21-openjdk-amd64/bin:/usr/bin:/bin",
+    "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk-amd64",
+    "GHIDRA_INSTALL_DIR": "@workspace/.tools/ghidra_12.1.4_PUBLIC",
+    "REA_ANALYSIS_PROVIDER": "ghidra",
+    "REA_LOG_LEVEL": "error",
+    "REA_MCP_INPUT_SCHEMA_PROFILE": "compact",
+    "GHIDRA_HEADLESS_MAXMEM": "2G",
+    "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt",
+    "NODE_EXTRA_CA_CERTS": "/etc/ssl/certs/ca-certificates.crt"
+  },
+  "network": {
+    "proxy": "disabled",
+    "custom_tls_environment": "ignored",
+    "zcode_redirects": "disabled"
+  },
+  "provider_defaults": {
+    "deepseek-official": {
+      "base_url": "https://api.deepseek.com/anthropic",
+      "protocol": "anthropic-messages"
+    },
+    "openai": {
+      "base_url": "https://api.openai.com/v1",
+      "protocol": "openai-responses"
+    },
+    "openai-codex": {
+      "base_url": "https://chatgpt.com/backend-api",
+      "protocol": "openai-codex-responses"
+    }
+  },
+  "gpt_provider": "openai-codex"
+}

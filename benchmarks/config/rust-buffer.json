@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "freestanding-rust2021-buffer-sysv-v1",
+  "source_language": "rust",
+  "output_abi": "sysv_amd64_c",
+  "crate": "no_std_staticlib",
+  "max_source_bytes": 262144,
+  "rust_flags": ["--edition=2021", "--crate-type=staticlib", "-C", "opt-level=2", "-C", "panic=abort", "-C", "codegen-units=1", "-C", "relocation-model=static", "-C", "debuginfo=0", "-C", "no-redzone=yes", "-C", "metadata=rea-rust-buffer-v1", "--remap-path-prefix=/work=."]
+}

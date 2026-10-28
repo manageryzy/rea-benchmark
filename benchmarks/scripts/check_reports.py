@@ -4,6 +4,7 @@ import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
+import re
 import socket
 import subprocess
 import sys
@@ -19,6 +20,80 @@ import glm_diagnostics
 import audit_environment
 import evidence_validation
 import cpp_points
+import cache
+
+
+def check_metadata_snapshot():
+    from report_io import metadata_snapshot
+    with tempfile.TemporaryDirectory(prefix='report-metadata-control-') as directory:
+        root = Path(directory)
+        source = root / 'input.txt'
+        source.write_text('original')
+        with metadata_snapshot():
+            assert root.is_dir() and source.is_file()
+            (root / 'unrelated-cache-entry').write_text('new')
+            assert root.is_dir()
+        try:
+            with metadata_snapshot():
+                assert source.is_file()
+                source.write_text('changed')
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('Changed file was admitted')
+        parent = root / 'parent'
+        parent.mkdir()
+        try:
+            with metadata_snapshot():
+                assert parent.is_dir()
+                parent.rename(root / 'old-parent')
+                parent.mkdir()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('Replaced directory was admitted')
+    print('PASS: unrelated directory entry, changed input and replaced directory controls')
+
+
+def frozen_runtime_inputs(data):
+    """Admit only saved task inputs authenticated by their inference Merkle tree."""
+    candidates = {name for name in data['input_files_sha256'] if re.fullmatch(
+        r'\.cache/benchmark-runtime/tasks/[0-9a-f]{64}/(?:analysis\.seeds|manifest\.json|target|prompt\.txt)', name)}
+    admitted = set()
+    for name, expected in data['input_files_sha256'].items():
+        if not name.startswith('benchmarks/runs/capabilities-v1/') or not name.endswith('/task.json'):
+            continue
+        raw = (records.ROOT / name).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == expected
+        task = json.loads(raw)
+        fingerprint = task.get('fingerprint', '')
+        if not re.fullmatch('[0-9a-f]{64}', fingerprint):
+            continue
+        root = '.cache/benchmark-runtime/tasks/' + fingerprint
+        if task.get('input_directory') != str(records.ROOT / root):
+            continue
+        names = set()
+        if task.get('analysis_context_policy') == 'public-given-entrypoints-v1':
+            names.update(('analysis.seeds', 'manifest.json', 'target'))
+        if task.get('artifact_format_policy') == 'record-role-string-v1':
+            names.add('prompt.txt')
+        if names:
+            assert report.action_cache.digest(report.action_cache.canonical(task['action_descriptor']))['hash'] == fingerprint
+        for leaf in names:
+            path = root + '/' + leaf
+            if path in candidates:
+                raw = (records.ROOT / path).read_bytes()
+                assert hashlib.sha256(raw).hexdigest() == data['input_files_sha256'][path]
+                assert cache.action_input_bytes(task['action_descriptor'], 'task/' + leaf) == raw
+                admitted.add(path)
+    return admitted
+
+
+def pinned_metadata(path):
+    return bool(path == '.cache/benchmark-grading/v1/active.json' or re.fullmatch(
+        r'\.cache/(?:benchmark-c-executor/v1|benchmark-capabilities/(?:tooling-v1|baseline-clang20-tooling-v1))/'
+        r'(?:active|[0-9a-f]{64})\.json', path) or re.fullmatch(
+        r'\.cache/benchmark-c-executor/v1/provenance/[0-9a-f]{64}/[0-9a-f]{64}\.json', path))
 
 
 class Links(HTMLParser):
@@ -35,6 +110,27 @@ class Links(HTMLParser):
 def hashes(directory):
     return {str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in sorted(directory.rglob('*')) if p.is_file()}
+
+
+def validate_capability_builds(builds, declarations, public_task_ids):
+    assert set(public_task_ids) == {row['task_id'] for row in declarations}
+    expected = {public_task_ids[row['task_id']]: row for row in declarations}
+    assert len(expected) == len(declarations)
+    assert len(builds) == len(expected) and {row['task_id'] for row in builds} == set(expected)
+    for row in builds:
+        declaration = expected[row['task_id']]
+        profile = declaration['profile']
+        compiler = (profile['original_compiler'] if profile['kind'] == 'matched_buffer' else
+                    profile['variant'] if profile['kind'] == 'native_abi' else 'gcc')
+        family, language = {'gcc': ('gcc', 'cpp'), 'clang20': ('clang', 'cpp'),
+                            'rust': ('rustc', 'rust'), 'go': ('gc', 'go')}[compiler]
+        optimization = ('compiler_default' if compiler == 'go' else
+                        '-O3' if profile['kind'] == 'optimized_localization' else '-O2')
+        metadata = row['metadata']
+        assert row['family_id'] == declaration['family_id'] and row['profile_id'] == profile['id']
+        actual = (metadata['source_language'], metadata['compiler_family'], metadata['optimization'])
+        assert actual == (language, family, optimization), (row['task_id'], actual)
+        assert metadata['strip_mode'] == 'strip_all_verified'
 
 
 def validate(directory):
@@ -54,6 +150,10 @@ def validate(directory):
     data = json.loads((directory / 'data/comparison.json').read_text())
     assert not any('/reports/' in p for p in data['input_files_sha256'])
     assert data['execution']['experiments_stopped']
+    configured_budget = json.loads((records.BENCH / 'config/request-contract.json').read_bytes())
+    assert data['task_budget_policy'] == {'policy_id': configured_budget['id'], 'limits': configured_budget['task_limits']}
+    assert 'Task spending limits' in (directory / 'index.html').read_text()
+    assert 'Task spending limits' in (directory / 'measurement.html').read_text()
     assert not any(r['status'] == 'running' for r in data['records'])
     assert any(r['status'] == 'interrupted' for r in data['records'])
     for row in data['records']:
@@ -61,11 +161,91 @@ def validate(directory):
             assert row['receipt'] and not row['grade']
     overview = (directory / 'index.html').read_text()
     assert 'data-chart-panel="matched"' in overview and 'Coverage before scores' in overview
-    assert 'Median saved runtime' in overview
+    assert 'Median inference runtime' in overview
     assert data['runner_validation']['passed'] and data['runner_validation']['inputs_current']
+    prepared = data['capability_preparation']
+    assert prepared['frozen_inputs_current']
+    from capabilities import tasks as capability_tasks
+    assert prepared['families'] == 6
+    assert prepared['task_definitions'] == prepared['frozen_tasks'] == len(capability_tasks.declared())
+    assert {'T1', 'T2', 'T3', 'T4', 'T5', 'T6'} <= set(prepared['supported_capabilities'])
+    expected_controls = {'localization': 27, 'structured_runtime': 13, 'c_buffers': 12, 'c_lifecycle': 22,
+                         'cpp_buffers': 16, 'cpp_lifecycle': 12, 'abi_probes': 35, 'pointer_probes': 27,
+                         'variant_objects': 24, 'indirect_calls': 28, 'optimized_locations': 42,
+                         'native_abi': 40, 'coordinator': 83, 'matched_baselines': 16,
+                         'rust_buffers': 17, 'go_buffers': 18}
+    assert {row['id'] for row in prepared['controls']} == set(expected_controls)
+    assert all(row['passed'] and row['current'] and not row['failed'] and row['checks'] >= expected_controls[row['id']]
+               for row in prepared['controls'])
+    typed = data['capability_measurements']
+    assert typed['declared_tasks'] == prepared['task_definitions']
+    assert typed['configured_cells'] == len(capability_tasks.declared()) * len(data['models'])
+    assert typed['configured_cells'] == typed['scheduled_cells'] + typed['disabled_cells']
+    assert typed['inference_enabled'] == prepared['inference_enabled']
+    assert typed['saved_observations'] == len(typed['history'])
+    assert typed['released_capabilities'] == 0
+    if not prepared['inference_enabled']:
+        assert typed['scheduled_cells'] == 0
+    assert all(not row['observation'] or row['observation']['analysis_condition'] == row['analysis_condition']
+               for row in typed['cells'])
+    assert typed['schedule_status'] == 'configuration_snapshot_only'
+    assert typed['validation']['passed'] and typed['validation']['current'] and typed['validation']['checks'] >= 48
+    assert typed['validation']['model_api_calls'] == 0
+    assert 'Typed capability inventory and measurement coverage' in ((directory / 'capabilities.html').read_text() + (directory / 'capability-inventory.html').read_text())
+    from capabilities import measurements as capability_measurements
+    capability_measurements.validate_projection(capability_measurements.public_projection(typed))
+    from capabilities import registration_report
+    registered = data['capability_registration']
+    registration_report.validate(registered)
+    assert registered == json.loads((directory / 'data/capability-registration.json').read_text())
+    assert registered['validation']['passed'] and registered['validation']['current']
+    assert registered['validation']['checks'] >= 38 and registered['validation']['model_api_calls'] == 0
+    # Valid stopped schedules and real observations must survive regeneration.
+    # The closed validator above verifies their saved bindings and denominators.
+    assert len({row['registration_id'] for row in registered['schedules']}) == len(registered['schedules'])
+    assert len({row['attempt_id'] for row in registered['observations']}) == len(registered['observations'])
+    assert registered['invalid_records'] >= 0 and registered['control_records_excluded'] >= 0
+    assert len(registered['builds']) == prepared['frozen_tasks']
+    declarations = capability_tasks.declared()
+    reader = capability_measurements.Reader(records.ROOT, records.read_bytes)
+    public_task_ids = {row['task_id']: capability_measurements.public_task_id(reader,
+        reader.json('.cache/benchmark-capabilities/task-index/' + row['task_id'] + '.json'))
+        for row in declarations}
+    validate_capability_builds(registered['builds'], declarations, public_task_ids)
+    assert not any('compiler_commands' in row['metadata'] or 'compiler_commands_sha256' in row['metadata']
+                   for row in registered['builds'])
+    assert 'Original compiler and build conditions' in ((directory / 'capabilities.html').read_text() + (directory / 'capability-inventory.html').read_text())
+    assert 'Pointer and object-role recovery: T3 preparation' in (directory / 'measurement.html').read_text()
     assert data['runner_validation']['model_api_calls'] == 0
-    assert data['runner_validation']['cache_hits_per_run'] == len(records.active_condition_rows(data))
+    runner = data['runner_validation']
+    assert runner['cache_hits_per_run'] + len(runner.get('changed_input_cache_misses', [])) == sum(bool(row['grade']) for row in records.active_condition_rows(data))
+    assert data['runner_validation']['scheduled_tasks'] == len(records.active_condition_rows(data))
     assert 'Configured benchmark and cache reuse' in overview
+    runtime = data['runtime_attestation']
+    assert runtime['inputs_current'] and runtime['controls_passed'] and runtime['controls_current']
+    assert runtime['model_api_calls'] == 0 and runtime['checks'] >= 13
+    assert set(runtime['runtimes']) == {'deepseek-harness', 'zcode'}
+    assert 'Runtime and provider attestation' in (directory / 'measurement.html').read_text()
+    grading = data['grading_runtime']
+    assert grading['controls_passed'] and grading['controls_current'] and grading['model_api_calls'] == 0
+    assert grading['checks'] >= 14 and set(grading['profiles']) == {'c', 'cpp', 'rust', 'go'}
+    assert 'Closed grading runtimes' in (directory / 'measurement.html').read_text()
+    executor = data['c_executor']
+    assert executor['controls_passed'] and executor['controls_current'] and executor['model_api_calls'] == 0
+    assert executor['checks'] >= 29 and executor['failed'] == 0
+    assert 'Host-owned restricted C returns' in (directory / 'measurement.html').read_text()
+    assert all(row['grade'].get('return_provenance') == 'native_process_unauthenticated'
+               for row in data['records'] + data['condition_records'] if row['grade'])
+    measurement = (directory / 'measurement.html').read_text()
+    assert 'Implementation plan: incomplete' in measurement
+    assert all(label in measurement for label in ['R3: request budgets', 'R6: authenticated returns',
+                                                   'L1–L6: localization', 'C1–C6: independent C condition',
+                                                   'T1–T7: type/layout/ABI'])
+    typed_abi = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6']
+    if 'T7' in data['capability_preparation']['supported_capabilities']:
+        typed_abi.append('T7')
+    assert '/'.join(typed_abi) + ' preparation' in measurement
+    assert all(row['runtime_attestation_status'] in {'historical_unknown', 'verified_at_execution', 'not_recorded', 'unverified'} for row in data['records'] + data['condition_records'])
     if data['shared_case_comparison']['cases']:
         assert 'Same-case tokens, cost and runtime' in overview
     assert 'Environment fairness: model-only comparison is not certified' in overview
@@ -98,7 +278,18 @@ def validate(directory):
     assert sum(c.get('counts', {}).get('spilled', 0) for c in dsh) == 40
     assert sum(c['blocked_spill_recovery'] for c in dsh) == 40
     assert any(t['status'] == 'primary_complete' and t['delivered_chars'] > 8192 for c in dsh for t in c['tools'])
-    assert not any(p.startswith(('.cache/', '.tools/')) for p in data['input_files_sha256'])
+    allowed_frozen_data = ('.cache/benchmark-capabilities/task-index/', '.cache/benchmark-capabilities/task-freezes/',
+                           '.cache/benchmark-capabilities/grade-specs/', '.cache/benchmark-actions/v3/cas/',
+                           '.cache/benchmark-actions/v3/ac/', '.cache/benchmark-grading/v1/profiles/')
+    assert pinned_metadata('.cache/benchmark-capabilities/tooling-v1/' + 'a' * 64 + '.json')
+    assert not pinned_metadata('.cache/benchmark-capabilities/tooling-v1/' + 'a' * 64 + '/usr/bin/strip')
+    assert not pinned_metadata('.cache/benchmark-grading/v1/images/private.tar')
+    assert not pinned_metadata('.cache/benchmark-c-executor/v1/credentials.json')
+    runtime_inputs = frozen_runtime_inputs(data)
+    assert not any(name.endswith('/credentials.json') for name in runtime_inputs)
+    assert not any(p.startswith('.tools/') or p.startswith('.cache/')
+                   and not p.startswith(allowed_frozen_data) and not pinned_metadata(p) and p not in runtime_inputs
+                   for p in data['input_files_sha256'])
     replay = data['evidence_validation']
     assert replay == json.loads((directory / 'data/evidence-validation.json').read_text())
     assert replay['passed'] and replay['inputs_current'] and replay['model_api_calls'] == 0
@@ -140,7 +331,9 @@ def validate(directory):
         assert '/conditions/' in row['directory']
         assert row['model_only_comparison_certified'] is False
         if row['status'] in ['environment_failure', 'interrupted']:
-            assert not row['grade'] and not row['cost']['usage_complete']
+            assert not row['grade']
+            # Accounting completeness is independent of task failure.
+            assert row['cost'].get('usage_status', 'unknown') in ('complete', 'partial', 'unknown')
     for case in data['condition_evidence_audit']['cases']:
         if case['inputs_current'] and case['condition'] == 'paged-evidence-v2':
             assert case['paging']['original_hashes_and_slices_verified']
@@ -191,6 +384,7 @@ def forbidden(*args, **kwargs):
 
 
 def main():
+    check_metadata_snapshot()
     import run
     # A missing build-point task must never borrow a score based only on binary bytes.
     saved_data = records.collect()
@@ -241,31 +435,55 @@ def main():
     # A cancelled batch must restore stopped state and refresh the report.
     # Neither backend nor execution-state file is touched by this local check.
     refresh = Mock()
-    paused = Mock()
+    execution = {'experiments_stopped': True}
+    paused = Mock(side_effect=lambda stopped, **kwargs: execution.update(experiments_stopped=stopped))
+    read = records.read
+    def controlled_state(path, default=None):
+        return dict(execution) if Path(path) == records.BENCH / 'config/execution.json' else read(path, default)
+    status_path = records.BENCH / 'config/benchmark-status.json'
+    original_status = status_path.read_bytes()
+    captured_status = []
+    def fixture_save(path, value, exclusive=False):
+        assert Path(path) == status_path, 'Cancellation fixture attempted an unexpected write'
+        captured_status.append(value)
     with tempfile.TemporaryDirectory(prefix='rea-cancel-check-', dir='/tmp') as temporary:
         with patch.object(sys, 'argv', ['benchmark', 'run', '--model', 'glm-5.3', '--resume-experiments']), \
              patch.object(run, 'ROOT', Path(temporary)), \
              patch.object(run, 'selected_entries', return_value=[{'model': 'glm-5.3', 'case': 'fixture', 'status': 'not_started'}]), \
              patch.object(run, 'execute', side_effect=KeyboardInterrupt), \
+             patch.object(run, 'save', side_effect=fixture_save), \
+             patch.object(records, 'read', side_effect=controlled_state), \
              patch.object(run, 'set_execution_stopped', paused), patch.object(run, 'finalize', refresh):
             try:
                 run.main()
             except KeyboardInterrupt:
                 pass
     assert paused.call_args.args == (True,) and refresh.called, 'Interrupted execution did not pause and refresh reports'
+    assert len(captured_status) == 1 and captured_status[0]['interrupted']
+    assert status_path.read_bytes() == original_status, 'Cancellation fixture modified the global batch status'
     with tempfile.TemporaryDirectory(prefix='rea-report-repro-', dir='/tmp') as temporary:
-        first, second = Path(temporary) / 'first', Path(temporary) / 'second'
+        first, second, cached = [Path(temporary) / name for name in ('first', 'second', 'cached')]
         with patch.object(socket.socket, 'connect', forbidden), patch.object(socket, 'create_connection', forbidden), \
              patch.object(subprocess, 'run', forbidden), patch.object(subprocess, 'Popen', forbidden):
-            report.build(first)
-            report.build(second)
+            # Both independent renders must bypass AC/CAS. Restoring the first
+            # render as the second tree cannot establish deterministic rendering.
+            with patch.object(report.action_cache.Cache, 'lookup', return_value=None):
+                report.build(first)
+                # Fail on stale receipts or invalid metrics before paying for
+                # two more complete saved-data collections.
+                pages, links = validate(first)
+                report.build(second)
+            # Exercise the ordinary cache-hit entrypoint separately, forbidding
+            # rendering so this third tree must come from the bound AC/CAS result.
+            with patch.object(report.Report, 'build', side_effect=AssertionError('Cache hit rendered again')):
+                report.build(cached)
         assert hashes(first) == hashes(second), 'Clean report builds differ'
-        pages, links = validate(first)
+        assert hashes(first) == hashes(cached), 'Cached report restoration differs'
         # The HTML and metadata must also agree with saved totals.
         data = json.loads((first / 'data/comparison.json').read_text())
         for item in data['totals']:
             assert f'{item["total_tokens"]:,}' in (first / 'index.html').read_text()
-        print(f'PASS: two byte-identical clean offline builds; {len(hashes(first))} artifacts; '
+        print(f'PASS: two byte-identical forced fresh offline renders plus cache restoration; {len(hashes(first))} artifacts; '
               f'{pages} HTML pages / {links} portable links; complete reproducible ZIP; no subprocesses or network')
 
 

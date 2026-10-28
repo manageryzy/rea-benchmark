@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import shutil
 import signal
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -22,6 +23,8 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 BENCH = ROOT / 'benchmarks'
+sys.path.insert(0, str(BENCH / 'scripts'))
+import request_contract
 NODE = ROOT / '.tools/node-v24.14.0-linux-x64/bin/node'
 REA_NODE = ROOT / '.tools/node-v24.22.0-linux-x64/bin/node'
 CLI = ROOT / '.tools/zcode-3.16.1/agent/zcode.cjs'
@@ -72,14 +75,29 @@ class Recorder(ThreadingHTTPServer):
     def __init__(self, directory, item, credentials=None, fixture=False):
         super().__init__(('127.0.0.1', 0), Handler)
         self.directory, self.item, self.credentials, self.fixture = directory, item, credentials, fixture
+        self.tools = {'mcp__rea__' + t['name'] for t in load(Path(item['input_directory'])/'tools.json')['tools']}
+        contract = request_contract.build({'protocol': 'openai-chat-completions'}, {'id': 'glm-5.3', 'reasoning': 'high'},
+            {'max_tool_calls': item['max_tool_calls']}, {'max_output_tokens': item['max_output_tokens'],
+                'allowed_tool_names': sorted(self.tools), 'tool_timeout_ms': item.get('tool_timeout_ms', 450000), 'timeout_seconds': 180}) if fixture else request_contract.from_task(item)
+        self.gate = request_contract.Gate(contract)
         self.sequence = 0
         self.seen = set()
         self.observations = []
         self.violations = []
-        self.requests = []
+        self.requests = self.gate.requests
         self.lock = threading.Lock()
-        self.tools = {'mcp__rea__' + t['name'] for t in load(Path(item['input_directory'])/'tools.json')['tools']}
         self.upstream_error = None
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *_args, **_kwargs):
+        return None
+
+
+def direct_opener(cafile):
+    # Do not inherit proxy/TLS environment or follow credential-bearing redirects.
+    return urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect(),
+        urllib.request.HTTPSHandler(context=ssl.create_default_context(cafile=cafile)))
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -98,39 +116,45 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         recorder = self.server
+        metadata = None
         try:
-            body = self.rfile.read(int(self.headers.get('Content-Length', '0')))
-            request = json.loads(body)
+            lengths = self.headers.get_all('Content-Length', [])
+            if len(lengths) != 1 or not lengths[0].isdigit() or self.headers.get('Transfer-Encoding') or not 0 < int(lengths[0]) <= recorder.gate.contract['max_request_bytes']:
+                recorder.violations.append({'category': 'invalid_request_length'})
+                return self.error_response(400, 'Invalid request length; no upstream request made')
+            body = self.rfile.read(int(lengths[0]))
+            metadata, request = recorder.gate.begin(self.path, body)
+            if 'requested_cap' in metadata:
+                body = request_contract.canonical(request)
             names = {t.get('function', {}).get('name') for t in request.get('tools', [])}
-            with recorder.lock:
-                recorder.sequence += 1
-                sequence = recorder.sequence
+            sequence = metadata['sequence']
+            recorder.sequence = sequence
             dump(recorder.directory / f'wire/request-{sequence:03d}.json', request, True)
             wire_limit = request.get('max_tokens', request.get('max_completion_tokens'))
-            metadata = {'sequence':sequence, 'model':request.get('model'), 'tool_names':sorted(names),
+            metadata.update({'sequence':sequence, 'model':request.get('model'), 'tool_names':sorted(names),
                         'reasoning_effort':request.get('reasoning_effort'), 'max_tokens':wire_limit,
-                        'configured_output_ceiling':recorder.item['max_output_tokens'],
-                        'started_at':now(), 'request_sha256':hashlib.sha256(body).hexdigest()}
-            recorder.requests.append(metadata)
+                        'configured_output_ceiling':recorder.gate.contract['output_ceiling'],
+                        'started_at':now(), 'request_sha256':hashlib.sha256(body).hexdigest()})
             if names != recorder.tools or request.get('model') != 'glm-5.3':
                 recorder.violations.append(metadata)
                 return self.error_response(400, 'Unexpected model or tool catalog; no upstream request made')
-            if request.get('reasoning_effort') != 'high' or not valid_output_ceiling(wire_limit, recorder.item['max_output_tokens']):
+            if request.get('reasoning_effort') != 'high' or not valid_output_ceiling(wire_limit, recorder.gate.contract['output_ceiling']):
                 recorder.violations.append(metadata)
                 return self.error_response(400, 'Reasoning or output ceiling violates frozen protocol; no upstream request made')
             if any(marker in body for marker in [b'Local binary-analysis environment', b'CODEGRAPH_START']):
                 recorder.violations.append(metadata)
                 return self.error_response(400, 'Workspace instructions leaked; no upstream request made')
-            if metadata['request_sha256'] in recorder.seen:
-                return self.error_response(409, 'Identical request retry denied')
-            recorder.seen.add(metadata['request_sha256'])
             if recorder.fixture:
-                return self.fixture_response(sequence, request)
+                recorder.gate.forward(metadata, fixture=True)
+                self.fixture_response(sequence, request)
+                recorder.gate.finish(metadata, status=200)
+                return
             endpoint, token = recorder.credentials
             upstream = urllib.request.Request(endpoint.rstrip('/') + '/chat/completions', data=body,
                         headers={'Content-Type':'application/json','Authorization':'Bearer '+token})
             try:
-                response = urllib.request.urlopen(upstream, timeout=300)
+                recorder.gate.forward(metadata)
+                response = recorder.opener.open(upstream, timeout=max(0.1, recorder.gate.remaining()))
             except urllib.error.HTTPError as error:
                 raw = error.read()
                 # Provider messages may contain account data; retain only status/code/message with token redaction.
@@ -138,6 +162,7 @@ class Handler(BaseHTTPRequestHandler):
                 (recorder.directory/f'wire/error-{sequence:03d}.json').write_text(text)
                 recorder.upstream_error = {'http_status':error.code, 'sequence':sequence}
                 metadata.update(http_status=error.code, finished_at=now())
+                recorder.gate.finish(metadata, status=error.code, complete=False, error='provider_http_error')
                 return self.error_response(error.code, 'Upstream provider rejected request; inspect redacted error receipt')
             with response:
                 metadata['http_status'] = response.status
@@ -147,16 +172,32 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 path = recorder.directory/f'wire/response-{sequence:03d}.sse'
                 raw = bytearray()
+                observer = request_contract.ResponseObserver(recorder.gate, metadata)
+                relay = request_contract.ResponseRelay(observer)
                 with path.open('xb') as output:
                     while True:
+                        if recorder.gate.remaining() <= 0:
+                            raise request_contract.Violation('wall_limit_reached')
+                        response.fp.raw._sock.settimeout(max(0.1, recorder.gate.remaining()))
                         chunk = response.read1(65536)
                         if not chunk:
                             break
                         output.write(chunk)
                         raw.extend(chunk)
-                        self.wfile.write(chunk)
-                        self.wfile.flush()
-                metadata['finished_at'] = now()
+                        ready = relay.feed(chunk)
+                        if ready:
+                            self.wfile.write(ready)
+                            self.wfile.flush()
+                complete, tail = relay.end()
+                ending = ('wall_limit_reached' if response.status == 200 and recorder.gate.remaining() <= 0
+                          else 'incomplete_provider_stream')
+                recorder.gate.finish(metadata, status=response.status, complete=complete,
+                                     error=None if complete else ending)
+                if tail:
+                    self.wfile.write(tail)
+                    self.wfile.flush()
+                if not complete and ending != 'wall_limit_reached':
+                    recorder.upstream_error = {'category': 'incomplete_provider_stream'}
                 for line in bytes(raw).splitlines():
                     if not line.startswith(b'data:'):
                         continue
@@ -171,7 +212,18 @@ class Handler(BaseHTTPRequestHandler):
                     if event.get('usage'):
                         recorder.observations.append({'sequence':sequence, 'finished_at':now(), 'model':event.get('model'), 'usage':event['usage']})
                 self.close_connection = True
-        except (BrokenPipeError, ConnectionResetError):
+        except request_contract.Violation as error:
+            recorder.violations.append({'category': str(error)})
+            if metadata:
+                recorder.gate.finish(metadata, complete=False, error=str(error))
+            try:
+                self.error_response(400, str(error))
+            except OSError:
+                pass
+        except (BrokenPipeError, ConnectionResetError, TimeoutError):
+            if metadata:
+                category = ('wall_limit_reached' if metadata.get('http_status') == 200 and recorder.gate.remaining() <= 0 else 'provider_transport_interrupted')
+                recorder.gate.finish(metadata, complete=False, error=category)
             self.close_connection = True
         except Exception as error:
             recorder.upstream_error = {'exception_type':type(error).__name__}
@@ -179,6 +231,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.error_response(502, 'Recording transport failed; private details suppressed')
             except OSError:
                 pass
+        finally:
+            if metadata and 'finished_at' not in metadata:
+                recorder.gate.finish(metadata, complete=False, error='provider_transport_interrupted')
 
     def fixture_response(self, sequence, request):
         recorder = self.server
@@ -209,7 +264,10 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
 
-def launch(directory, item, credentials=None, fixture=False, replay=None, cancel_event=None):
+def launch(directory, item, credentials=None, fixture=False, replay=None, cancel_event=None, attestation_proof=None):
+    if not fixture:
+        if not attestation_proof or attestation_proof.get('identity') != item.get('runtime_attestation', {}).get('identity') or attestation_proof.get('status') != 'verified_local_content_and_route':
+            raise ValueError('Runtime-attested coordinator dispatch is required')
     if replay and not fixture:
         raise ValueError('Cached response replay is only available with the offline fixture')
     if sha(CLI) != load(BENCH/'config/evidence-delivery.json')['zcode']['upstream_bundle_sha256']:
@@ -220,8 +278,14 @@ def launch(directory, item, credentials=None, fixture=False, replay=None, cancel
     for path, expected in profile.get('files_sha256', {}).items():
         if not path.startswith('benchmarks/') or sha(ROOT/path) != expected:
             raise ValueError('Benchmark adapter/config changed after task preparation')
+    sealed = None
+    if not fixture:
+        from runtime_attestation import environment
+        sealed = environment(item['runtime_attestation'], input_directory=item['input_directory'])
     directory.mkdir(parents=True, exist_ok=True)
     recorder = Recorder(directory, item, credentials, fixture)
+    if not fixture:
+        recorder.opener = direct_opener(sealed['SSL_CERT_FILE'])
     recorder.replay = replay
     thread = threading.Thread(target=recorder.serve_forever, daemon=True)
     thread.start()
@@ -254,7 +318,7 @@ def launch(directory, item, credentials=None, fixture=False, replay=None, cancel
           'modelConfigRules':{'providerModelRules':[{'providerId':'benchmark-glm','modelId':'glm-5.3',
               'config':{'enabled':True,'optionSpecs':{
                   'reasoningLevel':{'map':'{"thinking":{"type":"enabled"},"reasoning_effort":reasoningLevel}'},
-                  'maxOutputTokens':{'max':item['max_output_tokens'],'map':'{"max_tokens":maxOutputTokens}'}}}}],
+                  'maxOutputTokens':{'max':recorder.gate.contract['output_ceiling'],'map':'{"max_tokens":maxOutputTokens}'}}}}],
               'manualProviderModelRules':[]},
           'defaultModelSelection':{'providerId':'benchmark-glm','modelId':'glm-5.3','options':{'reasoningLevel':'high'}}}}
         dump(state/'.zcode/v2/provider_config.json', provider)
@@ -266,16 +330,19 @@ def launch(directory, item, credentials=None, fixture=False, replay=None, cancel
         if replay:
             env['REA_OFFLINE_REPLAY'] = '1'
             env['NODE_OPTIONS'] = '--require ' + str(BENCH/'scripts/offline-network.cjs')
-        for key in ('USER','LOGNAME','SSL_CERT_FILE','SSL_CERT_DIR','HTTP_PROXY','HTTPS_PROXY','NO_PROXY'):
-            if key in os.environ:
-                env[key] = os.environ[key]
+        env['HOME'] = str(isolated)
+        env['TMPDIR'] = str(isolated)
+        if not fixture:
+            env.update(sealed)
         command = [str(NODE),'--require',str(EVIDENCE_OVERLAY),str(CLI),'--prompt',(work/'prompt.txt').read_text(),'--cwd',str(work),
                    '--mode','yolo','--workflow-mode','disabled','--disallowed-tools',DENIED,'--output-format','stream-json','--no-color']
         with (directory/'zcode-events.jsonl').open('x') as output, (directory/'stderr.log').open('x') as errors:
             child = subprocess.Popen(command, cwd=work, env=env, stdout=output, stderr=errors, start_new_session=True)
             try:
-                deadline = time.monotonic() + (180 if fixture else item['timeout_seconds'])
+                deadline = time.monotonic() + max(0, recorder.gate.remaining())
                 while True:
+                    if recorder.gate.exhausted:
+                        raise request_contract.BudgetExhausted(recorder.gate.exhausted)
                     if cancel_event and cancel_event.is_set():
                         raise InterruptedError('Batch cancelled; preserve attempt without retry')
                     remaining = deadline - time.monotonic()
@@ -286,8 +353,8 @@ def launch(directory, item, credentials=None, fixture=False, replay=None, cancel
                         break
                     except subprocess.TimeoutExpired:
                         pass
-            except subprocess.TimeoutExpired:
-                timed_out = True
+            except (subprocess.TimeoutExpired, request_contract.BudgetExhausted) as error:
+                timed_out = isinstance(error, subprocess.TimeoutExpired)
                 os.killpg(child.pid, signal.SIGTERM)
                 try:
                     code = child.wait(timeout=15)
@@ -315,8 +382,10 @@ def launch(directory, item, credentials=None, fixture=False, replay=None, cancel
     recorder.server_close()
     dump(directory/'wire-index.json', {'requests':recorder.requests,'usage_observations':recorder.observations,
                                       'policy_violations':recorder.violations,'upstream_error':recorder.upstream_error})
+    dump(directory/'request-budget.json', recorder.gate.summary(), True)
     return {'started_at':started_at,'completed_at':now(),'exit_code':code,'timed_out':timed_out,
             'elapsed_seconds':time.monotonic()-started, 'requests':recorder.requests,
+            'request_budget': recorder.gate.summary(),
             'usage_observations_raw':recorder.observations,'policy_violations':recorder.violations,
             'upstream_error':recorder.upstream_error}
 

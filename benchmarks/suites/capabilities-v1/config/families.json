@@ -1,0 +1,437 @@
+{
+  "schema_version": 1,
+  "id": "capabilities_v1",
+  "inference_enabled": false,
+  "baseline": {
+    "language": "cpp",
+    "compiler_image": "cpp",
+    "optimization": "-O2",
+    "standard": "c++20",
+    "architecture": "x86_64"
+  },
+  "families": [
+    {
+      "id": "record_codec",
+      "behavior": "Decode a tagged little-endian record, mix its count and value with a fixed salt, then add the fifth input byte when present to the decoder result (including an error result).",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "decode_item"
+      ],
+      "roles": {
+        "record_check": "codec_decision",
+        "value_mix": "codec_update"
+      },
+      "role_descriptions": {
+        "record_check": "Both short-input and tag-rejection conditional branches. Their compare instructions are optional context; initializing an error return is not a check.",
+        "value_mix": "Both the count-times-value multiplication and XOR with the fixed salt. The intervening salt load is optional context."
+      }
+    },
+    {
+      "id": "dispatch_registry",
+      "behavior": "For nonempty input choose one of two byte aggregation policies from the low bit of the first byte, call that policy and add the choice bit to its result; return zero for empty input.",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "add_policy",
+        "xor_policy"
+      ],
+      "roles": {
+        "empty_check": "dispatch_decision",
+        "policy_call": "dispatch_call"
+      },
+      "role_descriptions": {
+        "empty_check": "The conditional branch rejecting empty input; its length test is optional context.",
+        "policy_call": "The actual indirect call to the selected policy. Its table load and choice-bit preparation are optional context."
+      }
+    },
+    {
+      "id": "numeric_aggregation",
+      "behavior": "Decode bounded signed little-endian values, sort them, form a rank-weighted wrapping sum, then XOR that aggregate with a fixed constant and return the zero-extended result.",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "aggregate_values"
+      ],
+      "roles": {
+        "ordering": "numeric_order"
+      },
+      "role_descriptions": {
+        "ordering": "All three signed value-comparison branches of the small-range insertion ordering. Their compare instructions are optional context; count checks, the bounded no-op introsort call, and the weighted sum do not implement these decisions."
+      }
+    },
+    {
+      "id": "variable_objects",
+      "behavior": "Check a length-prefixed byte object, reduce its payload using an order-sensitive checksum, then add a fixed adjustment to the inspector result, including its error results.",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "inspect_payload"
+      ],
+      "roles": {
+        "header_check": "object_decision",
+        "payload_loop": "object_payload"
+      },
+      "role_descriptions": {
+        "header_check": "Both conditional branches rejecting a short header or a declared length beyond available payload. Their compares, length load and length adjustment are optional context; error-return initialization is not a check.",
+        "payload_loop": "The shift and two additions computing checksum times 33 plus the payload byte. Operand preparation, byte load and pointer increment in that iteration are optional context; the loop-bound comparison is not the checksum update."
+      }
+    },
+    {
+      "id": "callback_policy",
+      "behavior": "Select the fixed index-dependent byte transform, pass it to an indirect callback iterator over the input, then add a fixed adjustment to the aggregate result.",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "apply_callback",
+        "transform_item"
+      ],
+      "roles": {
+        "callback_invoke": "callback_call"
+      },
+      "role_descriptions": {
+        "callback_invoke": "The actual indirect callback call. Loading its byte/index arguments and advancing the iteration index are optional context."
+      }
+    },
+    {
+      "id": "session_state",
+      "behavior": "Create a fresh zeroed count/checksum session on each invocation, feed every input byte through its state updater and return the XOR of the individual step results.",
+      "root": "family_root",
+      "chain": [
+        "family_root",
+        "update_session"
+      ],
+      "roles": {
+        "state_update": "session_update"
+      },
+      "role_descriptions": {
+        "state_update": "The count increment and store, and checksum shift, two additions and store. The state loads, byte extension, checksum copy and final return XOR are optional context."
+      }
+    }
+  ],
+  "semantic_review": {
+    "revision": "required-sites-context-v1",
+    "provenance": "Coordinating-agent static instruction review. Record codec was located in public REA/Ghidra evidence before comparison with private truth; other functions used private symbols only to scope public disassembly. Not independent human or multi-reviewer acceptance.",
+    "builds": [
+      {
+        "family_id": "record_codec",
+        "binary_sha256": "d5b2e2ae0561de7e1619ca583b98db965fa5213554ff9f755e82c62bdbab5d56",
+        "evidence_sha256": "742b93ef861412f11d2086835d16da5086c7285281b1d0c7ef2ae6246eeb94fe",
+        "roles": {
+          "record_check": {
+            "required": [
+              {
+                "rva": 6237,
+                "bytes": "7618"
+              },
+              {
+                "rva": 6242,
+                "bytes": "7513"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6233,
+                "bytes": "4883fe03"
+              },
+              {
+                "rva": 6239,
+                "bytes": "803fa7"
+              }
+            ]
+          },
+          "value_mix": {
+            "required": [
+              {
+                "rva": 6252,
+                "bytes": "0fafc1"
+              },
+              {
+                "rva": 6261,
+                "bytes": "31d0"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6255,
+                "bytes": "8b15f3270000"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "dispatch_registry",
+        "binary_sha256": "4134e18f8d998d8a2b5d65fe607f2d21d5e6abad131196cbb230aeedbb1f2d65",
+        "evidence_sha256": "e0d290836bdb63c2d4ea5ff5c26d75b6c858671f978fcd5f1e01532f4f5937ea",
+        "roles": {
+          "empty_check": {
+            "required": [
+              {
+                "rva": 6391,
+                "bytes": "7437"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6388,
+                "bytes": "4885f6"
+              }
+            ]
+          },
+          "policy_call": {
+            "required": [
+              {
+                "rva": 6421,
+                "bytes": "ffd0"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6410,
+                "bytes": "488b04c570404000"
+              },
+              {
+                "rva": 6418,
+                "bytes": "83e301"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "numeric_aggregation",
+        "binary_sha256": "395edd1db4b14f21de999f2d1c022d85a543abf0c87b06f855eeaa126cc4e646",
+        "evidence_sha256": "f2c89f7f8b3b8dbd4e0d5edf260c0a3993a65c91ae5935adac4a5fdfa5f2ea94",
+        "roles": {
+          "ordering": {
+            "required": [
+              {
+                "rva": 7488,
+                "bytes": "7cbe"
+              },
+              {
+                "rva": 7503,
+                "bytes": "7e1c"
+              },
+              {
+                "rva": 7531,
+                "bytes": "7ceb"
+              }
+            ],
+            "context": [
+              {
+                "rva": 7484,
+                "bytes": "664139c7"
+              },
+              {
+                "rva": 7499,
+                "bytes": "664439fa"
+              },
+              {
+                "rva": 7527,
+                "bytes": "664139d7"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "variable_objects",
+        "binary_sha256": "cef51c1e56c7ee2e1e6dff41c24eba0b2b1a23b0b48da348ecf99c53c17261de",
+        "evidence_sha256": "b37c807b31e798292c1142f7d60b3b79ce9939f9dbde94551cdec3492cff3b66",
+        "roles": {
+          "header_check": {
+            "required": [
+              {
+                "rva": 6237,
+                "bytes": "7642"
+              },
+              {
+                "rva": 6254,
+                "bytes": "7231"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6233,
+                "bytes": "4883fe03"
+              },
+              {
+                "rva": 6239,
+                "bytes": "0fb70f"
+              },
+              {
+                "rva": 6242,
+                "bytes": "4883ee04"
+              },
+              {
+                "rva": 6251,
+                "bytes": "4839ce"
+              }
+            ]
+          },
+          "payload_loop": {
+            "required": [
+              {
+                "rva": 6279,
+                "bytes": "48c1e105"
+              },
+              {
+                "rva": 6283,
+                "bytes": "4801ca"
+              },
+              {
+                "rva": 6290,
+                "bytes": "4801ca"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6272,
+                "bytes": "4889d1"
+              },
+              {
+                "rva": 6275,
+                "bytes": "4883c001"
+              },
+              {
+                "rva": 6286,
+                "bytes": "0fb64803"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "callback_policy",
+        "binary_sha256": "e3a4dd21d2def489064de7171c980ea621b041557f42a76800b49a651b530ac7",
+        "evidence_sha256": "d2303a223603a4c45c9cdab2dc7b48297e8d6aebeb586242f0da2709e9d27f7a",
+        "roles": {
+          "callback_invoke": {
+            "required": [
+              {
+                "rva": 6316,
+                "bytes": "41ffd7"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6304,
+                "bytes": "410fb63c1e"
+              },
+              {
+                "rva": 6309,
+                "bytes": "4889de"
+              },
+              {
+                "rva": 6312,
+                "bytes": "4883c301"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "session_state",
+        "binary_sha256": "c944fe5c5727c8a76dc1ed7724036473a41d12340dc16a8e1340f67c6d388f3e",
+        "evidence_sha256": "4031a98a10ebfd331830a4ccdffd0b7e2ceec0a27c437b5a3f32879b9d2178ba",
+        "roles": {
+          "state_update": {
+            "required": [
+              {
+                "rva": 6239,
+                "bytes": "83c001"
+              },
+              {
+                "rva": 6242,
+                "bytes": "c1e204"
+              },
+              {
+                "rva": 6245,
+                "bytes": "8907"
+              },
+              {
+                "rva": 6247,
+                "bytes": "01ca"
+              },
+              {
+                "rva": 6249,
+                "bytes": "01f2"
+              },
+              {
+                "rva": 6251,
+                "bytes": "895704"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6228,
+                "bytes": "8b4f04"
+              },
+              {
+                "rva": 6231,
+                "bytes": "8b07"
+              },
+              {
+                "rva": 6233,
+                "bytes": "400fb6f6"
+              },
+              {
+                "rva": 6237,
+                "bytes": "89ca"
+              },
+              {
+                "rva": 6254,
+                "bytes": "31d0"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "family_id": "dispatch_registry",
+        "binary_sha256": "06764550d3102c75908ffc0e9ea47de33397983f82d2510d12845b62a7613699",
+        "evidence_sha256": "bfb1bd64ae4619ad24c3f1662214c65c0df7fdfaad8dc629136fd5589abf3319",
+        "roles": {
+          "empty_check": {
+            "required": [
+              {
+                "rva": 6423,
+                "bytes": "7437"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6420,
+                "bytes": "4885f6"
+              }
+            ]
+          },
+          "policy_call": {
+            "required": [
+              {
+                "rva": 6456,
+                "bytes": "ffd0"
+              }
+            ],
+            "context": [
+              {
+                "rva": 6426,
+                "bytes": "488d15ef260000"
+              },
+              {
+                "rva": 6449,
+                "bytes": "488b04c2"
+              },
+              {
+                "rva": 6453,
+                "bytes": "83e301"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

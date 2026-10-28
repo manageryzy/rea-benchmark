@@ -14,6 +14,8 @@ import benchmark_config
 import cache
 import records
 import run
+import action_cache
+from grading import native
 
 
 def rejected(operation, text):
@@ -25,30 +27,89 @@ def rejected(operation, text):
         raise AssertionError('Expected explicit rejection: ' + text)
 
 
-def main():
-    implementation = [Path(__file__), Path(run.__file__), Path(cache.__file__), Path(benchmark_config.__file__),
+def fixture_attestation():
+    manifest = {'schema_version': 1, 'environment': {}, 'components': {}, 'scope': 'offline-fixture'}
+    runtime = {'identity': action_cache.digest(action_cache.canonical(manifest))['hash'], 'manifest': manifest}
+    value = {'schema_version': 1, 'runtime': runtime, 'provider': {'provider': 'offline-fixture'}}
+    return {**value, 'identity': action_cache.digest(action_cache.canonical(value))['hash']}
+
+
+@patch.object(run.runtime_attestation, 'prepare', return_value=fixture_attestation())
+def main(_attestation):
+    implementation = [Path(__file__), Path(run.__file__), Path(cache.__file__), records.BENCH / 'scripts/action_cache.py', records.BENCH / 'config/action-dependencies.json', Path(benchmark_config.__file__),
                       Path(run.environment_profile.__file__), records.BENCH / 'harnesses/dispatch.py']
+    implementation += sorted((records.BENCH / 'scripts/grading').glob('*.py'))
+    implementation += [records.BENCH / 'scripts/grading/go_imports.go', records.BENCH / 'scripts/usage.py']
+    implementation += [records.BENCH / name for name in ['scripts/runtime_attestation.py', 'harnesses/provider-auth.mjs',
+                       'config/runtime-attestation.json', 'config/runtime-attestation-migration.json']]
+    implementation += [records.BENCH / 'scripts/grading/metadata_admission.py']
     started_sources = {p: cache.file_sha(p) for p in implementation}
     selection = benchmark_config.load()
-    entries = run.selected_entries(selection)
-    assert entries and all(e['status'] == 'cached' for e in entries), 'Acceptance requires the completed configured suite'
+    # Native cache controls use the native fixture attestation above. Typed
+    # capabilities have their own closed coordinator/cache controls and cannot
+    # be authenticated by this deliberately synthetic native proof.
+    selection['capabilities'] = False
+    configured = run.selected_entries(selection)
+    assert configured, 'No configured benchmark cells'
+    completed = [entry for entry in configured if entry['status'] == 'cached']
+    entries, changed_inputs = [], []
+    # A saved grade is historical evidence, not proof that today's adapter has
+    # identical inputs. Keep related adapter changes as explicit cache misses.
+    for entry in completed:
+        model = records.models()[entry['model']]
+        expected = run.prepare_task(entry, model, materialize=False)
+        try:
+            cache.validate(entry, model, expected)
+        except ValueError as error:
+            assert str(error).startswith('Inference fingerprint mismatch:'), str(error)
+            rejected(lambda: cache.validate(entry, model, expected), 'Inference fingerprint mismatch:')
+            changed_inputs.append({'experiment': entry['experiment'], 'case': entry['case'],
+                                   'model': entry['model'], 'condition': entry['condition'],
+                                   'reason': str(error)})
+        else:
+            entries.append(entry)
+    # A related adapter revision may legitimately invalidate every current-input
+    # cache. Preserve and verify those historical receipts; exercise positive
+    # miss/reuse below using the isolated fixture, never a paid replacement run.
+    assert completed, 'Cache acceptance requires at least one historical saved cell'
     configured_models = selection['models'] if isinstance(selection['models'], list) else [mid for mid, m in records.models().items() if m.get('enabled', True)]
-    assert {e['model'] for e in entries} == set(configured_models)
-    assert len({(e['experiment'], e['case'], e['model'], e['condition']) for e in entries}) == len(entries)
-    for e in entries:
+    assert {e['model'] for e in configured} == set(configured_models)
+    assert len({(e['experiment'], e['case'], e['model'], e['condition']) for e in configured}) == len(configured)
+    for e in configured:
         assert e['condition'] == (records.condition_catalog()['active_case_conditions'][e['suite']] if selection['condition'] == 'active' else selection['condition'])
     original_stop = (records.BENCH / 'config/execution.json').read_bytes()
+    status_path = records.BENCH / 'config/benchmark-status.json'
+    original_status = status_path.read_bytes() if status_path.exists() else None
+    save = run.save
+    validation_statuses = []
+    def isolated_save(path, value, *args, **kwargs):
+        if Path(path) == status_path:
+            validation_statuses.append(copy.deepcopy(value))
+            return
+        return save(path, value, *args, **kwargs)
     with patch.object(run, 'launch_model', side_effect=AssertionError('Provider launch forbidden')) as forbidden, \
+         patch.object(native, 'evaluate', side_effect=AssertionError('Unexpected native regrading of a current cache')), \
          patch.object(socket.socket, 'connect', side_effect=AssertionError('Network forbidden')), \
+         patch.object(run, 'save', side_effect=isolated_save), \
          contextlib.redirect_stdout(io.StringIO()):
         first = run.run_batch(entries, selection, offline=True)
         second = run.run_batch(entries, selection, offline=True)
     assert forbidden.call_count == 0
-    assert first == second and first['cache_hits'] == len(entries) and first['model_api_calls'] == 0
+    def stable(receipt):
+        value = copy.deepcopy(receipt)
+        for outcome in value.get('outcomes', []):
+            # A first-pass legacy import is cache reuse, not native evaluation.
+            outcome.pop('offline_regraded', None)
+            outcome.pop('grading_id', None)
+        return value
+    assert stable(first) == stable(second) and first['cache_hits'] == len(entries) and first['model_api_calls'] == 0
     assert (records.BENCH / 'config/execution.json').read_bytes() == original_stop
+    assert len(validation_statuses) == 2
+    assert (status_path.read_bytes() if status_path.exists() else None) == original_status, 'Validation changed real benchmark status'
     print(f'PASS: two coordinator runs, {len(entries)} validated cache hits each, zero provider launches', flush=True)
+    print(f'PASS: {len(changed_inputs)} saved cells reject changed inference inputs; historical results preserved', flush=True)
 
-    entry = entries[0]
+    entry = (entries or completed)[0]
     model = records.models()[entry['model']]
     expected = run.prepare_task(entry, model, materialize=False)
     fixture_entry = {k: v for k, v in entry.items() if k != 'condition'}
@@ -62,7 +123,7 @@ def main():
     rejected(lambda: cache.validate(entry, model, changed), 'fingerprint mismatch')
     changed = copy.deepcopy(expected)
     changed['inference_identity']['environment']['files_sha256']['benchmarks/scripts/rea-gateway.mjs'] = '0' * 64
-    rejected(lambda: cache.validate(entry, model, changed), 'adapter changed')
+    rejected(lambda: cache.validate(entry, model, changed), 'verified profile')
     changed = copy.deepcopy(expected)
     changed['inference_identity']['model']['reasoning'] = 'low'
     rejected(lambda: cache.validate(entry, model, changed), 'adapter changed')
@@ -85,7 +146,12 @@ def main():
             original_save(path, value, exclusive)
         def provider(directory, task, model, cancel_event=None):
             run.save(directory / 'result.json', {'model': model['id'], 'environment_profile': task['environment_profile'],
+                'provider': task['runtime_attestation']['provider']['provider'], 'runtime_attestation_id': task['runtime_attestation']['identity'],
                 'binary_sha256': task['binary_sha256'], 'prompt_sha256': task['prompt_sha256']}, True)
+            for phase in ('before', 'after'):
+                run.save(directory / ('runtime-verification-' + phase + '.json'), {
+                    'identity': task['runtime_attestation']['identity'], 'status': 'verified_local_content_and_route',
+                    'provider': task['runtime_attestation']['provider']}, True)
             (directory / 'answer.md').write_text('Offline fixture only. No benchmark candidate.\n')
         def grader(directory, task):
             grade = {'compiled': False, 'passed': 0, 'total': 1, 'failure': 'Offline fixture'}
@@ -111,14 +177,21 @@ def main():
               records.BENCH / 'config/conditions.json', records.BENCH / 'config/experiments.json',
               records.BENCH / 'config/cache-compatibility.json', records.BENCH / 'config/environment-profile-archives.json',
               records.BENCH / 'config/cleanup-preservation.json']
-    for e in entries:
+    for e in completed:
         directory = records.ROOT / e['directory']
         inputs += [directory / name for name in ['completed.json', 'task.json', 'result.json', 'grade.json']]
+        if (directory / 'selected-grade.json').exists():
+            inputs.append(directory / 'selected-grade.json')
+            selection = records.read(directory / 'selected-grade.json')
+            inputs += [directory / selection['path'], (directory / selection['path']).parent / 'manifest.json']
     for harness in {m['harness'] for m in records.models().values()}:
         for condition in {e['condition'] for e in entries}:
             inputs += [records.ROOT / name for name in run.environment_profile.current(harness, condition)['files_sha256']]
     receipt = {'schema_version': 1, 'passed': True, 'model_api_calls': 0, 'provider_launches': 0,
                'configured_tasks': len(entries), 'repeat_runs': 2, 'cache_hits_per_run': len(entries),
+               'scheduled_tasks': len(configured), 'incomplete_tasks': len(configured) - len(completed),
+               'historical_completed_tasks': len(completed),
+               'changed_input_cache_misses': changed_inputs,
                'fixture_dispatches': 1, 'fixture_paid_calls': 0,
                'checks': ['all configured active cases', 'two identical cache-only coordinator runs',
                    'no credentials or provider dispatch', 'one simulated missing-cache dispatch',

@@ -1,0 +1,503 @@
+{
+  "schema_version": 1,
+  "suite": "capabilities-v1",
+  "inference_enabled": true,
+  "families_file": "benchmarks/suites/capabilities-v1/config/families.json",
+  "pricing_file": "benchmarks/config/pricing-20261019.json",
+  "analysis_tools_file": "benchmarks/config/rea-tools.json",
+  "condition": "lean-evidence-v4",
+  "limits": {
+    "max_tool_calls": 60,
+    "timeout_seconds": 1800,
+    "max_output_tokens": 128000
+  },
+  "runtime": {
+    "schema_version": 4,
+    "harness_version": "0.2.1-rc.2",
+    "tool_timeout_ms": 120000,
+    "data_limits": {},
+    "known_entry_seeds": true,
+    "explicit_type_roles": true
+  },
+  "profiles": [
+    {
+      "id": "optimized_recover",
+      "kind": "optimized_localization",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "instances.json": 1
+      },
+      "families": [
+        "dispatch_registry"
+      ],
+      "variant": "optimized"
+    },
+    {
+      "id": "lto_recover",
+      "kind": "optimized_localization",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "instances.json": 1
+      },
+      "families": [
+        "dispatch_registry"
+      ],
+      "variant": "lto"
+    },
+    {
+      "id": "rust_native_recover",
+      "kind": "native_abi",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "native-abi.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "rust"
+    },
+    {
+      "id": "go_internal_recover",
+      "kind": "native_abi",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "native-abi.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "go"
+    },
+    {
+      "id": "indirect_recover",
+      "kind": "indirect_call",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "calls.json": 1
+      },
+      "families": [
+        "callback_policy"
+      ],
+      "variant": "baseline"
+    },
+    {
+      "id": "indirect_recover_counterfactual",
+      "kind": "indirect_call",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "calls.json": 1
+      },
+      "families": [
+        "callback_policy"
+      ],
+      "variant": "reordered"
+    },
+    {
+      "id": "variant_recover",
+      "kind": "variant_object",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "baseline"
+    },
+    {
+      "id": "variant_recover_counterfactual",
+      "kind": "variant_object",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "reordered"
+    },
+    {
+      "id": "pointer_recover",
+      "kind": "pointer_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "baseline"
+    },
+    {
+      "id": "pointer_recover_counterfactual",
+      "kind": "pointer_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "reordered"
+    },
+    {
+      "id": "localize",
+      "kind": "localization",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "locations.json": 1
+      }
+    },
+    {
+      "id": "c_recover",
+      "kind": "c_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      }
+    },
+    {
+      "id": "c_codegen",
+      "kind": "c_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      }
+    },
+    {
+      "id": "cpp_recover",
+      "kind": "cpp_buffer",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      }
+    },
+    {
+      "id": "cpp_codegen",
+      "kind": "cpp_buffer",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      }
+    },
+    {
+      "id": "c_lifecycle_recover",
+      "kind": "c_lifecycle",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "families": [
+        "callback_policy",
+        "session_state"
+      ]
+    },
+    {
+      "id": "c_lifecycle_codegen",
+      "kind": "c_lifecycle",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "families": [
+        "callback_policy",
+        "session_state"
+      ]
+    },
+    {
+      "id": "cpp_lifecycle_recover",
+      "kind": "cpp_lifecycle",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      },
+      "families": [
+        "callback_policy",
+        "session_state"
+      ]
+    },
+    {
+      "id": "cpp_lifecycle_codegen",
+      "kind": "cpp_lifecycle",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      },
+      "families": [
+        "callback_policy",
+        "session_state"
+      ]
+    },
+    {
+      "id": "scalar_recover",
+      "kind": "abi_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "record_codec",
+        "numeric_aggregation",
+        "variable_objects"
+      ],
+      "conventions": [
+        "sysv_amd64",
+        "ms_x64"
+      ]
+    },
+    {
+      "id": "layout_recover",
+      "kind": "abi_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "record_codec",
+        "numeric_aggregation",
+        "variable_objects"
+      ],
+      "conventions": [
+        "sysv_amd64",
+        "ms_x64"
+      ]
+    },
+    {
+      "id": "abi_recover",
+      "kind": "abi_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "abi.json": 1
+      },
+      "families": [
+        "record_codec",
+        "numeric_aggregation",
+        "variable_objects"
+      ],
+      "conventions": [
+        "sysv_amd64",
+        "ms_x64"
+      ]
+    },
+    {
+      "id": "scalar_recover_counterfactual",
+      "kind": "abi_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "record_codec",
+        "numeric_aggregation",
+        "variable_objects"
+      ],
+      "conventions": [
+        "sysv_amd64",
+        "ms_x64"
+      ],
+      "condition": "scalar_recover",
+      "variant": "scalar_counterfactual"
+    },
+    {
+      "id": "layout_recover_counterfactual",
+      "kind": "abi_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "record_codec",
+        "numeric_aggregation",
+        "variable_objects"
+      ],
+      "conventions": [
+        "sysv_amd64",
+        "ms_x64"
+      ],
+      "condition": "layout_recover",
+      "variant": "layout_counterfactual"
+    },
+    {
+      "id": "clang20_c_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "clang20",
+      "condition": "recover"
+    },
+    {
+      "id": "clang20_c_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "clang20",
+      "condition": "codegen"
+    },
+    {
+      "id": "clang20_cpp_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      },
+      "original_compiler": "clang20",
+      "condition": "recover"
+    },
+    {
+      "id": "clang20_cpp_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "cpp",
+      "artifact_schema": {
+        "solution.cpp": 1
+      },
+      "original_compiler": "clang20",
+      "condition": "codegen"
+    },
+    {
+      "id": "rust_c_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "rust",
+      "condition": "recover"
+    },
+    {
+      "id": "rust_c_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "rust",
+      "condition": "codegen"
+    },
+    {
+      "id": "rust_rust_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "rust",
+      "artifact_schema": {
+        "solution.rs": 1
+      },
+      "original_compiler": "rust",
+      "condition": "recover"
+    },
+    {
+      "id": "rust_rust_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "rust",
+      "artifact_schema": {
+        "solution.rs": 1
+      },
+      "original_compiler": "rust",
+      "condition": "codegen"
+    },
+    {
+      "id": "go_c_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "go",
+      "condition": "recover"
+    },
+    {
+      "id": "go_c_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "c",
+      "artifact_schema": {
+        "solution.c": 1
+      },
+      "original_compiler": "go",
+      "condition": "codegen"
+    },
+    {
+      "id": "go_go_recover",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "go",
+      "artifact_schema": {
+        "solution.go": 1
+      },
+      "original_compiler": "go",
+      "condition": "recover"
+    },
+    {
+      "id": "go_go_codegen",
+      "kind": "matched_buffer",
+      "enabled": true,
+      "output_language": "go",
+      "artifact_schema": {
+        "solution.go": 1
+      },
+      "original_compiler": "go",
+      "condition": "codegen"
+    },
+    {
+      "id": "pointer_topology_recover",
+      "kind": "pointer_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "indirect"
+    },
+    {
+      "id": "pointer_topology_recover_counterfactual",
+      "kind": "pointer_probe",
+      "enabled": true,
+      "output_language": null,
+      "artifact_schema": {
+        "types.json": 1
+      },
+      "families": [
+        "variable_objects"
+      ],
+      "variant": "indirect_reordered"
+    }
+  ]
+}

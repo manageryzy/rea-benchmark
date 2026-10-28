@@ -16,6 +16,10 @@ def collect(data, read_bytes):
     builder_current = validation.get('builder_sha256') == hashlib.sha256(read_bytes(BENCH / 'scripts/build_cpp_points.py')).hexdigest()
     rows = data['records'] + data.get('condition_records', [])
     for row in rows:
+        if row['case'].get('native_case_origin') == 'compiler_matrix':
+            row['target_build'] = {**row['case']['target_build'],
+                                   'origin': 'Registered compiler variant; frozen target and prompt'}
+            continue
         family = next((f for f in config['families'] if (f['experiment'], f['base_case']) == (row['experiment'], row['case']['id'])), None)
         if family:
             row['target_build'] = {'compiler_family': 'GCC', 'compiler_version': '13.3.0',

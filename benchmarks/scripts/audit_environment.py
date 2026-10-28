@@ -5,9 +5,11 @@ import datetime
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import subprocess
 
 import records
+import cache
 
 ROOT = records.ROOT
 OUTPUT = records.BENCH / 'config/environment-audit.json'
@@ -19,6 +21,24 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def require_zstd():
+    executable = shutil.which('zstd')
+    if executable is None:
+        raise RuntimeError('Historical session audit requires zstd inside the pinned runtime; '
+                           'refresh the image with --refresh --reuse-runtime')
+    return executable
+
+
+def durable_session(raw, session_id):
+    # Decode exactly the bytes whose digest the receipt records, not a second file read.
+    decoded = subprocess.run([require_zstd(), '-dc'], input=raw, check=True,
+                             capture_output=True, timeout=60).stdout
+    events = [json.loads(line) for line in decoded.splitlines() if line.strip()]
+    if not events or events[0].get('id') != session_id:
+        raise ValueError('Durable session identity mismatch')
+    return events
+
+
 def text(message):
     return '\n'.join(b['text'] for b in message.get('content', []) if b.get('type') == 'text')
 
@@ -26,8 +46,12 @@ def text(message):
 def receipt_current(audit, read_bytes):
     if not audit.get('inputs_sha256'):
         return False
+    parents = {}
     for path, expected in audit['inputs_sha256'].items():
-        source = (ROOT / path).resolve()
+        try:
+            source = cache.confined_path(ROOT, path, parents)
+        except ValueError:
+            return False
         if not source.is_relative_to(records.BENCH / 'runs') or not source.is_file():
             return False
         if digest(read_bytes(source)) != expected:
@@ -59,10 +83,7 @@ def audit_case(row, sessions, evidence_prefix='evidence-', verify_errors=False):
     path = paths[0]
     raw = path.read_bytes()
     # This explicit audit target may decompress saved files. Report builds only read its receipt.
-    decoded = subprocess.run(['zstd', '-dc', str(path)], check=True, capture_output=True).stdout
-    durable = [json.loads(line) for line in decoded.splitlines() if line.strip()]
-    if durable[0].get('id') != session_id:
-        raise ValueError('Durable session identity mismatch')
+    durable = durable_session(raw, session_id)
     result['session_source'] = {'path': str(path.relative_to(ROOT)), 'sha256': digest(raw), 'id': session_id}
     calls = [e for e in events if e['type'] == 'tool_call']
     call_order = {c['callId']: (i + 1, c) for i, c in enumerate(calls)}
@@ -176,6 +197,7 @@ def for_report(data, read_bytes):
 
 
 def main():
+    require_zstd()
     data = records.collect()
     if not data['execution']['experiments_stopped']:
         raise SystemExit('Stop experiments before auditing saved inputs')

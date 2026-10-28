@@ -28,13 +28,37 @@
         "complex-native-v1",
         "stl-native-v2"
       ]
+    },
+    {
+      "id": "compact-evidence-v3",
+      "label": "Compact paged evidence (v3)",
+      "environment_profile": "compact-evidence-v3",
+      "paging_policy": "benchmarks/config/evidence-paging-compact.json",
+      "suites": [
+        "record-parser",
+        "complex-native-v1",
+        "stl-native-v2",
+        "capabilities-v1"
+      ]
+    },
+    {
+      "id": "lean-evidence-v4",
+      "label": "Lean evidence and wallet limits (v4)",
+      "environment_profile": "lean-evidence-v4",
+      "paging_policy": "benchmarks/config/evidence-paging-lean.json",
+      "suites": [
+        "record-parser",
+        "complex-native-v1",
+        "stl-native-v2",
+        "capabilities-v1"
+      ]
     }
   ],
   "active_comparison": "fixed-harnesses",
   "note": "Conditions reuse existing experiments, frozen cases and grading. They are not new benchmark suites.",
   "active_case_conditions": {
-    "record-parser": "lossless-evidence-v1",
-    "complex-native-v1": "paged-evidence-v2",
-    "stl-native-v2": "paged-evidence-v2"
+    "record-parser": "lean-evidence-v4",
+    "complex-native-v1": "lean-evidence-v4",
+    "stl-native-v2": "lean-evidence-v4"
   }
 }

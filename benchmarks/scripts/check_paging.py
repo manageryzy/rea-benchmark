@@ -57,7 +57,7 @@ def main():
         receipt.update(result)
         steps = result['steps']
         entry = next(e for e in run.plan(model='glm-5.3',condition='paged-evidence-v2') if e['suite']=='complex-native-v1' and e['case']=='cpp')
-        task = run.prepare_task(entry, records.models()['glm-5.3'])
+        task = run.prepare_task(entry, records.models()['glm-5.3'], offline_fixture=True)
         frozen = Path(task['input_directory'])
         (temp/'spec.json').write_text(json.dumps({'tools':str(frozen/'tools.json'),'steps':steps,
             'evidence_paging':records.read(BENCH/'config/evidence-paging.json')}))

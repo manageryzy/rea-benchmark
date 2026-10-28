@@ -4,6 +4,8 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import os
+import tempfile
 
 import records
 
@@ -15,7 +17,7 @@ def candidates():
     return [r for r in records.collect()['condition_records'] if r['source']]
 
 
-def prepare():
+def prepare(*, reassess=False):
     PACK.mkdir(parents=True, exist_ok=True)
     output = {}
     for row in candidates():
@@ -27,12 +29,42 @@ def prepare():
             assert path.read_bytes() == raw
         else:
             path.write_bytes(raw)
-        if not (source.parent / 'readability-review.json').exists():
+        if reassess or not (source.parent / 'readability-review.json').exists():
             output[digest] = {'source_sha256': digest, 'file': str(path), 'bytes': len(raw), 'language': row['case']['language']}
     print(json.dumps({'dimensions': DIMENSIONS, 'pending': list(output.values())}, indent=2))
 
 
-def apply(path):
+def store_review(destination, review, *, reassess=False):
+    """Explicit reassessment archives exact prior bytes before replacing selection."""
+    raw = (json.dumps(review, indent=2) + '\n').encode()
+    if destination.exists():
+        old = destination.read_bytes()
+        if json.loads(old) == review:
+            return False
+        assert reassess, 'Existing source review is immutable; use explicit --reassess'
+        history = destination.parent / 'readability-history'
+        history.mkdir(exist_ok=True)
+        archive = history / (hashlib.sha256(old).hexdigest() + '.json')
+        if archive.exists():
+            assert archive.read_bytes() == old, 'Archived readability review changed'
+        else:
+            with archive.open('xb') as stream:
+                stream.write(old)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=destination.parent, prefix='.readability-', delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        temporary.replace(destination)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    return True
+
+
+def apply(path, *, reassess=False):
     decisions = json.loads(path.read_text())
     indexed = {d['source_sha256']: d for d in decisions}
     assert len(indexed) == len(decisions), 'Duplicate source decisions'
@@ -53,11 +85,7 @@ def apply(path):
                   'model_labels_in_review_pack': False, 'independent_review': False,
                   'coordinator_has_run_context': True}
         destination = source.parent / 'readability-review.json'
-        if destination.exists():
-            assert json.loads(destination.read_text()) == review, 'Existing source review is immutable'
-        else:
-            destination.write_text(json.dumps(review, indent=2) + '\n')
-            count += 1
+        count += store_review(destination, review, reassess=reassess)
     print(f'Attached {count} explicit source-only reviews; no inferred scores or model calls')
 
 
@@ -65,9 +93,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['prepare', 'apply'])
     parser.add_argument('--decisions', type=Path)
+    parser.add_argument('--reassess', action='store_true', help='Include reviewed sources / archive and replace prior explicit reviews')
     args = parser.parse_args()
     if args.action == 'prepare':
-        prepare()
+        prepare(reassess=args.reassess)
     else:
         assert args.decisions, '--decisions is required'
-        apply(args.decisions)
+        apply(args.decisions, reassess=args.reassess)

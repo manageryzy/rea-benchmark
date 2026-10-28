@@ -108,6 +108,7 @@ def audit_paging(row, entry):
 
 
 def main():
+    audit_environment.require_zstd()
     data = records.collect()
     sessions = {}
     for path in (ROOT / '.cache/benchmark-runtime').glob('home-*/sessions/*/*/session.v4.jsonl.zstd'):

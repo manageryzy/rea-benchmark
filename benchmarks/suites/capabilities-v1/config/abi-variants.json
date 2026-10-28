@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "variants": [
+    {
+      "id": "scalar_counterfactual",
+      "condition": "scalar_recover",
+      "families": {
+        "record_codec": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/record_codec_scalar.hpp",
+          "scalars": {"signed16": {"id": "wide_adjustment", "bits": 32, "signed": true}},
+          "offsets": {}
+        },
+        "numeric_aggregation": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/numeric_aggregation_scalar.hpp",
+          "scalars": {"signed16": {"id": "unsigned_adjustment", "bits": 16, "signed": false}},
+          "offsets": {}
+        },
+        "variable_objects": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/variable_objects_scalar.hpp",
+          "scalars": {"signed16": {"id": "unsigned_change", "bits": 16, "signed": false}},
+          "offsets": {}
+        }
+      }
+    },
+    {
+      "id": "layout_counterfactual",
+      "condition": "layout_recover",
+      "families": {
+        "record_codec": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/record_codec_layout.hpp",
+          "scalars": {},
+          "offsets": {"root": {"weight": 0, "delta": 4, "flags": 6, "values": 12}}
+        },
+        "numeric_aggregation": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/numeric_aggregation_layout.hpp",
+          "scalars": {},
+          "offsets": {"root": {"weight": 0, "delta": 4}}
+        },
+        "variable_objects": {
+          "header": "benchmarks/suites/capabilities-v1/sources/abi/variants/variable_objects_layout.hpp",
+          "scalars": {},
+          "offsets": {"item": {"change": 0, "key": 2}, "root": {"length": 0, "kind": 4, "items": 6}}
+        }
+      }
+    }
+  ]
+}

@@ -5,13 +5,18 @@
   "experiments": "primary",
   "cases": "all",
   "condition": "active",
+  "capabilities": true,
   "execution": {
+    "startup_mode": "trusted_local",
     "max_parallel_models": 3,
-    "report_every": 0
+    "report_every": 1,
+    "budget_stop_scope": "case",
+    "skip_saved_failures": true,
+    "transport_timeout_scope": "case"
   },
   "compiler_matrix": {
     "config": "benchmarks/config/cpp-build-points.json",
-    "inference_enabled": false,
-    "note": "Build validation and planned compiler/optimization points remain visible globally. Only registered primary cases are enabled for model inference."
+    "inference_enabled": true,
+    "note": "Registered compiler/optimization variants reuse the existing native suites and graders. Five identical GCC O2 points remain their original case IDs; only the 31 distinct variants add inference cells."
   }
 }

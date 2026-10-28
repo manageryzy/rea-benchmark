@@ -63,7 +63,7 @@ def main():
             steps.append({'tool': call['tool'], 'arguments': call['arguments'], 'result_path': check['path']})
             receipt['inputs_sha256'][str((path.parent / 'tool-calls.jsonl').relative_to(ROOT))] = hashlib.sha256((path.parent / 'tool-calls.jsonl').read_bytes()).hexdigest()
         stl = next(e for e in records.registry()['experiments'] if e['suite'] == 'stl-native-v2' and e['role'] == 'primary')
-        task = run.prepare_task({'experiment': stl['id'], 'case': 'rust-data-v2', 'directory': 'unused-offline'}, records.models()['glm-5.3'])
+        task = run.prepare_task({'experiment': stl['id'], 'case': 'rust-data-v2', 'directory': 'unused-offline'}, records.models()['glm-5.3'], offline_fixture=True)
         tools = json.loads((Path(task['input_directory']) / 'tools.json').read_text())
         receipt['wire_tool_catalog_sha256'] = hashlib.sha256((Path(task['input_directory']) / 'tools.json').read_bytes()).hexdigest()
         # Use a temporary fixture input directory; never alter the frozen suite.

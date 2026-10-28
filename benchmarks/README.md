@@ -48,6 +48,15 @@ build IDs are separate. Earlier cache keys are validated using the reviewed
 fingerprints, all committed artifacts and exact archived source profiles. Results
 retain their recorded environment; cache reuse never relabels scores.
 
+`make check` / `make check-warm` verifies accepted receipts and current frozen
+action/CAS/artifact bytes without builds, grading, live attestation or model
+calls. It records per-stage timings and enforces a 180-second completion budget.
+Stale or missing inputs fail instead of triggering cold work. `make check-cold`
+explicitly runs the broad regression suite, including empty-cache fixtures,
+compilers, graders, transports and report reproduction, with per-command timings.
+See [warm verification](../guides/setup.md#warm-verification-and-explicit-cold-regression)
+for the scope and persistent-cache behavior during temporary WSL execution.
+
 `make check-runner` executes the coordinator twice with provider dispatch blocked,
 validates each saved cache, and checks one isolated simulated cache miss followed
 by reuse. It also rejects corruption, changed model inputs and automatic retries.
@@ -105,7 +114,7 @@ Run `make check-environment` to replay cached MCP results through the installed
 DSH projection and ZCode serializer, followed by actual-client loopback transport
 checks of large C++ and Rust/data payloads. It uses no provider API or credentials,
 and does not open binaries, grade candidates or change old run artifacts.
-`make check` includes this validation. `make reports` consumes its saved hashed
+`make check-cold` includes this validation. `make reports` consumes its saved hashed
 receipt without loading runtimes, executing subprocesses or using the network.
 Future task identities include configuration and adapter hashes; old cache hits
 remain labeled `legacy-recorded`, never upgraded to the fixed condition by replay.
@@ -185,7 +194,7 @@ Saved attempts are never retried automatically. Original and prior fixed
 results keep their recorded source profiles; exact versions are exported with
 the report. The GPT adapter now selects the requested model ID instead of a
 fixed GPT-6.1 descriptor. Offline checks verify identical effective prompts,
-tools and controls across GPT selections. `make check` includes these checks.
+tools and controls across GPT selections. `make check-cold` includes these checks.
 
 `config/pricing-gpt-baselines-20261020.json` freezes the new models' published
 standard rates, long-context multipliers and unknown cache-write bounds.
@@ -243,6 +252,7 @@ they can become model recovery tests.
 
     make reports
     make check
+    make check-cold                # explicit broad regression; can take much longer
     make check-reports
     make check-environment
     make check-paging

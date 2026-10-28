@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "id": "freestanding-cpp20-buffer-v1",
+  "compiler_image": "cpp",
+  "compiler_flags": ["-std=c++20", "-O2", "-Wall", "-Wextra", "-ffreestanding", "-fno-builtin", "-fno-exceptions", "-fno-rtti", "-fno-threadsafe-statics", "-fno-stack-protector", "-fno-pie", "-fno-plt", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables", "-fno-tree-loop-distribute-patterns", "-fcf-protection=none", "-mno-red-zone", "-march=x86-64", "-mtune=generic", "-nostdlib", "-nodefaultlibs", "-static"],
+  "limits": {"source_bytes": 262144, "compile_cpu_seconds": 90, "compile_memory_bytes": 4294967296, "compile_wall_seconds": 120, "worker_wall_seconds": 150, "pipe_bytes": 12582912}
+}

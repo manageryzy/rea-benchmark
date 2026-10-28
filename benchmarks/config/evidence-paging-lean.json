@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "lean-evidence-v4",
+  "inline_characters": 24000,
+  "default_page_characters": 12000,
+  "maximum_page_characters": 24000,
+  "catalog_entries": 24,
+  "compact_semantic_views": true,
+  "note": "Exact semantic views; compact case-local references and pointer-only catalog. Fully delivered identical views reference prior evidence across tools. Explicit reads always return original bytes; all metadata remains addressable.",
+  "deduplicate_complete_views": true
+}

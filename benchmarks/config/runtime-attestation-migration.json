@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "scope": "historical_unattested_observations_only",
+  "reason": "Runtime/provider and session-budget enforcement upgrade; original unattested observations remain in their recorded namespace, without historical environment or budget equivalence claims",
+  "changes": {
+    "benchmarks/scripts/rea-gateway.mjs": {
+      "before_sha256": "6c8440cac9c94e5eb300c4e6c0a266c9aee9f8cd09cf940474b74a72473f87a9",
+      "after_sha256": "b4926d5de13885edb8a1cb7bdafd9e21c4c410ba50a13780eb7f9f58c2c9eb72",
+      "archive": "benchmarks/archive/runtime-attestation-v1/benchmarks/scripts/rea-gateway.mjs"
+    },
+    "benchmarks/harnesses/dispatch.py": {
+      "before_sha256": "440f8e53f13df1e57e816a515ff8c5d6052a49672afdb09dc84558318f8706f3",
+      "after_sha256": "d4f632c80248680271cc351c959f6c346468dc53e9d37db4f3f58b5e8addb100",
+      "archive": "benchmarks/archive/runtime-attestation-v1/benchmarks/harnesses/dispatch.py",
+      "native_followup_review": {
+        "previous_after_sha256": "e4466427de7f578972af6b065109c7de095aab21e5f443a7ea1110f405fc6a0d",
+        "reviewed_after_sha256": "d4f632c80248680271cc351c959f6c346468dc53e9d37db4f3f58b5e8addb100",
+        "scope": "unattested_native_binary_nonempty_tools_no_declared_seeds",
+        "reason": "The sole follow-up change selects the success receipt status from the attested request contract. Historical bridge observations are unattested and never dispatched; this does not certify their provider route or generation cap, or alias them into an uncapped Codex action."
+      }
+    },
+    "benchmarks/harnesses/deepseek-harness.mjs": {
+      "before_sha256": "f37a164d7fbc0ab0a4ff23cf77b96181f45c6de7e3d5d1826d0f69b731eb90f4",
+      "after_sha256": "c67c774be215a481745cb9b4581776d2e977797295e41e619b66c9cdb0b9c021",
+      "archive": "benchmarks/archive/runtime-attestation-v1/benchmarks/harnesses/deepseek-harness.mjs",
+      "native_followup_review": {
+        "previous_after_sha256": "52d7a374818b8f7bdd83794d39bc636216f7e8d4f8e221b439f05cc7bdb0338c",
+        "reviewed_after_sha256": "e2190ab377d0a399721e848bdf39d590718da0c7ff5f20af151dca9720d3f575",
+        "scope": "unattested_native_binary_nonempty_tools_no_declared_seeds",
+        "reason": "Only the zero-tool branch changed: inherited REA is disabled and no REA connector is inserted. Nonempty native tool catalogues retain the reviewed configuration."
+      },
+      "codex_condition_review": {
+        "previous_after_sha256": "e2190ab377d0a399721e848bdf39d590718da0c7ff5f20af151dca9720d3f575",
+        "reviewed_after_sha256": "c67c774be215a481745cb9b4581776d2e977797295e41e619b66c9cdb0b9c021",
+        "scope": "unattested_native_binary_nonempty_tools_no_declared_seeds",
+        "reason": "The follow-up adds a pre-dispatch check only for the attested openai-codex route, requiring its explicit observed_task_limits contract without a wire cap; remaining changes are comments. Historical native observations are never dispatched or promoted into that new attested condition. Historical GPT route and cap enforcement remain unknown."
+      }
+    },
+    "benchmarks/harnesses/zcode.py": {
+      "before_sha256": "8af14da579338a4fdcf914954b271c53c8ee2a10f0436748da86a4cd7f92e82f",
+      "after_sha256": "1a32ebb229208d824842fc462cf7e9f2465c37a742553277d1eb3762017f79c8",
+      "archive": "benchmarks/archive/runtime-attestation-v1/benchmarks/harnesses/zcode.py",
+      "native_followup_review": {
+        "previous_after_sha256": "95949d235809d656d18d5d039f539fef25d9fcd6056efc03aced0a3bb96b6337",
+        "reviewed_after_sha256": "1a32ebb229208d824842fc462cf7e9f2465c37a742553277d1eb3762017f79c8",
+        "scope": "unattested_native_binary_nonempty_tools_no_declared_seeds",
+        "reason": "Environment validation moves before recorder allocation and receives the bound input directory. Native tasks have no declared analysis seeds, so the seed-specific branch does not apply."
+      }
+    }
+  }
+}

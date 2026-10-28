@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "bounded-go-buffer-abiinternal-v1",
+  "source_language": "go",
+  "output_abi": "go_abi_internal_amd64",
+  "max_source_bytes": 262144,
+  "imports": ["unsafe", "encoding/binary", "math", "math/bits", "sort", "slices", "cmp"],
+  "compiler_flags": ["-trimpath", "-buildvcs=false", "-gcflags=-l", "-ldflags=-buildid="],
+  "runtime_startup": "not_executed",
+  "image_writes": "forbidden"
+}

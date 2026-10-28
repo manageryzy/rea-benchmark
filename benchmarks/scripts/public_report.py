@@ -1,5 +1,6 @@
 """Allowlisted result cache and HTML-only publication; never launch a provider."""
 from contextlib import ExitStack
+import copy
 import datetime
 import hashlib
 from html.parser import HTMLParser
@@ -14,6 +15,18 @@ import subprocess
 from unittest.mock import patch
 from string import Template
 import tempfile
+import records
+import action_cache
+import report_prices
+import report_views
+import i18n_report
+import report_budget
+import localization_report
+from report_states import STATES
+from report_io import metadata_snapshot
+from capabilities import summary as capability_summary
+from capabilities import measurements as capability_measurements
+from capabilities import registration_report
 from urllib.parse import unquote, urlsplit
 
 from report import Report, ASSETS, escape, json_text, money, summary, table
@@ -52,21 +65,44 @@ RUBRIC = ('names', 'decomposition', 'language_idioms', 'formatting', 'explanator
 
 def project_row(row):
     out = pick(row, ROW)
+    if 'attempt_current' in row:
+        out.update(attempt_current=row['attempt_current'], attempt_id=row.get('attempt_id'))
+    if 'failure_receipt_malformed' in row:
+        out['failure_receipt_malformed'] = row['failure_receipt_malformed']
     out['case'] = pick(row['case'], CASE)
     out['source'] = bool(row.get('source'))  # Availability only; no path or code.
     out['environment_delivery'] = row.get('environment_delivery', 'unverified')
+    out['runtime_attestation_status'] = row.get('runtime_attestation_status', 'historical_unknown' if row.get('receipt') else 'not_recorded')
     out['target_build'] = pick(row['target_build'], BUILD) if row.get('target_build') else None
+    if 'budget_condition' in row:
+        out['budget_condition'] = report_budget.project(row['budget_condition'])
     out['receipt'] = None
     if row.get('receipt'):
         receipt = row['receipt']
         out['receipt'] = pick(receipt, 'elapsed_seconds elapsed_ms timed_out tool_calls tool_errors')
         out['receipt']['timed_out'] = bool(receipt.get('timed_out'))
-        out['receipt']['reported_usage'] = {k: receipt.get('reported_usage', {}).get(k, 0) for k in USAGE.split()}
+        coverage = report_prices.coverage(receipt)
+        out['receipt']['reported_usage'] = {k: (receipt.get('reported_usage') or {}).get(k,
+            0 if coverage['proven_zero_forwards'] else None) for k in USAGE.split()}
+        out['receipt']['usage_coverage'] = coverage
+    if row.get('pricing_basis_id'):
+        out['pricing_basis_id'] = row['pricing_basis_id']
     out['cost'] = pick(row['cost'], 'low_usd high_usd usage_complete')
+    out['cost']['usage_status'] = row['cost'].get('usage_status', 'legacy_unknown')
+    if 'periods' in row['cost']:
+        out['cost']['periods'] = list(row['cost']['periods'])
     out['grade'] = None
     if row.get('grade'):
         grade = row['grade']
         out['grade'] = pick(grade, 'compiled passed total')
+        out['grade'].update(original_passed=grade.get('original_passed', grade['passed']),
+                            original_total=grade.get('original_total', grade['total']),
+                            original_program_success=grade.get('original_program_success', row['program_success']),
+                            grading_version=grade['grading_version'] if grade.get('grading_version') in ('exact-returns-v2', 'exact-returns-v3') else 'legacy',
+                            return_provenance='native_process_unauthenticated',
+                            grading_runtime_status=('verified_closed_image' if grade.get('grading_runtime', {}).get('id') else
+                                                    grade.get('grading_runtime_status', 'not_executed' if grade.get('grading_version') == 'exact-returns-v3' else 'historical_limited')),
+                            grading_runtime_id=grade.get('grading_runtime', {}).get('id', grade.get('grading_runtime_id', '')))
         # Failure text may contain provider output. Publish categories only.
         out['grade']['failure'] = ('Expected single native block' if 'Expected' in (grade.get('failure') or '') else
                                   'Compilation failed' if not grade['compiled'] else
@@ -79,16 +115,42 @@ def project_row(row):
 
 def project(report):
     data = report.data
+    performance = data.get('runtime_performance', {})
+    warm = performance.get('warm')
+    cold = performance.get('cold')
+    safe_performance = {
+        'warm': ({**pick(warm, 'measured_at total_seconds budget_seconds prepared_cases native_saved_cases reusable_native_cases retained_changed_input_cases accepted_regression_checks verification_cache_hit current passed model_api_calls provider_launches'),
+                  'stages': [pick(row, 'name seconds') for row in warm['stages']]} if warm else None),
+        'cold': ({**pick(cold, 'measured_at total_seconds passed complete'),
+                  'stages': [pick(row, 'name seconds exit_code') for row in cold['stages']]} if cold else None)}
+    benchmark = performance.get('benchmark')
+    if benchmark:
+        safe_performance['benchmark'] = {
+            **pick(benchmark, 'schema_version mode status total_seconds selected_tasks cache_hits provider_launches model_api_calls failures unprocessed_tasks'),
+            **({'queue_holds': benchmark['queue_holds']} if 'queue_holds' in benchmark else {}),
+            'stages': [pick(row, 'stage status elapsed_seconds') for row in benchmark['stages']]}
     original = data['environment_audit'].get('cases', [])
     fixed = data['condition_evidence_audit'].get('cases', [])
-    return {
-        'schema_version': 1, 'data_as_of': data['data_as_of'],
+    projected = {
+        'schema_version': 10, 'data_as_of': data['data_as_of'],
+        'runtime_performance': safe_performance,
+        'task_budget_policy': copy.deepcopy(data['task_budget_policy']),
         'source_report_build_id': report.build_id,
         'models': {k: pick(v, 'id label harness') for k, v in data['models'].items()},
         'experiments': [pick(e, 'id label role suite') for e in data['experiments']],
         'conditions': {'active_case_conditions': data['conditions']['active_case_conditions']},
         'records': [project_row(r) for r in data['records']],
         'condition_records': [project_row(r) for r in data['condition_records']],
+        'runtime_attestation': pick(data['runtime_attestation'], 'status inputs_current model_api_calls runtimes controls_passed controls_current checks'),
+        'grading_runtime': {**pick(data['grading_runtime'], 'status controls_passed controls_current checks model_api_calls'),
+                            'profiles': {language: pick(profile, 'id files bytes compiler_version')
+                                         for language, profile in data['grading_runtime']['profiles'].items()}},
+        'c_executor': pick(data['c_executor'], 'status controls_passed controls_current checks failed model_api_calls engine_version engine_id base_image module_files module_bytes'),
+        'capability_preparation': {**pick(data['capability_preparation'],
+            'status inference_enabled families task_definitions frozen_tasks frozen_inputs_current model_api_calls supported_capabilities source_languages'),
+            'controls': [pick(row, 'id passed current checks failed') for row in data['capability_preparation']['controls']]},
+        'capability_measurements': capability_measurements.public_projection(data['capability_measurements']),
+        'capability_registration': registration_report.public_projection(data['capability_registration']),
         'audit': {
             'original_cases': len(original),
             'original_spilled_results': sum(c.get('counts', {}).get('spilled', 0) for c in original),
@@ -101,6 +163,14 @@ def project(report):
         'compiler_points': [pick(p, POINT) for p in data['cpp_build_points']['points']],
         'feature_probes': [pick(p, FEATURE) for p in data['cpp_build_points']['language_feature_probes']['probes']],
     }
+    if data.get('localization_regrades'):
+        projected['localization_regrades'] = copy.deepcopy(data['localization_regrades'])
+    if 'price_bases' in data:
+        projected['price_bases'] = [project_price_basis(value) for value in data['price_bases']]
+    if 'typed_budget_conditions' in data:
+        projected['typed_budget_conditions'] = {key: report_budget.project(value)
+            for key, value in data['typed_budget_conditions'].items()}
+    return projected
 
 
 # A recursive schema rejects unknown fields before publication, including fields manually
@@ -108,9 +178,12 @@ def project(report):
 NUMBER = (int, float, type(None))
 TEXT = (str, type(None))
 MAP = lambda schema: ('map', schema)
+OPTIONAL = lambda schema: ('optional', schema)
 GRADE = {'compiled': bool, 'passed': int, 'total': int, 'failure': str,
          'points': MAP({'passed': int, 'total': int})}
 ROW_SCHEMA = {**{k: TEXT for k in ROW.split()},
+              'attempt_current': OPTIONAL(bool), 'attempt_id': OPTIONAL(TEXT),
+              'failure_receipt_malformed': OPTIONAL(bool),
               'points_total': NUMBER, 'points_passed': NUMBER, 'program_success': bool,
               'case': {**{k: TEXT for k in CASE.split()}, **{k: NUMBER for k in 'tool_count max_tool_calls timeout_seconds max_output_tokens string_abi'.split()}},
               'source': bool, 'environment_delivery': str,
@@ -131,9 +204,166 @@ SCHEMA = {
     'feature_probes': [{**{k: TEXT for k in FEATURE.split()}, 'inputs_current': bool, 'model_attempts': int}],
 }
 
+# Accept the existing sanitized snapshot without retroactively certifying it.
+LEGACY_SCHEMA = copy.deepcopy(SCHEMA)
+ROW_SCHEMA['cost']['usage_status'] = str
+GRADE.update(original_passed=NUMBER, original_total=NUMBER, original_program_success=bool,
+             grading_version=str, return_provenance=str)
+V2_SCHEMA = copy.deepcopy(SCHEMA)
+ROW_SCHEMA['runtime_attestation_status'] = str
+SCHEMA['runtime_attestation'] = {'status': str, 'inputs_current': bool, 'model_api_calls': int, 'controls_passed': bool, 'controls_current': bool, 'checks': int,
+    'runtimes': MAP({'identity': str, 'components': MAP({'sha256': str, 'files': int, 'bytes': int})})}
+V3_SCHEMA = copy.deepcopy(SCHEMA)
+GRADE.update(grading_runtime_status=str, grading_runtime_id=str)
+SCHEMA['grading_runtime'] = {'status': str, 'controls_passed': bool, 'controls_current': bool, 'checks': int,
+    'model_api_calls': int, 'profiles': MAP({'id': str, 'files': int, 'bytes': int, 'compiler_version': str})}
+V4_SCHEMA = copy.deepcopy(SCHEMA)
+SCHEMA['c_executor'] = {**{key: str for key in ('status', 'engine_version', 'engine_id', 'base_image')},
+                        'controls_passed': bool, 'controls_current': bool,
+                        **{key: int for key in ('checks', 'failed', 'model_api_calls', 'module_files', 'module_bytes')}}
+V5_SCHEMA = copy.deepcopy(SCHEMA)
+SCHEMA['capability_preparation'] = {'status': str, 'inference_enabled': bool, 'families': int,
+    'task_definitions': int, 'frozen_tasks': int, 'frozen_inputs_current': bool, 'model_api_calls': int,
+    'supported_capabilities': [str], 'source_languages': [str],
+    'controls': [{'id': str, 'passed': bool, 'current': bool, 'checks': int, 'failed': int}]}
+V6_SCHEMA = copy.deepcopy(SCHEMA)
+TYPED_COST = {'low_usd': NUMBER, 'high_usd': NUMBER, 'usage_complete': bool}
+TYPED_GRADE = {'grading_id': str, 'grading_version': str, 'passed': int, 'total': int,
+    'artifact_valid': bool, 'task_success': bool, 'return_provenance': str,
+    'scores': MAP({'score': NUMBER, 'components': MAP(NUMBER)})}
+TYPED_OBSERVATION = {**{key: str for key in ('attempt_id', 'model', 'profile_id', 'task_id', 'family_id', 'lineage_id',
+    'build_id', 'binary_sha256', 'source_language', 'hint_profile', 'analysis_condition',
+    'public_package_sha256', 'status', 'usage_status', 'runtime_status', 'budget_status', 'accounting_policy')},
+    'output_language': TEXT, 'capability_ids': [str], 'grade': (TYPED_GRADE, type(None)),
+    'grade_revisions': [{'grading_id': str, 'grading_version': str, 'passed': int, 'total': int, 'task_success': bool, 'selected': bool}],
+    'invalid_grade_revisions': int, 'invalid_accounting_revisions': int, 'record_valid': bool,
+    'readability': {'applicable': bool, 'total': NUMBER, 'provenance': str},
+    'known_tokens': MAP(int), 'cost': TYPED_COST,
+    'accounting_revisions': [{'accounting_id': str, 'version': str, 'usage_status': str, 'low_usd': NUMBER, 'high_usd': NUMBER}]}
+SCHEMA['capability_measurements'] = {
+    'schema_version': int, 'schedule_status': str, 'schedule_id': str, 'inference_enabled': bool,
+    **{key: int for key in ('declared_tasks', 'configured_cells', 'scheduled_cells', 'disabled_cells', 'saved_observations',
+                           'duplicate_saved_copies', 'invalid_attempt_records', 'released_capabilities')},
+    'statuses': MAP(int), 'validation': {'passed': bool, 'current': bool, 'checks': int, 'model_api_calls': int},
+    'cells': [{**{key: str for key in ('cell_id', 'model', 'task_id', 'family_id', 'lineage_id', 'profile_id', 'preparation_status',
+                                    'status', 'source_language', 'hint_profile', 'analysis_condition')},
+               'output_language': TEXT, 'binary_sha256': TEXT, 'public_package_sha256': TEXT, 'build_id': TEXT, 'capability_ids': [str],
+               'scheduled': bool, 'observation': (TYPED_OBSERVATION, type(None))}],
+    'history': [TYPED_OBSERVATION],
+    'macro_vectors': [{**{key: str for key in ('model', 'profile_id', 'capability_id')},
+                       **{key: int for key in ('scheduled_cells', 'graded_cells', 'metric_observations', 'scheduled_families',
+                                              'observed_families', 'observed_lineages', 'matched_cells', 'matched_families')},
+                       **{key: NUMBER for key in ('observed_macro', 'complete_macro', 'matched_macro')}}],
+    'totals': [{'model': str, **{key: int for key in ('configured_cells', 'scheduled_cells', 'graded_cells', 'artifact_valid_cells',
+                                                   'successful_cells', 'saved_observations', 'readability_n')},
+                'readability_mean': NUMBER, 'known_tokens': {key: NUMBER for key in USAGE.split()}, 'cost': TYPED_COST}]}
+V7_SCHEMA = copy.deepcopy(SCHEMA)
+ORIGINAL_BUILD = {key: str for key in ('build_id', 'binary_sha256', 'compiler_family', 'compiler_version',
+    'compiler_image_id', 'compiler_executable_sha256', 'source_language', 'architecture', 'standard', 'optimization',
+    'strip_mode', 'standard_library', 'link_mode', 'binutils_image_id', 'flag_summary_sha256', 'abi')}
+ORIGINAL_BUILD['flag_summary'] = [str]
+SCHEMA['capability_registration'] = {'status': str, 'policy_id': str, 'data_as_of': TEXT,
+    'invalid_records': int, 'control_records_excluded': int,
+    'validation': {'passed': bool, 'current': bool, 'checks': int, 'model_api_calls': int},
+    'builds': [{'task_id': str, 'family_id': str, 'profile_id': str, 'metadata': ORIGINAL_BUILD}],
+    'schedules': [{'registration_id': str, 'registered_at': str, 'scheduled_cells': int, 'prospective_cells': int,
+        'prior_cells': int, 'native_context_cells': int, 'policy_id': str, 'parallel_models': int,
+        'bindings': [{'binding_id': str, 'created_at': str, 'bound_cells': int, 'dispatch_intents': int,
+                      'runtime_ids': [str], 'provider_ids': [str]}]}],
+    'observations': [{'attempt_id': str, 'registration_id': TEXT, 'binding_id': TEXT, 'status': str, 'registered_at': TEXT,
+                      'admission_mode': OPTIONAL(str)}]}
+V8_SCHEMA = copy.deepcopy(SCHEMA)
+SCHEMA['task_budget_policy'] = ({'policy_id': str, 'limits': {key: int for key in (
+    'max_model_turns', 'max_response_tokens', 'max_output_tokens', 'max_observed_total_tokens')},
+    'wallets': OPTIONAL([{'model': str, 'currency': str, 'limit_nano': int, 'semantics': str,
+                         'max_response_tokens': OPTIONAL(int)}]),
+    'adaptive_budget': OPTIONAL({'id': str, 'condition': str, 'multiplier': int, 'max_response_tokens': int,
+        'max_model_turns': (int, type(None)), 'basic_suites': [str], 'sample_policy': str, 'bootstrap': str})}, type(None))
+V9_SCHEMA = copy.deepcopy(SCHEMA)
+SCHEMA['runtime_performance'] = {
+    'warm': ({'measured_at': str, 'total_seconds': (int, float), 'budget_seconds': int,
+        **{key: int for key in ('prepared_cases', 'native_saved_cases', 'reusable_native_cases',
+            'retained_changed_input_cases', 'accepted_regression_checks', 'model_api_calls', 'provider_launches')},
+        **{key: bool for key in ('verification_cache_hit', 'current', 'passed')},
+        'stages': [{'name': str, 'seconds': (int, float)}]}, type(None)),
+    'cold': ({'measured_at': str, 'total_seconds': (int, float), 'passed': bool, 'complete': bool,
+        'stages': [{'name': str, 'seconds': (int, float), 'exit_code': int}]}, type(None))}
+BENCHMARK_TIMING_SCHEMA = {
+    'schema_version': int, 'mode': str, 'status': str, 'total_seconds': (int, float),
+    **{key: int for key in ('selected_tasks', 'cache_hits', 'provider_launches', 'failures', 'unprocessed_tasks')},
+    'model_api_calls': (int, type(None)),
+    'queue_holds': OPTIONAL(int),
+    'stages': [{'stage': str, 'status': str, 'elapsed_seconds': NUMBER}]}
+
+# Optional additive fields preserve old sanitized snapshots without certifying
+# missing pricing or request coverage. Unknown categories remain nullable.
+USAGE_COVERAGE = {'recorded_requests': (int, type(None)),
+                 'requests_with_incomplete_usage': (int, type(None)), 'proven_zero_forwards': bool}
+ROW_SCHEMA['receipt'][0]['usage_coverage'] = OPTIONAL(USAGE_COVERAGE)
+ROW_SCHEMA['pricing_basis_id'] = OPTIONAL(str)
+ROW_SCHEMA['cost']['periods'] = OPTIONAL([str])
+PRICE_BASIS = {**{key: TEXT for key in ('snapshot_at', 'currency', 'source_url', 'fx_date', 'fx_source_url', 'request_first_at', 'request_last_at')},
+    **{key: str for key in ('id', 'model', 'snapshot_sha256', 'rule', 'estimate_kind')},
+    'unit_tokens': int, 'cny_per_usd': NUMBER, 'short_context_max_input': (int, type(None)),
+    'rates': [{'period': str, **{key: NUMBER for key in report_prices.RATE_KEYS}}],
+    'peak_utc_hours': [[int]], 'recorded_periods': [str], 'actual_invoice_available': bool}
+SCHEMA['price_bases'] = OPTIONAL([PRICE_BASIS])
+BUDGET_OUTCOME = {'status': str, 'budget_exceeded': bool, 'queue_stop_required': bool,
+                  'queue_stop_reason': TEXT}
+BUDGET_CONDITION = {'mode': str, 'evidence': str, 'protocol': TEXT,
+    'provider_output_cap_enforced': (bool, type(None)),
+    **{key: NUMBER for key in report_budget.NUMBERS}, 'outcome': OPTIONAL(BUDGET_OUTCOME),
+    'wallet': OPTIONAL({'currency': str, 'limit_nano': (int, type(None)), 'semantics': str}),
+    'response_allocation': OPTIONAL(str), 'observed_response_output_tokens': OPTIONAL(int),
+    'adaptive': OPTIONAL({'mode': str, 'metric': str, 'sample_count': int, 'multiplier': int,
+                         'limit': (int, type(None)), 'baseline_sha256': str})}
+ROW_SCHEMA['budget_condition'] = OPTIONAL(BUDGET_CONDITION)
+SCHEMA['typed_budget_conditions'] = OPTIONAL(MAP(BUDGET_CONDITION))
+TYPED_OBSERVATION['budget_outcome'] = OPTIONAL(BUDGET_OUTCOME)
+SCHEMA['localization_regrades'] = OPTIONAL({'policy': str, 'updated_at': str, 'entries': [{
+    'revision_id': str, 'original_grading_id': str, 'answer_sha256': str,
+    'normalized_sha256': TEXT, 'transforms': int, 'reason': str,
+    'observation': TYPED_OBSERVATION, 'grade': (TYPED_GRADE, type(None))}]})
+
+
+def project_price_basis(value):
+    result = pick(value, ' '.join(PRICE_BASIS))
+    result['rates'] = [pick(row, 'period ' + ' '.join(report_prices.RATE_KEYS)) for row in value['rates']]
+    result['peak_utc_hours'] = [list(hours) for hours in value['peak_utc_hours']]
+    return result
+
+
+def validate_benchmark_timing(value):
+    stages = value['stages']
+    allowed = {'selection', 'preparation_inspection', 'action_resolution', 'schedule', 'preparation',
+               'prepared_action_resolution', 'binding', 'execute', 'finalization'}
+    if (value['schema_version'] != 1 or value['mode'] not in ('offline', 'live')
+            or value['status'] not in ('running', 'complete', 'incomplete', 'stopped',
+                                       'offline_cache_miss', 'pre_dispatch_failure')
+            or value['total_seconds'] > 604800 or value['selected_tasks'] > 100000
+            or len(stages) > len(allowed) or len({row['stage'] for row in stages}) != len(stages)
+            or any(row['stage'] not in allowed or row['status'] not in
+                   ('running', 'complete', 'failed', 'interrupted', 'skipped')
+                   or (row['elapsed_seconds'] is None) != (row['status'] == 'running')
+                   or row['status'] == 'skipped' and row['elapsed_seconds'] != 0 for row in stages)
+            or sum(row['elapsed_seconds'] or 0 for row in stages) > value['total_seconds'] + 0.001
+            or any(value[key] > value['selected_tasks'] for key in
+                   ('cache_hits', 'provider_launches', 'unprocessed_tasks'))
+            or value['failures'] > 100000
+            or value['cache_hits'] + value['unprocessed_tasks'] > value['selected_tasks']
+            or value['model_api_calls'] is not None and value['model_api_calls'] > 10**9
+            or value['mode'] == 'offline' and (value['provider_launches'] != 0 or value['model_api_calls'] != 0)
+            or value['status'] == 'offline_cache_miss' and (value['mode'] != 'offline' or not value['failures'])
+            or value['status'] == 'pre_dispatch_failure' and value['provider_launches'] != 0
+            or value.get('queue_holds', 0) > value['selected_tasks']
+            or value['status'] == 'complete' and (value['failures'] or value.get('queue_holds') or value['unprocessed_tasks'])):
+        raise ValueError('Invalid benchmark stage timing measurement')
+
 
 def validate_value(value, schema):
-    if isinstance(schema, tuple) and schema[0] == 'map':
+    if isinstance(schema, tuple) and schema[0] == 'optional':
+        validate_value(value, schema[1])
+    elif isinstance(schema, tuple) and schema[0] == 'map':
         if not isinstance(value, dict):
             raise ValueError('Expected publication map')
         for key, item in value.items():
@@ -149,10 +379,12 @@ def validate_value(value, schema):
                 pass
         raise ValueError('Invalid nullable publication value')
     elif isinstance(schema, dict):
-        if not isinstance(value, dict) or set(value) != set(schema):
+        required = {key for key, spec in schema.items() if not (isinstance(spec, tuple) and spec[0] == 'optional')}
+        if not isinstance(value, dict) or not required.issubset(value) or not set(value).issubset(schema):
             raise ValueError('Unexpected or missing publication fields')
         for k, spec in schema.items():
-            validate_value(value[k], spec)
+            if k in value:
+                validate_value(value[k], spec)
     elif isinstance(schema, list):
         if not isinstance(value, list):
             raise ValueError('Expected publication list')
@@ -167,26 +399,255 @@ def validate_value(value, schema):
 
 
 def validate(data):
-    validate_value(data, SCHEMA)
-    if data['schema_version'] != 1 or not re.fullmatch('[0-9a-f]{64}', data['source_report_build_id']):
+    if data.get('schema_version') == 1:
+        validate_value(data, LEGACY_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 2
+        for row in data['records'] + data['condition_records']:
+            row['cost']['usage_status'] = 'legacy_unknown'
+            if row['grade']:
+                grade = row['grade']
+                grade.update(original_passed=grade['passed'], original_total=grade['total'],
+                             original_program_success=row['program_success'], grading_version='legacy',
+                             return_provenance='native_process_unauthenticated')
+    if data.get('schema_version') == 2:
+        validate_value(data, V2_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 3
+        data['runtime_attestation'] = {'status': 'not_recorded', 'inputs_current': False, 'model_api_calls': 0, 'runtimes': {}, 'controls_passed': False, 'controls_current': False, 'checks': 0}
+        for row in data['records'] + data['condition_records']:
+            row['runtime_attestation_status'] = 'historical_unknown' if row['receipt'] or row['status'] != 'not_started' else 'not_recorded'
+    if data.get('schema_version') == 3:
+        validate_value(data, V3_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 4
+        data['grading_runtime'] = {'status': 'not_recorded', 'controls_passed': False, 'controls_current': False,
+                                   'checks': 0, 'model_api_calls': 0, 'profiles': {}}
+        for row in data['records'] + data['condition_records']:
+            if row['grade']:
+                row['grade'].update(grading_runtime_status='historical_limited', grading_runtime_id='')
+    if data.get('schema_version') == 4:
+        validate_value(data, V4_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 5
+        data['c_executor'] = {'status': 'not_recorded', 'controls_passed': False, 'controls_current': False,
+                              'checks': 0, 'failed': 0, 'model_api_calls': 0, 'engine_version': '',
+                              'engine_id': '', 'base_image': '', 'module_files': 0, 'module_bytes': 0}
+    if data.get('schema_version') == 5:
+        validate_value(data, V5_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 6
+        data['capability_preparation'] = capability_summary.empty()
+    if data.get('schema_version') == 6:
+        validate_value(data, V6_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 7
+        data['capability_measurements'] = capability_measurements.empty()
+    if data.get('schema_version') == 7:
+        validate_value(data, V7_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 8
+        data['capability_registration'] = registration_report.empty()
+    if data.get('schema_version') == 8:
+        validate_value(data, V8_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 9
+        data['task_budget_policy'] = None
+    if data.get('schema_version') == 9:
+        validate_value(data, V9_SCHEMA)
+        data = copy.deepcopy(data)
+        data['schema_version'] = 10
+        data['runtime_performance'] = {'warm': None, 'cold': None}
+    schema = SCHEMA
+    benchmark = data.get('runtime_performance', {}).get('benchmark')
+    if 'benchmark' in data.get('runtime_performance', {}):
+        # An optional addition to v10: historical snapshots retain their exact
+        # two-field timing inventory and receive no invented batch observation.
+        schema = {**SCHEMA, 'runtime_performance': {
+            **SCHEMA['runtime_performance'], 'benchmark': BENCHMARK_TIMING_SCHEMA}}
+    validate_value(data, schema)
+    if data['schema_version'] != 10 or not re.fullmatch('[0-9a-f]{64}', data['source_report_build_id']):
         raise ValueError('Unknown public cache version or build identity')
+    if benchmark is not None:
+        validate_benchmark_timing(benchmark)
+    warm = data['runtime_performance']['warm']
+    if warm:
+        if (warm['model_api_calls'] != 0 or warm['provider_launches'] != 0
+                or warm['budget_seconds'] <= 0 or warm['total_seconds'] > warm['budget_seconds']
+                or {row['name'] for row in warm['stages']} != {'acceptance_receipts', 'prepared_case_bytes',
+                    'saved_native_artifacts', 'fresh_content_seal', 'persistent_action_cache'}
+                or len(warm['stages']) != 5
+                or sum(row['seconds'] for row in warm['stages']) > warm['total_seconds'] + 0.001):
+            raise ValueError('Invalid offline warm performance measurement')
+    budget_policy = data['task_budget_policy']
+    if budget_policy and (any(n <= 0 for n in budget_policy['limits'].values())
+            or budget_policy['limits']['max_response_tokens'] > budget_policy['limits']['max_output_tokens']):
+        raise ValueError('Invalid public task spending limits')
+    capability_measurements.validate_projection(data['capability_measurements'])
+    overlay = data.get('localization_regrades')
+    if overlay:
+        if overlay['policy'] != localization_report.POLICY:
+            raise ValueError('Unknown localization regrade policy')
+        seen = set()
+        for entry in overlay['entries']:
+            row, grade = entry['observation'], entry['grade']
+            if (row['attempt_id'] in seen or not row['record_valid'] or not row['grade']
+                    or row['grade']['artifact_valid'] or not row['capability_ids']
+                    or any(not c.startswith('L') for c in row['capability_ids'])
+                    or entry['original_grading_id'] != row['grade']['grading_id']
+                    or row['model'] not in data['models'] or entry['transforms'] < 0
+                    or row['status'] not in ('graded', 'completed_over_budget', 'completed_queue_held')):
+                raise ValueError('Invalid localization regrade binding')
+            seen.add(row['attempt_id'])
+            for key in ('revision_id', 'original_grading_id', 'answer_sha256'):
+                capability_measurements.hash_value(entry[key])
+            if entry['normalized_sha256'] is not None:
+                capability_measurements.hash_value(entry['normalized_sha256'])
+            if grade:
+                if (entry['reason'] != 'semantic_regraded' or grade['grading_id'] != entry['revision_id']
+                        or grade['grading_version'] != localization_report.POLICY
+                        or grade['artifact_valid'] is not True or not 0 <= grade['passed'] <= grade['total']
+                        or grade['total'] <= 0 or grade['task_success'] != (grade['passed'] == grade['total'])
+                        or set(grade['scores']) != set(row['capability_ids'])):
+                    raise ValueError('Invalid semantic localization regrade')
+            elif entry['reason'] not in ('format_not_losslessly_convertible', 'target_or_contract_not_admitted'):
+                raise ValueError('Unknown localization review reason')
+    for row in data['records'] + data['condition_records']:
+        if 'budget_condition' in row:
+            report_budget.validate(row['budget_condition'])
+    typed_ids = {row['attempt_id'] for row in data['capability_measurements']['history']}
+    for key, value in data.get('typed_budget_conditions', {}).items():
+        if key not in typed_ids or not re.fullmatch('[0-9a-f]{64}', key):
+            raise ValueError('Budget condition references an unknown typed attempt')
+        report_budget.validate(value)
+    registration_report.validate(data['capability_registration'])
+    if any(row['model'] not in data['models'] for row in data['capability_measurements']['cells']):
+        raise ValueError('Unknown configured model in typed measurement inventory')
     if data['data_as_of']:
         datetime.datetime.fromisoformat(data['data_as_of'])
-    seen = set()
+    price_ids = set()
+    for item in data.get('price_bases', []):
+        if (item['id'] in price_ids or item['model'] not in data['models']
+                or not re.fullmatch('[0-9a-f]{64}', item['id'])
+                or not re.fullmatch('[0-9a-f]{64}', item['snapshot_sha256'])
+                or item['currency'] not in ('USD', 'CNY') or not 0 < item['unit_tokens'] <= 10**9
+                or item['actual_invoice_available'] is not False
+                or item['estimate_kind'] not in ('api_equivalent', 'published_rate_estimate')
+                or not 1 <= len(item['rates']) <= 4):
+            raise ValueError('Invalid sanitized pricing basis')
+        price_ids.add(item['id'])
+        for key in ('source_url', 'fx_source_url'):
+            if item[key] is not None and report_prices.public_url(item[key]) != item[key]:
+                raise ValueError('Unsafe pricing source URL')
+        for key in ('snapshot_at', 'fx_date', 'request_first_at', 'request_last_at'):
+            if item[key] is not None and report_prices._date(item[key]) != item[key]:
+                raise ValueError('Invalid pricing date')
+        if (item['cny_per_usd'] is not None and item['cny_per_usd'] <= 0
+                or any(len(hours) != 2 or not 0 <= hours[0] < hours[1] <= 24 for hours in item['peak_utc_hours'])
+                or any(rate['period'] not in ('standard', 'peak', 'off_peak', 'standard_short_context',
+                                             'standard_long_context') for rate in item['rates'])):
+            raise ValueError('Invalid pricing rate period or conversion')
+        if set(item['recorded_periods']) - {'standard', 'peak', 'off_peak', 'standard_short_context', 'standard_long_context'}:
+            raise ValueError('Invalid recorded pricing periods')
+    runtime = data['runtime_attestation']
+    if runtime['status'] not in ('not_recorded', 'local_inventory_only') or runtime['model_api_calls'] != 0 or not set(runtime['runtimes']).issubset({'deepseek-harness', 'zcode'}):
+        raise ValueError('Invalid public runtime inventory status')
+    grading = data['grading_runtime']
+    executor = data['c_executor']
+    preparation = data['capability_preparation']
+    if (preparation['status'] not in ('not_recorded', 'offline_preparation') or preparation['model_api_calls'] != 0
+            or any(not 0 <= preparation[key] <= 10000 for key in ('families', 'task_definitions', 'frozen_tasks'))
+            or preparation['frozen_tasks'] > preparation['task_definitions']
+            or set(preparation['supported_capabilities']) - {'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'}
+            or set(preparation['source_languages']) - {'cpp', 'rust', 'go'}):
+        raise ValueError('Invalid capability preparation summary')
+    for control in preparation['controls']:
+        if (control['id'] not in ('localization', 'structured_runtime', 'c_buffers', 'c_lifecycle', 'cpp_buffers', 'cpp_lifecycle', 'abi_probes', 'pointer_probes', 'variant_objects', 'indirect_calls', 'optimized_locations', 'native_abi', 'coordinator', 'coordinator_incremental', 'matched_baselines', 'rust_buffers', 'go_buffers')
+                or not 0 <= control['checks'] <= 10000 or not 0 <= control['failed'] <= 10000
+                or control['passed'] and (not control['checks'] or control['failed'])):
+            raise ValueError('Invalid capability preparation controls')
+    if executor['status'] not in ('not_recorded', 'saved_offline_controls') or executor['model_api_calls'] != 0:
+        raise ValueError('Invalid C executor control status')
+    if executor['controls_passed'] and (executor['status'] != 'saved_offline_controls' or executor['failed'] or executor['checks'] < 29):
+        raise ValueError('Inconsistent C executor acceptance evidence')
+    if executor['status'] == 'saved_offline_controls':
+        if any(not re.fullmatch('[0-9a-f]{64}', executor[key]) for key in ('engine_id', 'base_image')):
+            raise ValueError('Invalid C executor content identity')
+    if (grading['status'] not in ('not_recorded', 'saved_offline_controls') or grading['model_api_calls'] != 0
+            or not set(grading['profiles']).issubset({'c', 'cpp', 'rust', 'go'})):
+        raise ValueError('Invalid public grading runtime status')
+    for profile in grading['profiles'].values():
+        if not re.fullmatch('[0-9a-f]{64}', profile['id']):
+            raise ValueError('Invalid grading runtime content identity')
+    for inventory in runtime['runtimes'].values():
+        if not re.fullmatch('[0-9a-f]{64}', inventory['identity']):
+            raise ValueError('Invalid runtime content identity')
+        for component in inventory['components'].values():
+            if not re.fullmatch('[0-9a-f]{64}', component['sha256']):
+                raise ValueError('Invalid component content digest')
+    seen, current_cells = set(), set()
     for row in data['records'] + data['condition_records']:
         for key in ['experiment', 'model', 'condition']:
             if not re.fullmatch('[a-zA-Z0-9_.-]+', row[key]):
                 raise ValueError('Unsafe publication identifier')
         if not re.fullmatch('[a-zA-Z0-9_.-]+', row['case']['id']):
             raise ValueError('Unsafe case identifier')
-        key = (row['experiment'], row['case']['id'], row['model'], row['condition'])
+        cell = (row['experiment'], row['case']['id'], row['model'], row['condition'])
+        attempt_id = row.get('attempt_id')
+        if attempt_id is not None and not re.fullmatch('[0-9a-f]{64}', attempt_id):
+            raise ValueError('Invalid publication attempt identity')
+        if not row.get('attempt_current', True) and attempt_id is None:
+            raise ValueError('Historical publication attempt lacks identity')
+        key = (*cell, attempt_id)
         if key in seen:
             raise ValueError('Duplicate publication row')
         seen.add(key)
-        if row['model'] not in data['models'] or row['status'] not in {'graded', 'not_started', 'interrupted', 'running', 'inference_saved_grading_pending', 'environment_failure'}:
+        if row.get('attempt_current', True):
+            if cell in current_cells:
+                raise ValueError('Duplicate current publication row')
+            current_cells.add(cell)
+        if row['model'] not in data['models'] or row['status'] not in STATES:
             raise ValueError('Unknown model or result state')
+        budget_outcome = row.get('budget_condition', {}).get('outcome')
+        if row['grade'] and budget_outcome and budget_outcome['queue_stop_required'] and row['status'] not in (
+                'completed_over_budget', 'completed_queue_held'):
+            raise ValueError('Graded native budget stop lost its queue-hold state')
+        if row['status'] == 'completed_over_budget' and (
+                not budget_outcome or budget_outcome['status'] != 'completed_over_budget'):
+            raise ValueError('Over-budget native state lacks saved budget outcome')
+        if row['status'] == 'completed_queue_held' and (
+                not budget_outcome or not budget_outcome['queue_stop_required'] or budget_outcome['budget_exceeded']):
+            raise ValueError('Held native state lacks saved budget outcome')
+        if row.get('pricing_basis_id') and row['pricing_basis_id'] not in price_ids:
+            raise ValueError('Unknown pricing basis reference')
+        if set(row['cost'].get('periods', [])) - {'standard', 'peak', 'off_peak', 'standard_short_context', 'standard_long_context'}:
+            raise ValueError('Unknown recorded pricing period')
+        receipt = row.get('receipt') or {}
+        coverage = receipt.get('usage_coverage')
+        if coverage:
+            total, incomplete = coverage['recorded_requests'], coverage['requests_with_incomplete_usage']
+            if ((total is None) != (incomplete is None) or total is not None and incomplete > total
+                    or coverage['proven_zero_forwards'] and any(value not in (None, 0)
+                                                               for value in receipt['reported_usage'].values())):
+                raise ValueError('Invalid request usage coverage')
         if row['grade'] and row['grade']['passed'] > row['grade']['total']:
             raise ValueError('Invalid behavioral score')
+        if row['cost']['usage_status'] not in ('complete', 'partial', 'unknown', 'legacy_unknown'):
+            raise ValueError('Invalid usage evidence status')
+        if row['runtime_attestation_status'] not in ('historical_unknown', 'verified_at_execution', 'not_recorded', 'unverified'):
+            raise ValueError('Invalid runtime attestation status')
+        if row['grade'] and (row['grade']['grading_version'] not in ('exact-returns-v2', 'exact-returns-v3', 'legacy') or
+                             row['grade']['return_provenance'] != 'native_process_unauthenticated'):
+            raise ValueError('Uncertified grading provenance')
+        if row['grade']:
+            grade = row['grade']
+            if grade['grading_runtime_status'] not in ('verified_closed_image', 'historical_limited', 'not_executed'):
+                raise ValueError('Invalid grading runtime evidence')
+            if grade['grading_runtime_status'] == 'verified_closed_image':
+                if not re.fullmatch('[0-9a-f]{64}', grade['grading_runtime_id']) or grade['grading_version'] != 'exact-returns-v3':
+                    raise ValueError('Missing closed grading runtime identity')
+            elif grade['grading_runtime_id']:
+                raise ValueError('Unexpected grading runtime identity')
     privacy_check(json_text(data))
     return data
 
@@ -197,7 +658,9 @@ class PublicReport(Report):
         self.template = Template((ASSETS / 'page.html').read_text())
         coverage = ROOT / 'benchmarks/suites/stl-native-v2/config/coverage.json'
         self.coverage = json.loads(coverage.read_text())
-        self.build_id = hashlib.sha256(json_text(data).encode() + coverage.read_bytes() + Path(__file__).read_bytes() + (ROOT / 'benchmarks/scripts/report.py').read_bytes() + (ASSETS / 'page.html').read_bytes() + (ASSETS / 'report.css').read_bytes() + (ASSETS / 'report.js').read_bytes() + (ROOT / 'benchmarks/scripts/report_charts.py').read_bytes()).hexdigest()
+        presentation = b''.join((ROOT / 'benchmarks/scripts' / name).read_bytes() for name in
+            ('report.py', 'report_charts.py', 'report_views.py', 'report_prices.py', 'report_states.py', 'report_budget.py'))
+        self.build_id = hashlib.sha256(json_text(data).encode() + coverage.read_bytes() + Path(__file__).read_bytes() + presentation + (ASSETS / 'page.html').read_bytes() + (ASSETS / 'report.css').read_bytes() + (ASSETS / 'report.js').read_bytes()).hexdigest()
         stamp = data['data_as_of']
         self.data_date = datetime.datetime.fromisoformat(stamp).astimezone(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M:%S JST') if stamp else 'No model measurements recorded'
 
@@ -205,7 +668,8 @@ class PublicReport(Report):
         notice = '<p class="notice">Public summary: credentials, raw requests, reasoning, answers and JSON downloads are excluded. Model + harness measurements; model-only attribution is not certified.</p>'
         super().page(name, title, notice + body)
         path = self.output / name
-        html = path.read_text().replace('make reports</code>', 'make pages</code>')
+        html = path.read_text().replace('Rebuild all reports: <code>make reports</code>',
+                                       'Re-render saved results: <code>make pages</code>; collect new results: <code>make reports</code>')
         html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; base-uri \'none\'; form-action \'none\'">')
         path.write_text(html)
 
@@ -213,31 +677,19 @@ class PublicReport(Report):
         return {'status': row['environment_delivery']}
 
     def overview(self):
-        active = self.current_records()
-        groups = {}
-        for row in active:
-            if row['grade']:
-                groups.setdefault((row['experiment'], row['case']['id']), set()).add(row['model'])
-        shared = {k for k, models in groups.items() if models == set(self.data['models'])}
-        matched = [r for r in active if (r['experiment'], r['case']['id']) in shared]
-        body = '<section><h2>Global status</h2><p>' + str(sum(bool(r['grade']) for r in active)) + '/' + str(len(active)) + ' active comparison cells have saved grades. Missing and environment-failed attempts remain unscored. This site regenerates from sanitized cached results; it never launches models.</p><p>Cached data timestamp above is distinct from deployment time. Historical attempts and interrupted expenditure remain included.</p></section>'
-        items = summary(active, self.data['models'])
-        body += '<section><h2>Coverage before scores</h2>' + charts.completion(items) + charts.outcome_chart(active, self.data['models']) + '</section>'
-        body += '<section><h2>Compare recorded setups</h2><p>Shared cases have grades for every configured model; a partial batch can favor easier cases. Readability has its own review count. Different system prompts and providers remain confounders.</p><div class="chart-tabs"><button data-chart-scope="matched" aria-pressed="true">Shared graded cases (' + str(len(shared)) + ')</button><button data-chart-scope="all" aria-pressed="false">All active cases</button></div>'
-        for scope, rows in [('matched', matched), ('all', active)]:
-            stats = summary(rows, self.data['models'])
-            body += '<div data-chart-panel="' + scope + '"' + (' hidden' if scope == 'all' else '') + '>' + self.summary_table(rows) + charts.score_charts(stats) + charts.runtime_chart(stats) + charts.token_chart(rows, self.data['models']) + charts.cost_chart(stats) + '</div>'
-        body += '</section>' + self.condition_comparison()
-        self.page('index.html', 'Global benchmark results', body)
+        super().overview()
 
     def case_pages(self):
         groups = {}
         for row in self.all_records():
             groups.setdefault(self.case_link(row), []).append(row)
         for name, rows in groups.items():
-            body = '<section><h2>Recorded scores</h2>' + self.case_table(rows, '../../') + '</section>'
+            body = '<section><h2>Recorded scores</h2><p>' + escape(report_views.case_identity(rows[0])) + '</p>' + self.case_table(rows, '../../') + '</section>'
             for r in rows:
-                body += '<section id="' + escape(r['model']) + '"><h2>' + escape(r['model_label']) + '</h2><p>Condition: ' + escape(r['condition_label']) + '. Status: ' + escape(r['status']) + '.</p>'
+                body += '<section id="' + escape(r['model']) + '"><h2>' + escape(r['model_label']) + '</h2><p>Condition: ' + escape(r['condition_label']) + '. Status: ' + escape(STATES[r['status']]) + '.</p>'
+                body += report_budget.detail(r.get('budget_condition'))
+                if r.get('failure_receipt_malformed'):
+                    body += '<p class="notice">The saved failure receipt is empty or malformed and has been preserved. No correctness score is assigned. Independently saved budget and usage records remain available.</p>'
                 if r['target_build']:
                     body += table(['Target build', 'Value'], [[escape(k), escape(v)] for k, v in r['target_build'].items()])
                 if r['grade']:
@@ -245,16 +697,17 @@ class PublicReport(Report):
                     body += table(['Function point', 'Passed / total'], [[escape(k), str(v['passed']) + '/' + str(v['total'])] for k, v in r['grade']['points'].items()])
                 if r['readability']:
                     body += table(['Readability dimension', 'Score / 2'], [[escape(k), v] for k, v in r['readability']['scores'].items()])
-                body += '<p>Estimated API cost: ' + money(r['cost']) + '. Raw submissions and traces are kept local.</p></section>'
+                    body += report_views.readability_note()
+                body += '<p>Estimated API cost for known usage: ' + money(r['cost']) + '. Actual invoice charge is unknown. Raw submissions and traces are kept local.</p>'
+                if r.get('pricing_basis_id'):
+                    body += '<p><a href="../../costs.html#price-' + escape(r['pricing_basis_id']) + '">Saved pricing basis</a></p>'
+                body += '</section>'
             self.page(name, rows[0]['case']['label'] + ' · ' + rows[0]['condition_label'], body)
-        body = '<section><h2>Active native recovery</h2>' + charts.heatmap(self.current_records(), self.data['models'], '../').replace('Each cell opens the saved source and evidence;', 'Each cell opens sanitized scores;') + '</section><section><h2>All experiments and conditions</h2><label>Filter <input data-table-filter="all-cases" aria-label="Filter cases"></label>' + self.case_table(self.all_records(), '../', 'all-cases') + '</section>'
+        body = '<section><h2>Native recovery · all valid saved grades</h2>' + charts.heatmap(self.current_records(), self.data['models'], '../').replace('Each cell opens the saved source and evidence;', 'Each cell opens sanitized scores;') + '</section><section><h2>All experiments and conditions</h2><label>Filter <input data-table-filter="all-cases" aria-label="Filter cases"></label>' + self.case_table(self.all_records(), '../', 'all-cases') + '</section>'
         self.page('cases/index.html', 'All cases and models', body)
 
     def costs(self):
-        rows = self.all_records()
-        body = '<section><h2>All recorded expenditure</h2><p>Includes historical, active, interrupted and environment-failed attempts with observed usage. Partial usage can increase the displayed totals. Published-rate estimates are not invoices; GPT amounts are Codex API equivalents. Frozen pricing and exchange rates are retained when summarizing the cached results.</p>' + self.summary_table(rows) + charts.token_chart(rows, self.data['models']) + charts.cost_chart(summary(rows, self.data['models'])) + '</section>'
-        body += '<section><h2>Current comparison only</h2>' + self.summary_table(self.current_records()) + '</section>'
-        self.page('costs.html', 'Tokens and estimated cost', body)
+        super().costs()
 
     def compilers_page(self):
         body = '<section><h2>Compiler and optimization are separate testing points</h2><p>The measured C++ inputs use GCC 13.3. GCC/Clang compiler version, language standard, optimization (-O0/-O2/-O3), standard library and ABI define distinct points. Build validation is not a model measurement; the additional inference matrix remains disabled.</p>'
@@ -273,12 +726,14 @@ class PublicReport(Report):
             path = 'history/' + experiment['id'] + '/index.html'
             links.append(['<a href="' + escape(experiment['id']) + '/index.html">' + escape(experiment['label']) + '</a>', escape(experiment['role']), len(selected)])
             self.page(path, experiment['label'], '<section><h2>Preserved original condition</h2>' + self.summary_table(selected) + self.case_table(selected, '../../') + '</section>')
-        self.page('history/index.html', 'Experiment history', '<section><h2>All registered experiments</h2><p>Original conditions and diagnostic attempts retain their scores and costs; no historical attempt is relabeled as a fixed-harness run.</p>' + table(['Experiment', 'Role', 'Cells'], links) + '</section>')
+        self.page('history/index.html', 'Experiment history', '<section><h2>All registered experiments</h2><p>Original conditions and diagnostic attempts retain their scores and costs; no historical attempt is relabeled as a fixed-harness run.</p>' + table(['Experiment', 'Role', 'Cells'], links) + '</section>' + self.condition_comparison())
 
     def diagnostics(self):
+        # Shared implementation status contains no local paths or trace text.
         a = self.data['audit']
         body = '<section id="environment"><h2>Environment fairness</h2><p>Model-only attribution is not certified. Original DSH spilling/pruning and ZCode clipping can affect delivered evidence. Current conditions disable those controls and use explicit bounded paging; different system prompts, context limits and providers remain.</p>' + table(['Cached audit metric', 'Count / status'], [[escape(k), escape(v)] for k, v in a.items()]) + '</section>'
         body += '<section id="evidence-fixes"><h2>GLM cached-trace diagnostics</h2><p>Counts below summarize historical traces without publishing their text. Long request windows can include provider queuing; reasoning characters are not a direct measure of compute time. Deadline-aware finalization and reasoning-effort ablations remain proposals, not demonstrated fixes.</p>' + table(['Case', 'Status', 'Timed out', 'Elapsed seconds', 'Reasoning characters', 'Visible characters', 'Tool calls', 'HTTP requests'], [[escape(c[k]) for k in ['case', 'status', 'timed_out', 'elapsed_seconds', 'reasoning_chars', 'content_chars', 'tool_calls', 'request_count']] for c in self.data['glm_diagnostics']]) + '</section>'
+        body += self.runtime_storage_section()
         self.page('diagnostics.html', 'Harness and timing diagnostics', body)
 
     def methodology(self):
@@ -288,9 +743,12 @@ class PublicReport(Report):
     def build(self):
         for name in ['report.css', 'report.js']:
             self.write('assets/' + name, (ASSETS / name).read_bytes())
+        for name, content in i18n_report.assets().items(): self.write(name, content)
         self.overview()
         self.case_pages()
         self.costs()
+        self.measurement()
+        self.capabilities_page()
         self.compilers_page()
         self.coverage_page()
         self.history_pages()
@@ -309,6 +767,7 @@ class Links(HTMLParser):
         self.targets.extend(v for k, v in attributes if k in ('href', 'src') and v)
 
 
+@metadata_snapshot()
 def validate_site(output):
     output = Path(output).resolve()
     pages, links = 0, 0
@@ -367,16 +826,28 @@ def _build(output=OUTPUT, snapshot=SNAPSHOT):
     if output in (ROOT, ROOT / 'benchmarks', ROOT / 'benchmarks/reports') or output.is_relative_to(ROOT / 'benchmarks/runs'):
         raise ValueError('Refusing to replace source or private report output')
     output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='.public-build-', dir=output.parent) as tmp:
+    with tempfile.TemporaryDirectory(prefix='rea-public-report-') as tmp:
         stage = Path(tmp) / 'site'
         stage.mkdir()
         report = PublicReport(stage, data)
-        report.build()
-        if output.exists():
-            if not (output / '.nojekyll').is_file():
-                raise ValueError('Output is not marked as a generated public site')
-            output.rename(Path(tmp) / 'previous')
-        stage.rename(output)
+        action = action_cache.reporting(data, public=True)
+        local = action_cache.Cache()
+        hit = local.lookup(action)
+        if hit:
+            local.restore(hit, stage)
+        else:
+            report.build()
+            local.capture(action, stage)
+        validate_site(stage)  # Privacy and link checks also apply to cache hits.
+        i18n_report.audit(stage)
+        with tempfile.TemporaryDirectory(prefix='.public-publish-', dir=output.parent) as publication:
+            ready = Path(publication) / 'site'
+            shutil.copytree(stage, ready)
+            if output.exists():
+                if not (output / '.nojekyll').is_file():
+                    raise ValueError('Output is not marked as a generated public site')
+                output.rename(Path(publication) / 'previous')
+            ready.rename(output)
     print('PUBLIC REPORT BUILT:', output, '·', report.build_id[:12], '· no model calls', flush=True)
     return report.build_id
 
@@ -390,8 +861,14 @@ def refresh(report):
             raise ValueError('Public projection changed measured results')
     if SNAPSHOT.exists():
         old = validate(json.loads(SNAPSHOT.read_text()))
-        rows = {(r['experiment'], r['case']['id'], r['model'], r['condition']): r for r in data['records'] + data['condition_records']}
-        complete = all(not r['receipt'] or (rows.get((r['experiment'], r['case']['id'], r['model'], r['condition']), {}).get('receipt') and (not r['grade'] or rows[(r['experiment'], r['case']['id'], r['model'], r['condition'])]['grade'])) for r in old['records'] + old['condition_records'])
+        rows = {}
+        for r in data['records'] + data['condition_records']:
+            rows.setdefault((r['experiment'], r['case']['id'], r['model'], r['condition']), []).append(r)
+        complete = all(not r['receipt'] or any(candidate['receipt']
+            and (not r['grade'] or candidate['grade'])
+            and (not r.get('attempt_id') or r['attempt_id'] == candidate.get('attempt_id'))
+            for candidate in rows.get((r['experiment'], r['case']['id'], r['model'], r['condition']), []))
+            for r in old['records'] + old['condition_records'])
         if not complete:
             print('PUBLIC CACHE RETAINED: local raw dataset is incomplete', flush=True)
             identity = build()
@@ -406,7 +883,48 @@ def refresh(report):
         temporary.replace(SNAPSHOT)
     identity = build()
     stage_pages()
+    refresh_readme(data)
     return identity
+
+
+def refresh_readme(data, path=ROOT / 'README.md'):
+    """Only the bounded result summary is generated; methods/docs stay authored."""
+    path = Path(path)
+    start, end = '<!-- benchmark-results:start -->', '<!-- benchmark-results:end -->'
+    if not path.exists():
+        return
+    text = path.read_text()
+    if text.count(start) != 1 or text.count(end) != 1:
+        return
+    a, b = text.index(start) + len(start), text.index(end)
+    if b < a:
+        raise ValueError('Invalid README result boundaries')
+    rows = records.active_condition_rows(data)
+    items = summary(rows, data['models'])
+    date = data['data_as_of'] or 'unavailable'
+    lines = ['Cached inference through **' + date + '**; report build `' + data['source_report_build_id'][:12] + '`.',
+             '', '**' + str(sum(bool(row['grade']) for row in rows)) + '/' + str(len(rows)) + '** active cells have grades. '
+             'Unequal completion is disclosed; this is not a matched-coverage ranking.', '',
+             '| Model | Graded / planned | Programs passing / graded | Checks passed / total | Readability / 10 | Known tokens | Observed USD estimate |',
+             '| --- | ---: | ---: | ---: | ---: | ---: | --- |']
+    for item in items:
+        review = f'{item["readability_mean"]:.2f} (n={item["readability_n"]})' if item['readability_n'] else 'Unreviewed'
+        lines.append('| ' + item['model_label'] + ' | ' + str(item['graded_attempts']) + '/' + str(item['planned_cells']) +
+                     ' | ' + str(item['programs_passed']) + '/' + str(item['graded_attempts']) + ' | ' +
+                     f'{item["passed"]:,}/{item["checks"]:,}' + ' | ' + review + ' | ' + f'{item["total_tokens"]:,}' + ' | ' + money(item['cost']) + ' |')
+    graded = [row for row in data['records'] + data['condition_records'] if row['grade']]
+    revised = [row for row in graded if row['grade'].get('grading_version') in ('exact-returns-v2', 'exact-returns-v3')]
+    changes = sum(row['grade']['original_passed'] != row['grade']['passed'] or
+                  row['grade']['original_program_success'] != row['program_success'] for row in revised)
+    lines += ['', f'Across all conditions, {len(revised)}/{len(graded)} saved grades use exact-byte grading; '
+              f'{changes} differ in passed checks or program success from their previously selected grades. '
+              'Offline regrading reuses the original model outputs and preserves historical grades.', '',
+              'Tokens include repeated context and cache reads. Costs cover observed usage at frozen published rates; '
+              'missing request linkage or usage leaves the total unknown. GPT amounts are API equivalents, not measured subscription debits. '
+              'Readability averages include only reviewed sources. Environment failures and unstarted cases receive no model correctness score.', '',
+              '[Measurement validity and revisions](https://manageryzy.github.io/rea-benchmark/measurement.html) · '
+              '[Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.']
+    path.write_text(text[:a] + '\n\n' + '\n'.join(lines) + '\n\n' + text[b:])
 
 
 def stage_pages(site=OUTPUT, destination=ROOT / 'docs'):

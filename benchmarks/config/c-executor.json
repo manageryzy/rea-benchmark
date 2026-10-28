@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "freestanding-c17-x86_64-sysv-v1",
+  "platform": "linux-x86_64",
+  "engine": {
+    "name": "unicorn",
+    "version": "2.1.4",
+    "wheel": "unicorn-2.1.4-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "sha256": "9d6e6dea140560de4ebd8446661f7ef84a357d428c14a3ef09dacd306ec8c239",
+    "url": "https://files.pythonhosted.org/packages/e7/df/ded5e3684c2d7600b30cc8a7530277b8cb36644a1a9d34cade7ebb45604c/unicorn-2.1.4-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+  },
+  "compiler_flags": ["-std=c17", "-O2", "-Wall", "-Wextra", "-ffreestanding", "-fno-builtin", "-fno-stack-protector", "-fno-pie", "-fno-plt", "-fno-asynchronous-unwind-tables", "-fno-unwind-tables", "-fcf-protection=none", "-mno-red-zone", "-march=x86-64", "-mtune=generic", "-nostdlib", "-nodefaultlibs", "-static"],
+  "limits": {
+    "max_source_bytes": 262144,
+    "max_elf_bytes": 4194304,
+    "max_image_bytes": 16777216,
+    "max_image_writable_bytes": 1048576,
+    "max_region_bytes": 1048576,
+    "max_regions": 16,
+    "max_arguments": 16,
+    "max_callbacks": 8,
+    "max_callback_calls": 128,
+    "stack_bytes": 131072,
+    "instructions": 1000000,
+    "emulator_timeout_us": 2000000,
+    "worker_wall_seconds": 10,
+    "worker_cpu_seconds": 8,
+    "worker_memory_bytes": 1610612736,
+    "worker_output_bytes": 8388608
+  },
+  "scope": {
+    "elf": "static-ET_EXEC-little-endian-ELF64-AMD64",
+    "relocations": "fully-linked-no-runtime-relocations",
+    "abi": "SysV-integer-and-pointer-arguments",
+    "syscalls": "forbidden",
+    "return_records": "host-owned",
+    "native_runtimes": "unsupported"
+  }
+}

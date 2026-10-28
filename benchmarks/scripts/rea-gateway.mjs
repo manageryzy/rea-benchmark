@@ -8,6 +8,7 @@ import { resolve,dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadToolCatalog, restrictDataQuery } from './tool-catalog.mjs';
 import { EvidencePager } from './evidence-paging.mjs';
+import { createHash } from 'node:crypto';
 const root=fileURLToPath(new URL('../..',import.meta.url)).replace(/\/$/,'');
 const target=resolve(process.argv[2]);const trace=resolve(process.argv[3]);
 const config=JSON.parse(await readFile(process.argv[4]??`${root}/benchmarks/config/pilot.json`,'utf8'));
@@ -15,11 +16,12 @@ const {catalog}=await loadToolCatalog(root,config);
 const names=new Set(catalog.tools.map(t=>t.name));
 const pager=config.evidence_paging?new EvidencePager(config.evidence_paging):null;
 let backend,backendTransport,connecting,opened=false,calls=0,closing;
+let targetDigest;
 async function connectBackend(){
  if(backend)return backend;
  if(!connecting)connecting=(async()=>{
   const c=new Client({name:'benchmark-analysis-gateway',version:'1'});
-  backendTransport=new StdioClientTransport({command:`${root}/bin/rea`,args:['mcp'],stderr:'inherit',env:{PATH:process.env.PATH??'/usr/bin:/bin',REA_ANALYSIS_PROVIDER:'ghidra',REA_LOG_LEVEL:'error',REA_MCP_INPUT_SCHEMA_PROFILE:'compact',GHIDRA_HEADLESS_MAXMEM:'2G'}});
+  backendTransport=new StdioClientTransport({command:`${root}/bin/rea`,args:['mcp'],stderr:'inherit',env:{PATH:`${root}/.tools/node-v24.22.0-linux-x64/bin:/usr/bin:/bin`,REA_ANALYSIS_PROVIDER:'ghidra',REA_LOG_LEVEL:'error',REA_MCP_INPUT_SCHEMA_PROFILE:'compact',GHIDRA_HEADLESS_MAXMEM:'2G',...(config.runtime_environment??{})}});
   await c.connect(backendTransport,{timeout:60000});backend=c;return c;
  })();
  return connecting;
@@ -42,19 +44,29 @@ server.setRequestHandler('tools/call',async(request)=>{
   }
   if(name==='close_binary'&&Object.keys(args).length)throw new Error('Snapshot writes are unavailable');
   if(name==='read_evidence'&&pager){
-   result=pager.read(args);
+   result=await pager.readRetained(args)??pager.read(args);
   }else{
    const c=await connectBackend();result=await c.callTool({name,arguments:args},{timeout:config.tool_timeout_ms});
   }
   if(!result.isError&&name==='open_binary')opened=true;
   if(!result.isError&&name==='close_binary')opened=false;
  }catch(error){result={isError:true,content:[{type:'text',text:error.message}]};}
- const elapsed_ms=performance.now()-start;
  await writeFile(resolve(dirname(trace),`evidence-${String(sequence).padStart(2,'0')}-${name.replace(/[^a-z_]/g,'_')}.json`),JSON.stringify(result,null,2)+'\n');
  if(pager){
-  if(name!=='read_evidence')result=pager.project(result);
+  if(name!=='read_evidence'){
+   const original=result;
+   if(name==='analyze_function'&&result.isError){
+    targetDigest??=createHash('sha256').update(await readFile(target)).digest('hex');
+    try{result=await pager.recover(result,async(params,options)=>(await connectBackend()).callTool(params,options),
+      {targetSha256:targetDigest,procedure:args.procedure,timeoutMs:config.tool_timeout_ms-(performance.now()-start),
+       audit:row=>appendFile(resolve(dirname(trace),'retained-evidence-recovery.jsonl'),JSON.stringify({sequence,...row})+'\n')});}
+    catch(error){result={isError:true,content:[{type:'text',text:'Retained evidence recovery failed: '+error.message}]};}
+   }
+   if(result===original||result.isError)result=pager.project(result);
+  }
   await writeFile(resolve(dirname(trace),`model-evidence-${String(sequence).padStart(2,'0')}-${name.replace(/[^a-z_]/g,'_')}.json`),JSON.stringify(result,null,2)+'\n');
  }
+ const elapsed_ms=performance.now()-start;
  await appendFile(trace,JSON.stringify({sequence,tool:name,arguments:args,elapsed_ms,is_error:!!result.isError})+'\n');
  return result;
 });

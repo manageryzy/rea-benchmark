@@ -12,6 +12,11 @@
     {
       "id": "stl-native-v2",
       "path": "benchmarks/suites/stl-native-v2"
+    },
+    {
+      "id": "capabilities-v1",
+      "path": "benchmarks/suites/capabilities-v1",
+      "enabled": false
     }
   ],
   "experiments": [
@@ -152,5 +157,6 @@
       "stop_record": "benchmarks/runs/zcode-glm53-global-v1/stopped-by-user.json"
     }
   ],
-  "import_note": "Location mapping only. Existing raw files and historical manifests remain immutable; these are the same cases, not additional benchmark definitions."
+  "import_note": "Location mapping only. Existing raw files and historical manifests remain immutable; these are the same cases, not additional benchmark definitions.",
+  "native_case_extensions": "benchmarks/config/native-case-extensions.json"
 }
