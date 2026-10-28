@@ -100,7 +100,7 @@ Across all conditions, 328/328 saved grades use exact-byte grading; 0 differ in 
 
 Tokens include repeated context and cache reads. Costs cover observed usage at frozen published rates; missing request linkage or usage leaves the total unknown. GPT amounts are API equivalents, not measured subscription debits. Readability averages include only reviewed sources. Environment failures and unstarted cases receive no model correctness score.
 
-[Measurement validity and revisions](https://manageryzy.github.io/rea-benchmark/measurement.html) · [Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.
+[Scoring methods and scope](https://manageryzy.github.io/rea-benchmark/methodology.html) · [Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.
 
 <!-- benchmark-results:end -->
 

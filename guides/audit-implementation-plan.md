@@ -17,7 +17,7 @@ covered same-mtime content changes, final content seals, absent offline cells,
 saved failures, metadata reuse and mutation rejection. No broad regression suite
 was rerun. One aborted diagnostic and one 465.81-second completed command preceded
 the final measurement, exceeding the requested single measurement attempt.
-The [timing page](../benchmarks/site/timings.html) and private logs in
+The [private diagnostics report](../benchmarks/reports/diagnostics.html#local-performance) and logs in
 `results/performance-review-20261023/warm-path-final/` retain the actual scope.
 This does not establish the performance of a fully populated, currently valid
 inference-cache matrix or satisfy the remaining acceptance/release gates.

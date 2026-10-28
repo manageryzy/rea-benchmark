@@ -97,7 +97,8 @@
       "benchmarks/scripts/report_assets/locales/en.json",
       "benchmarks/scripts/report_assets/locales/zh-CN.json",
       "benchmarks/scripts/report_assets/locales/ja.json",
-      "benchmarks/scripts/localization_report.py"
+      "benchmarks/scripts/localization_report.py",
+      "benchmarks/scripts/report_labels.py"
     ]
   },
   "public_report": {
@@ -133,7 +134,11 @@
       "benchmarks/scripts/report_assets/locales/en.json",
       "benchmarks/scripts/report_assets/locales/zh-CN.json",
       "benchmarks/scripts/report_assets/locales/ja.json",
-      "benchmarks/scripts/localization_report.py"
+      "benchmarks/scripts/localization_report.py",
+      "benchmarks/scripts/report_reader.py",
+      "benchmarks/scripts/report_reader_summary.py",
+      "benchmarks/scripts/report_labels.py",
+      "benchmarks/scripts/report_assets/public-page.html"
     ]
   },
   "c_compile": {

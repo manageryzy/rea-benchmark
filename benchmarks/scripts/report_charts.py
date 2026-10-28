@@ -3,6 +3,7 @@ import html
 import math
 import textwrap
 from report_states import STATES as STATE_LABELS
+from report_labels import route_label
 
 
 def esc(value):
@@ -84,7 +85,7 @@ def capability_dimensions(groups, catalog, *, scope='Saved observations in the s
         result += legend + '</fieldset></div><p class="chart-note" data-radar-status>' + str(len(models)) + '/' + str(len(models)) + ' models shown. Selection changes chart visibility only; the scored cohort and tables stay unchanged.</p><p class="dimension-empty" data-radar-empty hidden>No models selected. Use the checkboxes or Show all to restore profiles.</p></figure>'
         return result
 
-    body = '<div class="capability-dimensions">' + context(scope, 'Scores use a fixed 0–100 scale within each group. Groups have their own measure and denominator; profiles are not combined into a ranking. Unmeasured dimensions remain unmeasured.')
+    body = '<div class="capability-dimensions">' + context(scope, 'Scores use a fixed 0–100 scale. Missing measurements are excluded, not scored zero.')
     if not groups:
         return body + '<p class="dimension-empty">No capability dimensions have recorded observations in this view.</p></div>'
     for group_index, group in enumerate(groups):
@@ -94,17 +95,17 @@ def capability_dimensions(groups, catalog, *, scope='Saved observations in the s
         for row in group['models']:
             if len(row['values']) != len(axes):
                 raise ValueError('Capability dimension values must match the declared axis order')
-        body += '<details class="capability-dimension-group" data-dimension-group="' + esc(group['id']) + '"' + (' open' if group_index == 0 else '') + '><summary>' + esc(group['label']) + '</summary>'
+        body += '<section class="capability-dimension-group" data-dimension-group="' + esc(group['id']) + '"><h3>' + esc(group['label']) + '</h3>'
         body += '<p class="chart-note dimension-definition">' + esc(group['note']) + '</p>'
         if radar_first and 3 <= len(axes) <= 6 and group['models']:
             body += radar(axes, group['models'], group)
-        body += '<div class="scroll dimension-matrix-region" tabindex="0" role="region" aria-label="' + esc(group['label'] + ' model scores') + '"><table class="dimension-matrix"><caption>' + esc(group['label']) + ' · score / 100 and sample count</caption><thead><tr><th scope="col">Model / harness</th>'
+        body += '<div class="scroll dimension-matrix-region" tabindex="0" role="region" aria-label="' + esc(group['label'] + ' model scores') + '"><table class="dimension-matrix"><caption>' + esc(group['label']) + ' · score / 100 and sample count</caption><thead><tr><th scope="col">Model / client</th>'
         body += ''.join('<th scope="col">' + esc(axis_label['label']) + '</th>' for axis_label in axes) + '</tr></thead><tbody>'
         exact = []
         for row in group['models']:
             info = catalog.get(row['model'], {})
             label = info.get('label', row['model'])
-            body += '<tr><th scope="row">' + esc(label) + '<small>' + esc(info.get('harness') or 'Harness unspecified') + '</small></th>'
+            body += '<tr><th scope="row">' + esc(label) + '<small>' + esc(route_label(row['model'], info)) + '</small></th>'
             for axis_label, value in zip(axes, row['values']):
                 score = checked_score(value)
                 n = value.get('n', 0)
@@ -114,15 +115,15 @@ def capability_dimensions(groups, catalog, *, scope='Saved observations in the s
                     body += '<td class="dimension-measured" style="--dimension-score:' + f'{score:.4f}' + '%"><strong>' + f'{score:.1f}' + '<span class="sr-only"> out of 100</span></strong><small>n=' + esc(n) + '</small></td>'
                 exact.append((label, axis_label['label'], 'Unmeasured' if score is None else str(score), n,
                               'Not available' if value.get('checks') is None else value['checks'],
-                              '; '.join(str(member) for member in value.get('members', [])) or 'None recorded'))
+                              len(value.get('members', []))))
             body += '</tr>'
-        body += '</tbody></table></div><p class="chart-note">Each cell shows the score and n for that dimension. The exact evidence table lists check counts and member identities. Color and bar length are secondary to the numbers.</p>'
+        body += '</tbody></table></div><p class="chart-note">Each cell shows its score and sample count. Exact scores and check counts are available below.</p>'
         if not radar_first and 3 <= len(axes) <= 6 and group['models']:
-            body += '<details class="dimension-radars"' + (' open' if group_index == 0 else '') + '><summary>Interactive radar comparison · ' + str(len(axes)) + ' dimensions on a fixed 0–100 scale</summary><p class="chart-note">Compare models on shared axes. Toggle the legend or focus a point for exact values. Polygon area is not an aggregate score. Incomplete profiles show observed dots only, without lines through missing values.</p>'
+            body += '<div class="dimension-radars"><p class="chart-note">Polygon area is not an aggregate score. Incomplete profiles show observed dots only, without lines through missing values.</p>'
             body += radar(axes, group['models'], group)
-            body += '</details>'
-        body += exact_table('Exact dimension scores, denominators and evidence members', ['Model', 'Dimension', 'Score / 100', 'n', 'Checks', 'Evidence members'], exact)
-        body += '</details>'
+            body += '</div>'
+        body += exact_table('Exact dimension scores and sample counts', ['Model', 'Dimension', 'Score / 100', 'n', 'Checks', 'Cases'], exact)
+        body += '</section>'
     return body + '</div>'
 
 
@@ -156,7 +157,7 @@ def axis(maximum, unit):
 
 
 def context(scope, meaning):
-    return '<p class="chart-note chart-context"><strong>Population:</strong> ' + esc(scope) + '. ' + esc(meaning) + '</p>'
+    return '<p class="chart-note chart-context"><strong>Population:</strong> <span>' + esc(scope) + '</span>. <span>' + esc(meaning) + '</span></p>'
 
 
 def metric(title, items, value_key, detail, maximum=100, *, scope='Saved native cases in the selected view', unit='%', note='Higher is better; ungraded outcomes are excluded.'):
@@ -177,7 +178,7 @@ def metric(title, items, value_key, detail, maximum=100, *, scope='Saved native 
     return content + exact_table('Values and sample counts', ['Model', 'Value and denominator'], values) + '</figure>'
 
 
-def score_charts(items, *, scope='Saved native cases in the selected view', structurally_single_point=False):
+def score_charts(items, *, scope='Saved native cases in the selected view', structurally_single_point=False, include_readability=True):
     values = []
     for item in items:
         row = dict(item)
@@ -204,9 +205,10 @@ def score_charts(items, *, scope='Saved native cases in the selected view', stru
         charts += metric('Function points passing every check', values, 'point_rate',
                          lambda r: f'{r["points_passed"]}/{r["points_total"]} points', scope=scope,
                          note='Fixed scale 0–100%. A point passes only when all its checks pass; denominator is graded function points.')
-    charts += metric('Stored readability reviews', values, 'readability_mean',
-                     lambda r: f'{r["readability_mean"]:.1f}/10 · n={r["readability_n"]}' if r['readability_n'] else 'Not reviewed · n=0', 10,
-                     scope=scope, unit='points', note='Fixed rubric scale 0–10. Stored source reviews, not independent replication; sample count includes reviewed sources only. Higher is better.')
+    if include_readability:
+        charts += metric('Stored readability reviews', values, 'readability_mean',
+                         lambda r: f'{r["readability_mean"]:.1f}/10 · n={r["readability_n"]}' if r['readability_n'] else 'Not reviewed · n=0', 10,
+                         scope=scope, unit='points', note='Fixed rubric scale 0–10. Stored source reviews, not independent replication; sample count includes reviewed sources only. Higher is better.')
     return '<div class="chart-grid">' + charts + '</div>'
 
 
@@ -332,7 +334,7 @@ def cost_chart(items, *, scope='Saved attempts in the selected view'):
     return body + '<p class="chart-note">Solid bars show the lower rate estimate; hatching shows rate uncertainty up to the upper estimate for known usage. Partial usage has no known upper expenditure bound. GPT values are API equivalents, not subscription charges. Exact USD values remain in the table.</p>' + exact_table('Exact cost estimates and usage coverage', ['Model', 'Lower USD', 'Upper rate estimate USD', 'Attempts with receipts', 'Usage'], details) + '</figure>'
 
 
-def heatmap(rows, catalog, prefix='', *, scope='Active native cases'):
+def heatmap(rows, catalog, prefix='', *, scope='Active native cases', compact=False):
     groups = {}
     for row in rows:
         groups.setdefault((row['experiment'], row['case']['id']), {})[row['model']] = row
@@ -358,12 +360,14 @@ def heatmap(rows, catalog, prefix='', *, scope='Active native cases'):
                 detail, css = 'No correctness score', 'heat-pending'
             condition = row.get('condition', 'legacy-recorded')
             suffix = '' if condition == 'legacy-recorded' else '-' + condition
-            href = prefix + 'cases/' + experiment + '/' + case + suffix + '.html#' + model
+            anchor = model + (('-' + row['attempt_id'][:12]) if not row.get('attempt_current', True) and row.get('attempt_id') else '')
+            href = prefix + 'cases/' + experiment + '/' + case + suffix + '.html#' + anchor
             evidence = {'delivery_limited': 'Evidence limited', 'primary_complete': 'Primary text complete',
                         'wrapper_differs': 'Wrapper differs', 'unverified': 'Evidence unverified'}.get(row.get('environment_delivery'), 'Not audited')
-            body += '<td><a class="heat-cell ' + css + '" href="' + esc(href) + '"><strong>' + esc(label) + '</strong><small>' + esc(detail) + '</small><small>' + evidence + '</small></a></td>'
+            body += '<td><a class="heat-cell ' + css + '" href="' + esc(href) + '"><strong>' + esc(label) + '</strong><small>' + esc(detail) + '</small>' + ('' if compact else '<small>' + evidence + '</small>') + '</a></td>'
         body += '</tr>'
-    return body + '</tbody></table></div><p class="chart-note">Green: whole program passes. Amber: compiled with mismatches. Red: no compilable source. Gray: no scored result. Each cell opens the saved source and evidence; time limits and missing answers are identified on the case page.</p>'
+    note = ('Green: all checks passed. Amber: checks not all passed. Red: no compilable source. Gray: not graded. Open a cell for its score and recorded outcome.' if compact else 'Green: whole program passes. Amber: compiled with mismatches. Red: no compilable source. Gray: no scored result. Each cell opens the saved source and evidence; time limits and missing answers are identified on the case page.')
+    return body + '</tbody></table></div><p class="chart-note">' + note + '</p>'
 
 
 def preparation_workflow():
@@ -515,7 +519,7 @@ def matched_baseline_workflow(enrolled=False):
 
 def workflow():
     steps = [('01', 'Frozen benchmark cases', 'Public ELF, language contract, prompt, tools and budgets'),
-             ('02', 'Model + harness', 'DeepSeek / GPT in DeepSeek Harness; GLM in ZCode'),
+             ('02', 'Model + client', 'DeepSeek Harness; GPT in Codex; GLM in ZCode'),
              ('03', 'Ghidra evidence', 'Restricted functions, assembly, xrefs, strings and bytes'),
              ('04', 'Native grading', 'Unchanged source → isolated compiler → hidden exact checks'),
              ('05', 'Saved records', 'Answer, evidence, usage, grades, source reviews and pricing'),

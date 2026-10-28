@@ -111,7 +111,10 @@
   const languageLabel = document.createTextNode('Language ');label.append(languageLabel, select);controls.append(label);
   const banner = document.createElement('details');banner.className = 'i18n-warning';banner.hidden = true;banner.setAttribute('role', 'status');banner.setAttribute('aria-live', 'polite');
   const headline = document.createElement('summary'), list = document.createElement('ul');banner.append(headline, list);
-  (document.querySelector('header') || document.body).prepend(controls, banner);
+  // Keep missing-copy warnings next to the language control. They remain
+  // visible and expandable without displacing the report's results header.
+  controls.append(banner);
+  (document.querySelector('header') || document.body).prepend(controls);
   let displayedWarnings = null;
   function warningDisplay() {
     const identity = [...warnings.keys()].join('\n');

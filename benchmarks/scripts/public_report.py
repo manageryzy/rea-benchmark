@@ -22,6 +22,9 @@ import report_views
 import i18n_report
 import report_budget
 import localization_report
+import report_reader
+import report_reader_summary
+from report_labels import route_label
 from report_states import STATES
 from report_io import metadata_snapshot
 from capabilities import summary as capability_summary
@@ -655,104 +658,86 @@ def validate(data):
 class PublicReport(Report):
     def __init__(self, output, data):
         self.output, self.data = output, validate(data)
-        self.template = Template((ASSETS / 'page.html').read_text())
+        self.template = Template((ASSETS / 'public-page.html').read_text())
         coverage = ROOT / 'benchmarks/suites/stl-native-v2/config/coverage.json'
         self.coverage = json.loads(coverage.read_text())
         presentation = b''.join((ROOT / 'benchmarks/scripts' / name).read_bytes() for name in
-            ('report.py', 'report_charts.py', 'report_views.py', 'report_prices.py', 'report_states.py', 'report_budget.py'))
-        self.build_id = hashlib.sha256(json_text(data).encode() + coverage.read_bytes() + Path(__file__).read_bytes() + presentation + (ASSETS / 'page.html').read_bytes() + (ASSETS / 'report.css').read_bytes() + (ASSETS / 'report.js').read_bytes()).hexdigest()
+            ('report.py', 'report_charts.py', 'report_views.py', 'report_prices.py', 'report_states.py', 'report_budget.py',
+             'report_reader.py', 'report_reader_summary.py', 'report_labels.py'))
+        locales = b''.join((ASSETS / 'locales' / (locale + '.json')).read_bytes() for locale in i18n_report.LOCALES)
+        self.build_id = hashlib.sha256(json_text(data).encode() + coverage.read_bytes() + Path(__file__).read_bytes() + presentation + locales + (ASSETS / 'public-page.html').read_bytes() + (ASSETS / 'report.css').read_bytes() + (ASSETS / 'report.js').read_bytes() + (ASSETS / 'i18n.js').read_bytes()).hexdigest()
         stamp = data['data_as_of']
         self.data_date = datetime.datetime.fromisoformat(stamp).astimezone(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M:%S JST') if stamp else 'No model measurements recorded'
 
     def page(self, name, title, body):
-        notice = '<p class="notice">Public summary: credentials, raw requests, reasoning, answers and JSON downloads are excluded. Model + harness measurements; model-only attribution is not certified.</p>'
-        super().page(name, title, notice + body)
-        path = self.output / name
-        html = path.read_text().replace('Rebuild all reports: <code>make reports</code>',
-                                       'Re-render saved results: <code>make pages</code>; collect new results: <code>make reports</code>')
-        html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; base-uri \'none\'; form-action \'none\'">')
-        path.write_text(html)
+        parent = Path(name).parent
+        link = lambda target: escape(os.path.relpath(target, str(parent)))
+        navigation = [('index.html', 'Overview'), ('comparison.html', 'Model comparison'),
+                      ('dimensions.html', 'Capability analysis'), ('cases/index.html', 'Task results'),
+                      ('costs.html', 'Cost and time'), ('methodology.html', 'Methods and scope')]
+        subtitles = {'index.html': 'Saved correctness results across all configured models and tasks.',
+                     'comparison.html': 'Native correctness on shared cases or each model’s measured subset.',
+                     'dimensions.html': 'Measured capability profiles with scores and sample counts.',
+                     'capabilities.html': 'Localization, reconstruction and type / ABI task results.',
+                     'cases/index.html': 'Native language results and typed task results.',
+                     'costs.html': 'Recorded usage, published-rate estimates and measured durations.'}
+        markup = self.template.substitute(title=escape(title), subtitle=escape(subtitles.get(name, 'Saved results and their interpretation.')),
+            stylesheet=link('assets/report.css'), script=link('assets/report.js'),
+            navigation=''.join('<a href="' + link(target) + '">' + label + '</a>' for target, label in navigation),
+            methods=link('methodology.html'), history=link('history/index.html'),
+            locale_scripts=''.join('<script src="' + link('assets/' + asset) + '" defer></script>' for asset in
+                ['locales/en.js', 'locales/zh-CN.js', 'locales/ja.js', 'i18n-config.js', 'i18n.js']),
+            body=body, data_date=escape(self.data_date), build_id=self.build_id[:12])
+        markup = markup.replace('<meta charset="utf-8">', '<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; base-uri \'none\'; form-action \'none\'">')
+        self.write(name, markup)
+
+    def summary_table(self, rows):
+        return table(['Model', 'Graded / configured', 'Programs passed', 'Case-equal mean', 'Check-weighted pass rate'], [
+            [escape(item['model_label']) + '<small>' + escape(route_label(item['model'], self.data['models'][item['model']])) + '</small>',
+             f'{item["graded_attempts"]}/{item["planned_cells"]}',
+             f'{item["programs_passed"]}/{item["graded_attempts"]}' if item['graded_attempts'] else 'Not graded (n=0)',
+             f'{item["case_equal_mean"]:.2f}%' if item['case_equal_mean'] is not None else 'Unmeasured',
+             f'{100*item["passed"]/item["checks"]:.2f}%' if item['checks'] else 'Unmeasured']
+            for item in summary(rows, self.data['models'])])
 
     def environment_case(self, row):
         return {'status': row['environment_delivery']}
 
     def overview(self):
-        super().overview()
+        report_reader_summary.overview(self)
 
     def case_pages(self):
-        groups = {}
-        for row in self.all_records():
-            groups.setdefault(self.case_link(row), []).append(row)
-        for name, rows in groups.items():
-            body = '<section><h2>Recorded scores</h2><p>' + escape(report_views.case_identity(rows[0])) + '</p>' + self.case_table(rows, '../../') + '</section>'
-            for r in rows:
-                body += '<section id="' + escape(r['model']) + '"><h2>' + escape(r['model_label']) + '</h2><p>Condition: ' + escape(r['condition_label']) + '. Status: ' + escape(STATES[r['status']]) + '.</p>'
-                body += report_budget.detail(r.get('budget_condition'))
-                if r.get('failure_receipt_malformed'):
-                    body += '<p class="notice">The saved failure receipt is empty or malformed and has been preserved. No correctness score is assigned. Independently saved budget and usage records remain available.</p>'
-                if r['target_build']:
-                    body += table(['Target build', 'Value'], [[escape(k), escape(v)] for k, v in r['target_build'].items()])
-                if r['grade']:
-                    body += '<p>' + escape(r['grade']['failure'] or 'All checks passed') + '.</p>'
-                    body += table(['Function point', 'Passed / total'], [[escape(k), str(v['passed']) + '/' + str(v['total'])] for k, v in r['grade']['points'].items()])
-                if r['readability']:
-                    body += table(['Readability dimension', 'Score / 2'], [[escape(k), v] for k, v in r['readability']['scores'].items()])
-                    body += report_views.readability_note()
-                body += '<p>Estimated API cost for known usage: ' + money(r['cost']) + '. Actual invoice charge is unknown. Raw submissions and traces are kept local.</p>'
-                if r.get('pricing_basis_id'):
-                    body += '<p><a href="../../costs.html#price-' + escape(r['pricing_basis_id']) + '">Saved pricing basis</a></p>'
-                body += '</section>'
-            self.page(name, rows[0]['case']['label'] + ' · ' + rows[0]['condition_label'], body)
-        body = '<section><h2>Native recovery · all valid saved grades</h2>' + charts.heatmap(self.current_records(), self.data['models'], '../').replace('Each cell opens the saved source and evidence;', 'Each cell opens sanitized scores;') + '</section><section><h2>All experiments and conditions</h2><label>Filter <input data-table-filter="all-cases" aria-label="Filter cases"></label>' + self.case_table(self.all_records(), '../', 'all-cases') + '</section>'
-        self.page('cases/index.html', 'All cases and models', body)
+        report_reader.case_pages(self)
 
     def costs(self):
-        super().costs()
+        report_reader_summary.costs(self)
 
-    def compilers_page(self):
-        body = '<section><h2>Compiler and optimization are separate testing points</h2><p>The measured C++ inputs use GCC 13.3. GCC/Clang compiler version, language standard, optimization (-O0/-O2/-O3), standard library and ABI define distinct points. Build validation is not a model measurement; the additional inference matrix remains disabled.</p>'
-        body += table(['Suite', 'Case', 'Compiler', 'Version', 'Optimization', 'Standard', 'ABI', 'Build status', 'Inputs verified at snapshot'], [[escape(p[k]) for k in ['suite', 'base_case', 'compiler_id', 'compiler_version', 'optimization', 'standard', 'string_abi', 'status', 'inputs_current']] for p in self.data['compiler_points']]) + '</section>'
-        body += '<section><h2>Language feature probes</h2>' + table(['Feature', 'Compiler', 'Standard', 'Status', 'Model attempts'], [[escape(p[k]) for k in ['feature', 'compiler_id', 'standard', 'status', 'model_attempts']] for p in self.data['feature_probes']]) + '</section>'
-        self.page('compilers.html', 'Compiler and optimization coverage', body)
+    def capabilities_page(self):
+        report_reader.capabilities(self)
 
-    def coverage_page(self):
-        # This shared view uses only committed fixture coverage and numeric scores.
-        super().coverage_page()
-
-    def history_pages(self):
-        links = []
-        for experiment in self.data['experiments']:
-            selected = [r for r in self.data['records'] if r['experiment'] == experiment['id']]
-            path = 'history/' + experiment['id'] + '/index.html'
-            links.append(['<a href="' + escape(experiment['id']) + '/index.html">' + escape(experiment['label']) + '</a>', escape(experiment['role']), len(selected)])
-            self.page(path, experiment['label'], '<section><h2>Preserved original condition</h2>' + self.summary_table(selected) + self.case_table(selected, '../../') + '</section>')
-        self.page('history/index.html', 'Experiment history', '<section><h2>All registered experiments</h2><p>Original conditions and diagnostic attempts retain their scores and costs; no historical attempt is relabeled as a fixed-harness run.</p>' + table(['Experiment', 'Role', 'Cells'], links) + '</section>' + self.condition_comparison())
-
-    def diagnostics(self):
-        # Shared implementation status contains no local paths or trace text.
-        a = self.data['audit']
-        body = '<section id="environment"><h2>Environment fairness</h2><p>Model-only attribution is not certified. Original DSH spilling/pruning and ZCode clipping can affect delivered evidence. Current conditions disable those controls and use explicit bounded paging; different system prompts, context limits and providers remain.</p>' + table(['Cached audit metric', 'Count / status'], [[escape(k), escape(v)] for k, v in a.items()]) + '</section>'
-        body += '<section id="evidence-fixes"><h2>GLM cached-trace diagnostics</h2><p>Counts below summarize historical traces without publishing their text. Long request windows can include provider queuing; reasoning characters are not a direct measure of compute time. Deadline-aware finalization and reasoning-effort ablations remain proposals, not demonstrated fixes.</p>' + table(['Case', 'Status', 'Timed out', 'Elapsed seconds', 'Reasoning characters', 'Visible characters', 'Tool calls', 'HTTP requests'], [[escape(c[k]) for k in ['case', 'status', 'timed_out', 'elapsed_seconds', 'reasoning_chars', 'content_chars', 'tool_calls', 'request_count']] for c in self.data['glm_diagnostics']]) + '</section>'
-        body += self.runtime_storage_section()
-        self.page('diagnostics.html', 'Harness and timing diagnostics', body)
+    def capability_inventory_page(self):
+        report_reader.capability_inventory(self)
 
     def methodology(self):
-        body = '<section><h2>Benchmark and reporting workflow</h2>' + charts.workflow() + '<p>Models receive only the frozen public ELF, prompt and restricted read-only REA tools. Hidden sources, tests, execution, shell access and compiler feedback are unavailable. Unchanged submissions are compiled and independently checked offline. Correctness, whole-program success, function points and five-dimension source readability are separate measures. Coordinating-AI readability reviews are not an independent blind panel.</p><p>Cached attempts are validated against effective binary, prompt, tool, model and harness inputs. Missing measurements remain pending; environment failures are not zero model scores. Cases run sequentially within each model with up to three model queues sharing the host, which can affect runtime.</p></section><section><h2>Public report reproduction</h2><p>The normal local report command refreshes an allowlisted summary cache from saved records. Local rendering blocks network and process creation and needs no provider credentials, model runtime, raw traces or downloaded toolchain. The generated site is committed under master/docs for GitHub Pages. Only HTML, CSS and JavaScript are deployed; raw JSON, source exports, answers, archives and reasoning are absent.</p><p>Summary audit flags describe the saved local verification at snapshot time; the public build cannot independently replay private traces. Source report identity: <code>' + escape(self.data['source_report_build_id']) + '</code>. Public build identity appears in each footer.</p><p><a href="https://github.com/manageryzy/rea-benchmark">Source repository and detailed documentation</a></p></section>'
-        self.page('methodology.html', 'Methods and publication policy', body)
+        report_reader.methodology(self)
+
+    def coverage_page(self):
+        report_reader.scope(self)
+
+    def history_pages(self):
+        report_reader.history(self)
 
     def build(self):
         for name in ['report.css', 'report.js']:
             self.write('assets/' + name, (ASSETS / name).read_bytes())
-        for name, content in i18n_report.assets().items(): self.write(name, content)
+        for name, content in i18n_report.assets().items():
+            self.write(name, content)
         self.overview()
         self.case_pages()
         self.costs()
-        self.measurement()
         self.capabilities_page()
-        self.compilers_page()
         self.coverage_page()
         self.history_pages()
-        self.diagnostics()
         self.methodology()
         self.write('.nojekyll', '')
         validate_site(self.output)
@@ -922,7 +907,7 @@ def refresh_readme(data, path=ROOT / 'README.md'):
               'Tokens include repeated context and cache reads. Costs cover observed usage at frozen published rates; '
               'missing request linkage or usage leaves the total unknown. GPT amounts are API equivalents, not measured subscription debits. '
               'Readability averages include only reviewed sources. Environment failures and unstarted cases receive no model correctness score.', '',
-              '[Measurement validity and revisions](https://manageryzy.github.io/rea-benchmark/measurement.html) · '
+              '[Scoring methods and scope](https://manageryzy.github.io/rea-benchmark/methodology.html) · '
               '[Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.']
     path.write_text(text[:a] + '\n\n' + '\n'.join(lines) + '\n\n' + text[b:])
 

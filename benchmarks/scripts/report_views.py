@@ -210,17 +210,18 @@ def readability_note():
 
 def cohorts(rows, catalog):
     """Explicit small model groups, avoiding a combinatorial hidden-page matrix."""
-    models = [m for m in catalog if any(r['model'] == m for r in rows)]
+    from report_labels import route_label, route_key
+    models = list(catalog)
     result = [('all-models', 'All configured models', models)]
     coverage = {m: sum(bool(r['grade']) for r in rows if r['model'] == m) for m in models}
     maximum = max(coverage.values(), default=0)
     fullest = [m for m in models if coverage[m] == maximum]
     if maximum and len(fullest) >= 2 and fullest != models:
         result.append(('maximum-coverage', 'Models with the largest graded coverage', fullest))
-    for harness in sorted({catalog[m]['harness'] for m in models}):
-        members = [m for m in models if catalog[m]['harness'] == harness]
+    for route in sorted({route_key(m, catalog[m]) for m in models}):
+        members = [m for m in models if route_key(m, catalog[m]) == route]
         if len(members) >= 2 and members != models and members != fullest:
-            result.append((harness, harness + ' models', members))
+            result.append((route, route_label(members[0], catalog[members[0]]) + ' models', members))
     return result
 
 
@@ -310,9 +311,10 @@ def comparison(report, dimensions_only=False):
     catalog = report.data['models']
     all_cases = {(r['experiment'], r['case']['id']): r for r in rows}
     groups = cohorts(rows, catalog)
-    body = '<section id="comparison"><h2>' + ('Model capability scores across dimensions' if dimensions_only else 'Native reconstruction: compare model + harness setups') + '</h2>'
-    body += '<p>Configured frozen cases with valid saved grades from all runs, deduplicated per model × case. Different harnesses, budgets and providers limit model-only attribution.</p>'
-    default_group = next((key for key, _, _ in groups if key == 'maximum-coverage'), 'all-models') if dimensions_only else 'all-models'
+    body = '<section id="comparison"><h2>' + ('Model capability scores across dimensions' if dimensions_only else 'Native model comparison') + '</h2>'
+    body += '<p>One valid saved grade per model and case. Shared-case comparisons match task coverage; saved budgets and clients can differ.</p>'
+    default_group = 'all-models'
+    default_scope = 'all' if dimensions_only else 'matched'
     body += '<label>Model group <select data-cohort-selection>' + ''.join(
         '<option value="' + text(key) + '"' + (' selected' if key == default_group else '') + '>' + text(label) + '</option>' for key, label, _ in groups) + '</select></label>'
     for index, (key, label, members) in enumerate(groups):
@@ -324,25 +326,26 @@ def comparison(report, dimensions_only=False):
         scope = f'{len(members)} models · shared {len(shared)}/{len(all_cases)} native cases'
         names = ', '.join(catalog[m]['label'] for m in members)
         body += '<div data-cohort-panel="' + text(key) + '"' + (' hidden' if key != default_group else '') + '>'
-        body += '<h3>' + text(scope) + '</h3><p>' + text(names) + '</p>'
-        body += '<div class="chart-tabs" role="group" aria-label="Comparison scope"><button type="button" data-chart-scope="matched" aria-pressed="true">Shared graded cases (' + str(len(shared)) + ')</button><button type="button" data-chart-scope="all" aria-pressed="false">Each model’s own graded subset</button></div>'
+        body += '<h3>' + text(scope) + '</h3><p translate="no">' + text(names) + '</p>'
+        body += '<div class="chart-tabs" role="group" aria-label="Comparison scope"><button type="button" data-chart-scope="matched" aria-pressed="' + str(default_scope == 'matched').lower() + '">Shared graded cases (' + str(len(shared)) + ')</button><button type="button" data-chart-scope="all" aria-pressed="' + str(default_scope == 'all').lower() + '">Each model’s own graded subset</button></div>'
         for name, current in [('matched', matched), ('all', selected)]:
             context = scope if name == 'matched' else label + ' · unequal graded subsets; not a common-case ranking'
             context += ' · request budgets not matched'
             keys = shared if name == 'matched' else set(all_cases)
-            body += '<div data-chart-panel="' + name + '"' + (' hidden' if name == 'all' else '') + '>'
+            body += '<div data-chart-panel="' + name + '"' + (' hidden' if name != default_scope else '') + '>'
             if not current:
                 body += '<p class="notice">No common graded cases for this model group. Choose another model group or explicitly view each model’s own subset. No zero-valued comparison is inferred.</p>'
                 body += table(['Model', 'Graded cases / configured cases'], [[text(catalog[m]['label']), f'{len(sets[m])}/{len(all_cases)}'] for m in members])
             else:
-                labels = [all_cases[k]['experiment_label'] + ' / ' + all_cases[k]['case']['label'] for k in sorted(keys)]
-                context += ' · ' + ('; '.join(labels) if len(labels) <= 3 else str(len(labels)) + ' cases; membership below')
-                context += ' · snapshot ' + str(report.data.get('data_as_of') or 'unknown') + ' · build ' + str(getattr(report, 'build_id', 'unknown'))[:12]
                 body += report.summary_table(current)
-                body += report_budget.comparison_note(current, cohort)
+                body += '<p class="chart-note">Request limits vary between saved attempts. Correctness scores and budget compliance are separate.</p>'
                 body += '<p class="chart-note">Fixed-test pass rate weights by check count. Case-equal mean weights each graded case equally. These are distinct descriptions of the same saved grades; checks are not independent trials.</p>'
                 if dimensions_only:
-                    body += charts.capability_dimensions(dimension_groups(current, cohort, report.data.get('compiler_points', [])), cohort, scope=context)
+                    dimension_values = dimension_groups(current, cohort, report.data.get('compiler_points', []))
+                    body += charts.capability_dimensions([g for g in dimension_values if g['id'] != 'readability'], cohort, scope=context, radar_first=True)
+                    reviews = [g for g in dimension_values if g['id'] == 'readability' and any(v.get('n') for m in g['models'] for v in m['values'])]
+                    if reviews:
+                        body += '<section class="historical-reviews"><h3>Historical source reviews</h3><p>Stored AI assessments are separate from correctness and have their own sample counts.</p>' + charts.capability_dimensions(reviews, cohort, scope='Reviewed accepted source only', radar_first=True) + '</section>'
                     body += '<p class="chart-note">These are native-language details. The <a href="index.html#capability-radar">overview radar</a> also includes observed localization, reconstruction and type/ABI correctness. See <a href="capabilities.html">typed task evidence and measurement gaps</a>.</p>'
                 else:
                     body += '<p><a href="dimensions.html?cohort=' + text(key) + '&amp;scope=' + name + '#comparison">Capability diagrams by language, behavior, build conditions and readability →</a></p>'
@@ -354,11 +357,18 @@ def comparison(report, dimensions_only=False):
                     body += '</div>'
                     continue
                 stats = summary(current, cohort)
-                body += '<details class="comparison-charts"><summary>Correctness, readability, runtime, tokens and cost charts</summary>'
+                body += '<div class="comparison-charts"><h3>Correctness, runtime, tokens and cost</h3>'
                 body += charts.score_charts(stats, scope=context,
-                    structurally_single_point=all(r['points_total'] == 1 for r in current if r['grade']))
-                body += readability_note() + charts.runtime_chart(stats, scope=context)
-                body += charts.token_chart(current, cohort, scope=context) + charts.cost_chart(stats, scope=context) + '</details>'
+                    structurally_single_point=all(r['points_total'] == 1 for r in current if r['grade']), include_readability=False)
+                body += charts.runtime_chart(stats, scope=context)
+                body += charts.token_chart(current, cohort, scope=context) + charts.cost_chart(stats, scope=context) + '</div>'
+                reviewed = [s for s in stats if s['readability_n']]
+                if reviewed:
+                    body += '<section class="historical-reviews"><h3>Historical source reviews</h3>' + readability_note()
+                    body += charts.metric('Stored readability reviews', reviewed, 'readability_mean',
+                        lambda r: f'{r["readability_mean"]:.1f}/10 · n={r["readability_n"]}', 10,
+                        scope='Reviewed accepted source only', unit='points',
+                        note='Stored AI assessments are separate from correctness and have their own sample counts.') + '</section>'
             body += '</div>'
         body += '</div>'
     return body + '</section>'

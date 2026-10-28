@@ -639,7 +639,7 @@ class PublicAcceptance(unittest.TestCase):
 
     def test_case_links_and_global_metric_consistency(self):
         rows = self.data['records'] + self.data['condition_records']
-        self.assertEqual(len(rows), len({(r['experiment'], r['case']['id'], r['model'], r['condition']) for r in rows}))
+        self.assertEqual(len(rows), len({(r['experiment'], r['case']['id'], r['model'], r['condition'], r.get('attempt_id')) for r in rows}))
         active = records.active_condition_rows(self.data)
         self.assertTrue(active)
         self.assertEqual(set(r['model'] for r in active), set(self.data['models']))
@@ -665,62 +665,18 @@ class PublicAcceptance(unittest.TestCase):
             self.assertEqual(receipt['model_calls'], 0)
             self.assertFalse(any(Path(p).suffix in ('.json', '.jsonl', '.csv', '.zip', '.md', '.sse') for p in first))
             self.assertTrue((out / 'history/index.html').is_file())
-            self.assertTrue((out / 'diagnostics.html').is_file())
+            for internal in ('diagnostics.html', 'measurement.html', 'timings.html'):
+                self.assertFalse((out / internal).exists())
             self.assertIn('data-radar-group="capability-overview"', (out / 'index.html').read_text())
             self.assertIn('data-chart-panel="matched"', (out / 'comparison.html').read_text())
-            self.assertIn('Runtime and provider attestation', (out / 'measurement.html').read_text())
-            self.assertIn('Closed grading runtimes', (out / 'measurement.html').read_text())
-            self.assertIn('Host-owned restricted C returns', (out / 'measurement.html').read_text())
-            self.assertIn('Explicit callback and persistent-state preparation:', (out / 'measurement.html').read_text())
-            self.assertIn('Authenticated C execution workflow', (out / 'measurement.html').read_text())
-            self.assertIn('Implementation plan: incomplete', (out / 'measurement.html').read_text())
-            self.assertIn('R3: request budgets', (out / 'measurement.html').read_text())
-            self.assertIn('R6: authenticated returns', (out / 'measurement.html').read_text())
-            measurement = (out / 'measurement.html').read_text()
-            supported = self.data['capability_preparation']['supported_capabilities']
-            label = '/'.join(name for name in supported if name.startswith('T')) + ' preparation; 0/7 released'
-            self.assertIn(label, measurement)
-            if 'T4' in supported:
-                self.assertIn('Tagged variants and subobjects: T4 preparation', measurement)
-                self.assertIn('Nominal inheritance', measurement)
-            if 'T6' in supported:
-                self.assertIn('Indirect calls, receivers and thunks: T6 preparation', measurement)
-                self.assertIn('complete supplied root layout', measurement)
-            if any(row['id'] == 'optimized_locations' for row in self.data['capability_preparation']['controls']):
-                self.assertIn('Optimized realizations: L6 diagnostic preparation', measurement)
-                if 'L6' in supported:
-                    self.assertIn('The L6 conditions are configured in the normal task inventory', measurement)
-            if any(row['id'] == 'native_abi' for row in self.data['capability_preparation']['controls']):
-                self.assertIn('Native language boundaries: T7 diagnostic preparation', measurement)
-                self.assertIn('accidental partial credit cannot pass a task', measurement)
-                self.assertIn('Sixty native calibration observations', measurement)
-                if 'T7' in supported:
-                    self.assertIn('The T7 conditions are configured in the normal task inventory', measurement)
-            self.assertTrue('Type and ABI descriptions generate a replacement and bridge' in measurement, 'Original-endpoint ABI workflow missing')
-            self.assertTrue('Paired C and C++ conditions use one binary and the same host-owned comparisons' in measurement, 'Paired original-language workflow missing')
-            self.assertTrue('Counterfactual type and layout targets share supplied facts and retain original call boundaries' in measurement, 'Counterfactual validity workflow missing')
-            self.assertIn('Automatic capability preparation and inference cache workflow', measurement)
+            methods = (out / 'methodology.html').read_text()
+            self.assertIn('How scores are calculated', methods)
+            self.assertIn('Saved results and missing scores', methods)
+            self.assertIn('Codex OAuth', methods)
             typed = (out / 'capabilities.html').read_text()
-            self.assertIn('Typed capability inventory and measurement coverage', typed)
-            self.assertIn('Capability vectors and family macros', typed)
-            self.assertIn('Append-only grading and accounting revisions', typed)
-            self.assertIn('Immutable pre-run registration', typed)
-            self.assertIn('Original compiler and build conditions', typed)
-            if self.data['capability_registration']['builds']:
-                self.assertIn('Flags and full identities', typed)
-                self.assertIn('Safe flags:', typed)
-            else:
-                self.assertIn('No verified original-build metadata is available in this saved snapshot.', typed)
-                self.assertNotIn('Flags and full identities', typed)
-                self.assertNotIn('Safe flags:', typed)
-            for row in self.data['capability_registration']['builds']:
-                for key in ('build_id', 'binary_sha256', 'compiler_image_id', 'compiler_executable_sha256',
-                            'binutils_image_id', 'flag_summary_sha256'):
-                    self.assertIn(row['metadata'][key], typed)
-            self.assertNotIn('compiler_commands_sha256', typed)
-            self.assertNotIn('record_codec_absent', typed)
-            self.assertFalse('Planned: 0/7 implemented' in measurement, 'Obsolete type/ABI status published')
-            self.assertNotIn('base_url', (out / 'measurement.html').read_text())
+            self.assertIn('Current task results', typed)
+            self.assertNotIn('Immutable pre-run registration', typed)
+            self.assertNotIn('base_url', methods)
             pages = Path(tmp) / 'docs'
             public.stage_pages(out, pages)
             self.assertEqual(first, hashes(pages))

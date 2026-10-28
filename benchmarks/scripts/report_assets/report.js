@@ -56,15 +56,16 @@
     const controls = document.createElement('div'); controls.className = 'filter-controls';
     const fields = [];
     const headers = all('thead th', table);
-    ['model', 'status', 'language'].forEach(name => {
-      const index = headers.findIndex(h => h.textContent.trim().toLocaleLowerCase() === name);
+    const headerAliases = {model: ['model'], status: ['status', 'state', 'outcome'], language: ['language', 'source language'], capability: ['capability']};
+    ['model', 'status', 'language', 'capability'].forEach(name => {
+      const index = headers.findIndex(h => headerAliases[name].includes(h.textContent.trim().toLocaleLowerCase()));
       const attribute = `filter${name[0].toUpperCase()}${name.slice(1)}`;
       if (index < 0 && !rows.some(row => row.dataset[attribute])) return;
       const valuesByRow = new Map(rows.map(row => {
         if (row.dataset[attribute]) return [row, row.dataset[attribute]];
         const cell = index < 0 ? null : row.children[index]?.cloneNode(true);
-        // Model annotations describe the condition/evidence, not model identity.
-        if (name === 'model' && cell) all('small', cell).forEach(note => note.remove());
+        // Model annotations and budget badges are separate from the primary filter value.
+        if ((name === 'model' || name === 'status') && cell) all('small', cell).forEach(note => note.remove());
         return [row, cell?.textContent.trim() || ''];
       }));
       const value = row => valuesByRow.get(row) || '';

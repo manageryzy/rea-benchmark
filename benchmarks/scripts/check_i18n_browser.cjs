@@ -30,7 +30,7 @@ const executablePath = process.env.CHROMIUM_EXECUTABLE ||
     const settle = () => page.waitForTimeout(60);
     const noWarnings = async () => assert.deepEqual(await page.evaluate(() => window.REA_I18N.warnings), []);
     const files = ['index.html','dimensions.html','comparison.html','cases/index.html','capabilities.html','costs.html','coverage.html',
-      'compilers.html','diagnostics.html','measurement.html','methodology.html','history/index.html','capability-inventory.html'];
+      'compilers.html','methodology.html','history/index.html','capability-inventory.html'];
     if (fs.existsSync(path.join(site, 'attempts'))) files.push(...fs.readdirSync(path.join(site, 'attempts')).filter(f => f.endsWith('.html')).slice(0, 2).map(f => 'attempts/' + f));
     for (const file of files) {
       await open(file);

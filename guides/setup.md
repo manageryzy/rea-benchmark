@@ -506,9 +506,10 @@ inference action key. Cache-only batches do not repeat historical trace audits.
 
 Stage timings are printed by the command and saved in
 `benchmarks/config/benchmark-status.json`, `report-timings.json` and
-`benchmark-command-timing.json`. The generated
-[pipeline timing page](../benchmarks/site/timings.html) is linked from Diagnostics;
-`make reports` reproduces that page from these saved numeric receipts.
+`benchmark-command-timing.json`. The private
+[diagnostics report](../benchmarks/reports/diagnostics.html#local-performance)
+contains measured stages; `make reports` reproduces it from saved numeric receipts.
+The public result report omits engineering diagnostics and installation checks.
 
 The 2026-10-23 whole-matrix offline measurement took **258.78 seconds**, including
 **197.739 seconds** for global report generation (previously 446.93 seconds).
