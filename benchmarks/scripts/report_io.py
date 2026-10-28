@@ -36,10 +36,10 @@ def metadata_snapshot():
         key = (name, os.fspath(path), tuple(sorted(kwargs.items())))
         with lock:
             found = observations.get(key)
-        # Directory timestamps change when unrelated cache/pycache entries are
-        # created. Never replay those timestamps; still seal directory identity.
-        if found is not None and found[0] and isinstance(found[1], os.stat_result) and stat.S_ISDIR(found[1].st_mode):
-            return originals[name](path, **kwargs)
+        # Directories are part of the same read-only snapshot as files. Their
+        # identity is freshly checked below; unrelated cache/pycache entries do
+        # not invalidate it. Re-querying every cached ancestor here defeats the
+        # realpath cache on Windows-backed workspaces.
         if found is None:
             try:
                 found = (True, originals[name](path, **kwargs))
@@ -199,7 +199,8 @@ def publish_timing(seconds=None):
             '<table><thead><tr><th>Stage</th><th>Seconds</th></tr></thead><tbody>' +
             ''.join('<tr><td>' + escape(name) + '</td><td>' + number(elapsed) + '</td></tr>' for name, elapsed in rows) +
             '</tbody></table></main></html>\n')
-    for directory in ('benchmarks/reports', 'benchmarks/site', 'docs'):
+    # Command timings are engineering diagnostics, never reader-report pages.
+    for directory in ('benchmarks/reports',):
         output = root / directory
         if (output / 'index.html').is_file():
             (output / 'timings.html').write_text(body)

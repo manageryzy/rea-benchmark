@@ -83,7 +83,7 @@ for commands, captured dependencies and the remaining host boundary.
 
 <!-- benchmark-results:start -->
 
-Cached inference through **2026-10-27T19:00:43.694540+00:00**; report build `b3baad9ef5d6`.
+Cached inference through **2026-10-28T10:33:41.197182+00:00**; report build `f77f7ad57749`.
 
 **166/252** active cells have grades. Unequal completion is disclosed; this is not a matched-coverage ranking.
 
@@ -91,10 +91,10 @@ Cached inference through **2026-10-27T19:00:43.694540+00:00**; report build `b3b
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | DeepSeek V4.1 Flash 1017 | 32/42 | 1/32 | 52,432/93,158 | Unreviewed | 63,149,311 | $2.7923 |
 | DeepSeek V4 Pro 0813 | 30/42 | 0/30 | 47,493/87,228 | Unreviewed | 68,495,234 | $12.1985 |
-| GPT-6.1 Sol | 24/42 | 9/24 | 66,715/69,438 | Unreviewed | 17,688,006 | $7.8937–$9.1369 (rate range) |
 | GLM-5.3 | 29/42 | 1/29 | 33,874/84,632 | Unreviewed | 50,206,948 | $26.3331 known subtotal; missing usage, final cost unknown |
-| GPT-6 Luna | 22/42 | 0/22 | 14,863/63,262 | Unreviewed | 12,466,821 | $0.3782–$0.4317 (rate range) |
 | GPT-5.6 Sol | 29/42 | 8/29 | 57,289/76,523 | Unreviewed | 18,217,689 | $22.9747–$25.7129 (rate range) |
+| GPT-6 Luna | 22/42 | 0/22 | 14,863/63,262 | Unreviewed | 12,466,821 | $0.3782–$0.4317 (rate range) |
+| GPT-6.1 Sol | 24/42 | 9/24 | 66,715/69,438 | Unreviewed | 17,688,006 | $7.8937–$9.1369 (rate range) |
 
 Across all conditions, 328/328 saved grades use exact-byte grading; 0 differ in passed checks or program success from their previously selected grades. Offline regrading reuses the original model outputs and preserves historical grades.
 
