@@ -712,6 +712,11 @@ class PublicAcceptance(unittest.TestCase):
             self.assertFalse((Path(tmp) / 'site').exists())
 
     def test_bounded_readme_summary(self):
+        import report_views
+        original = copy.deepcopy(self.data)
+        cells = report_views.aggregate_cells(self.data)
+        graded = sum(cell['grade'] is not None for cell in cells)
+        passed = sum(cell['success'] for cell in cells)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'README.md'
             path.write_text('Authored methods\n<!-- benchmark-results:start -->\nold\n<!-- benchmark-results:end -->\nAuthored related projects\n')
@@ -721,7 +726,16 @@ class PublicAcceptance(unittest.TestCase):
             self.assertEqual(first, path.read_text())
             self.assertTrue(first.startswith('Authored methods\n'))
             self.assertTrue(first.endswith('Authored related projects\n'))
+            self.assertIn(f'**{graded:,}/{len(cells):,} model × task cells', first)
+            self.assertIn(f'{passed:,} have full marks.', first)
+            self.assertIn('| GPT-6.1 Sol | Codex |', first)
+            self.assertIn('| GLM-5.3 | ZCode |', first)
+            for category in ('Localization', 'Reconstruction', 'Types / ABI'):
+                self.assertIn('| ' + category + ' |', first)
+            self.assertIn('Ungraded states are not correctness zeros.', first)
+            self.assertIn('not a matched-coverage ranking', first)
             self.assertIn('total unknown', first)
+            self.assertEqual(self.data, original)
 
 
 if __name__ == '__main__':

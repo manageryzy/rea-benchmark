@@ -884,31 +884,47 @@ def refresh_readme(data, path=ROOT / 'README.md'):
     a, b = text.index(start) + len(start), text.index(end)
     if b < a:
         raise ValueError('Invalid README result boundaries')
-    rows = records.active_condition_rows(data)
-    items = summary(rows, data['models'])
+    cells = report_views.aggregate_cells(data)
+    items = report_views.aggregate_stats(cells, data['models'])
+    graded = sum(item['graded_attempts'] for item in items)
+    passed = sum(item['passed_cells'] for item in items)
     date = data['data_as_of'] or 'unavailable'
-    lines = ['Cached inference through **' + date + '**; report build `' + data['source_report_build_id'][:12] + '`.',
-             '', '**' + str(sum(bool(row['grade']) for row in rows)) + '/' + str(len(rows)) + '** active cells have grades. '
-             'Unequal completion is disclosed; this is not a matched-coverage ranking.', '',
-             '| Model | Graded / planned | Programs passing / graded | Checks passed / total | Readability / 10 | Known tokens | Observed USD estimate |',
-             '| --- | ---: | ---: | ---: | ---: | ---: | --- |']
+    lines = [f'**{graded:,}/{len(cells):,} model × task cells have valid saved grades; '
+             f'{passed:,} have full marks.** '
+             f'The other {graded - passed:,} graded cells are below full marks; '
+             f'{len(cells) - graded:,} cells are ungraded.', '',
+             'Saved data as of **' + date + '**; source snapshot `' + data['source_report_build_id'][:12] + '`. '
+             'These are saved measurements, not live queue status.', '',
+             '| Model | Client route | Graded / planned | Full marks | Below full marks | Ungraded | Mean correctness |',
+             '| --- | --- | ---: | ---: | ---: | ---: | ---: |']
     for item in items:
-        review = f'{item["readability_mean"]:.2f} (n={item["readability_n"]})' if item['readability_n'] else 'Unreviewed'
-        lines.append('| ' + item['model_label'] + ' | ' + str(item['graded_attempts']) + '/' + str(item['planned_cells']) +
-                     ' | ' + str(item['programs_passed']) + '/' + str(item['graded_attempts']) + ' | ' +
-                     f'{item["passed"]:,}/{item["checks"]:,}' + ' | ' + review + ' | ' + f'{item["total_tokens"]:,}' + ' | ' + money(item['cost']) + ' |')
-    graded = [row for row in data['records'] + data['condition_records'] if row['grade']]
-    revised = [row for row in graded if row['grade'].get('grading_version') in ('exact-returns-v2', 'exact-returns-v3')]
-    changes = sum(row['grade']['original_passed'] != row['grade']['passed'] or
-                  row['grade']['original_program_success'] != row['program_success'] for row in revised)
-    lines += ['', f'Across all conditions, {len(revised)}/{len(graded)} saved grades use exact-byte grading; '
-              f'{changes} differ in passed checks or program success from their previously selected grades. '
-              'Offline regrading reuses the original model outputs and preserves historical grades.', '',
-              'Tokens include repeated context and cache reads. Costs cover observed usage at frozen published rates; '
-              'missing request linkage or usage leaves the total unknown. GPT amounts are API equivalents, not measured subscription debits. '
-              'Readability averages include only reviewed sources. Environment failures and unstarted cases receive no model correctness score.', '',
-              '[Scoring methods and scope](https://manageryzy.github.io/rea-benchmark/methodology.html) · '
-              '[Report reproduction](guides/setup.md#rebuild-benchmark-reports). Raw traces, reasoning and private results remain local.']
+        score = 'Unmeasured' if item['score'] is None else f'{item["score"]:.1f}%'
+        lines.append(f'| {item["model_label"]} | {route_label(item["model"], data["models"][item["model"]])} '
+                     f'| {item["graded_attempts"]}/{item["planned_cells"]} | {item["passed_cells"]} '
+                     f'| {item["graded_attempts"] - item["passed_cells"]} '
+                     f'| {item["planned_cells"] - item["graded_attempts"]} | {score} |')
+    lines += ['', 'Mean correctness gives each graded task equal weight: '
+              '`mean(passed checks / total checks) × 100`. '
+              'Full marks require all checks for that task to pass. '
+              '**Coverage, task mix and recorded conditions differ; this is not a matched-coverage ranking.**', '',
+              '| Capability category | Tasks per model | Graded / planned cells |',
+              '| --- | ---: | ---: |']
+    for category, label, _ in report_views.CAPABILITY_CATEGORIES:
+        selected = [cell for cell in cells if cell['category'] == category]
+        if not selected:
+            continue
+        tasks = len({cell['key'][1:] for cell in selected})
+        n = sum(cell['grade'] is not None for cell in selected)
+        lines.append(f'| {label} | {tasks} | {n}/{len(selected)} |')
+    lines += ['', 'Valid cached grades count once per model and frozen task, including reusable earlier results. '
+              'Original answers, grades and runtime identities are preserved. '
+              'Ungraded states are not correctness zeros.', '',
+              '[Full results and capability radar](https://manageryzy.github.io/rea-benchmark/) · '
+              '[Native comparison](https://manageryzy.github.io/rea-benchmark/comparison.html) · '
+              '[Localization, reconstruction and type/ABI results](https://manageryzy.github.io/rea-benchmark/capabilities.html)', '',
+              '[Tokens and cost estimates](https://manageryzy.github.io/rea-benchmark/costs.html) '
+              'use saved usage and frozen price snapshots. Missing usage leaves the total unknown. '
+              'Codex estimates are API equivalents; subscription debit is unknown.']
     path.write_text(text[:a] + '\n\n' + '\n'.join(lines) + '\n\n' + text[b:])
 
 
