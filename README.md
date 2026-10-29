@@ -1,13 +1,18 @@
 # REA Benchmark
 
+## [📊 Open the HTML report on GitHub Pages →](https://manageryzy.github.io/rea-benchmark/)
+
+**Report URL: [manageryzy.github.io/rea-benchmark](https://manageryzy.github.io/rea-benchmark/)**
+
+[English](https://manageryzy.github.io/rea-benchmark/?lang=en) ·
+[简体中文](https://manageryzy.github.io/rea-benchmark/?lang=zh-CN) ·
+[日本語](https://manageryzy.github.io/rea-benchmark/?lang=ja)
+
 This benchmark measures six model/client setups recovering program behavior from
 frozen Linux binaries. Executable tests and structured artifact checks score
 native C++/Rust/Go recovery, function localization, source reconstruction, and
 type/layout/ABI recovery.
 
-[**Read the report**](https://manageryzy.github.io/rea-benchmark/) ·
-[简体中文](https://manageryzy.github.io/rea-benchmark/?lang=zh-CN) ·
-[日本語](https://manageryzy.github.io/rea-benchmark/?lang=ja) ·
 [Setup](guides/setup.md) · [WTFPL license](LICENSE)
 
 ## Results and conclusions
@@ -16,7 +21,7 @@ type/layout/ABI recovery.
 
 **985/1,170 model × task cells have valid saved grades; 602 have full marks.** The other 383 graded cells are below full marks; 185 cells are ungraded.
 
-Saved data as of **2026-10-28T10:33:41.197182+00:00**; source snapshot `f77f7ad57749`. These are saved measurements, not live queue status.
+Saved data as of **2026-10-28T10:33:41.197182+00:00**; source snapshot `8a5cc37d55ad`. These are saved measurements, not live queue status.
 
 | Model | Client route | Graded / planned | Full marks | Below full marks | Ungraded | Mean correctness |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |

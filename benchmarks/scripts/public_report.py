@@ -76,7 +76,10 @@ def project_row(row):
     out['source'] = bool(row.get('source'))  # Availability only; no path or code.
     out['environment_delivery'] = row.get('environment_delivery', 'unverified')
     out['runtime_attestation_status'] = row.get('runtime_attestation_status', 'historical_unknown' if row.get('receipt') else 'not_recorded')
-    out['target_build'] = pick(row['target_build'], BUILD) if row.get('target_build') else None
+    # Registered variants already carry explicit build facts in the frozen case.
+    # A reader that omits cpp_points' top-level annotation must not lose them.
+    build = row.get('target_build') or row['case'].get('target_build')
+    out['target_build'] = pick(build, BUILD) if build else None
     if 'budget_condition' in row:
         out['budget_condition'] = report_budget.project(row['budget_condition'])
     out['receipt'] = None
@@ -846,6 +849,12 @@ def refresh(report):
             raise ValueError('Public projection changed measured results')
     if SNAPSHOT.exists():
         old = validate(json.loads(SNAPSHOT.read_text()))
+        identity = lambda r: (r['experiment'], r['case']['id'], r['model'],
+                              r['condition'], r.get('attempt_id'))
+        previous = {identity(r): r for r in old['records'] + old['condition_records']}
+        for row in data['records'] + data['condition_records']:
+            if previous.get(identity(row), {}).get('target_build') and not row.get('target_build'):
+                raise ValueError('Public refresh would drop saved target build metadata: ' + row['case']['id'])
         rows = {}
         for r in data['records'] + data['condition_records']:
             rows.setdefault((r['experiment'], r['case']['id'], r['model'], r['condition']), []).append(r)

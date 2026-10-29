@@ -26,6 +26,38 @@ class PublicAcceptance(unittest.TestCase):
     def setUpClass(cls):
         cls.data = public.validate(json.loads(public.SNAPSHOT.read_text()))
 
+    def test_frozen_case_build_survives_missing_top_level_annotation(self):
+        row = copy.deepcopy(next(r for r in self.data['condition_records'] if r['case']['language'] == 'cpp'))
+        build = {'compiler_family': 'Clang', 'compiler_version': '20.1.2',
+                 'optimization': 'O3', 'standard': 'c++20', 'string_abi': 1,
+                 'standard_library': 'libstdc++ 13', 'strip_mode': 'all'}
+        row['target_build'] = None
+        row['case']['target_build'] = {**build, 'private_build_path': 'PRIVATE_CANARY'}
+        projected = public.project_row(row)
+        self.assertEqual(projected['target_build'], build)
+        self.assertNotIn('PRIVATE_CANARY', json.dumps(projected))
+        self.assertIsNone(public.project_row({**row, 'case': {**row['case'], 'target_build': None}})['target_build'])
+
+    def test_refresh_rejects_lost_build_metadata_before_publishing(self):
+        previous = copy.deepcopy(self.data)
+        row = next(r for r in previous['condition_records'] if r['case']['language'] == 'cpp')
+        row['target_build'] = {'compiler_family': 'Clang', 'compiler_version': '20.1.2',
+                               'optimization': 'O3', 'standard': 'c++20', 'string_abi': 1,
+                               'standard_library': 'libstdc++ 13', 'strip_mode': 'all'}
+        fresh = copy.deepcopy(previous)
+        fresh['condition_records'][previous['condition_records'].index(row)]['target_build'] = None
+        with tempfile.TemporaryDirectory() as tmp:
+            snapshot = Path(tmp) / 'summary.json'
+            snapshot.write_text(json.dumps(previous))
+            before = snapshot.read_bytes()
+            with patch.object(public, 'SNAPSHOT', snapshot), \
+                    patch.object(public, 'project', return_value=fresh), \
+                    patch.object(public, 'build') as build:
+                with self.assertRaisesRegex(ValueError, 'drop saved target build metadata'):
+                    public.refresh(SimpleNamespace(data=fresh))
+                build.assert_not_called()
+            self.assertEqual(snapshot.read_bytes(), before)
+
     def test_malformed_failure_receipt_is_preserved_and_safely_projected(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(records, 'ROOT', Path(tmp)):
             path = Path(tmp) / 'harness-failure.json'
